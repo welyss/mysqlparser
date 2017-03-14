@@ -1,4 +1,4 @@
-package mysqlparser;
+package org.welyss.mysqlparser.test;
 
 import java.io.IOException;
 
