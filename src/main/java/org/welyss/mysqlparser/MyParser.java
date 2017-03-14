@@ -1299,7 +1299,7 @@ public class MyParser {
 		 * 
 		 * @return the token identifier corresponding to the next token.
 		 */
-		int yylex(SQLThread thd) throws java.io.IOException;
+		int mysqlLex(SQLThread thd);
 
 		/**
 		 * Entry point for error reporting. Emits an error in a user-defined
@@ -1309,7 +1309,7 @@ public class MyParser {
 		 * @param s
 		 *            The string for the error message.
 		 */
-		void yyerror(String s, SQLThread thd);
+		void mysqlError(String s, SQLThread thd);
 	}
 
 	/** The object doing lexical analysis for us. */
@@ -1382,12 +1382,12 @@ public class MyParser {
 		yydebug = level;
 	}
 
-	private final int yylex(SQLThread thd) throws java.io.IOException {
-		return yylexer.yylex(thd);
+	private final int yylex(SQLThread thd) {
+		return yylexer.mysqlLex(thd);
 	}
 
 	protected final void yyerror(String s, SQLThread thd) {
-		yylexer.yyerror(s, thd);
+		yylexer.mysqlError(s, thd);
 	}
 
 	protected final void yycdebug(String s) {
@@ -28181,7 +28181,7 @@ public class MyParser {
 	 * @return <tt>true</tt> if the parsing succeeds. Note that this does not
 	 *         imply that there were no syntax errors.
 	 */
-	public boolean parse(SQLThread thd) throws java.io.IOException {
+	public boolean parse(SQLThread thd) {
 		/// Lookahead and lookahead in internal form.
 		int yychar = yyempty_;
 		int yytoken = 0;
@@ -28594,36 +28594,4 @@ public class MyParser {
 	private static final int yyundef_token_ = 2;
 
 	/* User implementation code. */
-	public static void main(String[] args) {
-		try {
-			MyParser parser = new MyParser(new MyLexer());
-			// parser.errorVerbose = true;
-			SQLThread sqlThread = new SQLThread(
-//					 "UPDATE trad_composition_fund_detail SET create_time = 92345678 and composition_detail_id = 415");
-					"select * from acdb.anct_account inner join bkdb.bknt_account where id = 1");
-			boolean result = parser.parse(sqlThread);
-			System.out.println(result);
-			if (!result) {
-				System.out.println(sqlThread.msg);
-			}
-			System.out.println(sqlThread.lex.sqlCommand);
-			// parser.yydebug = 1;
-			// System.out.println(parser.parse(new SQLThread("insert/*123*/ into
-			// t1 values(1,2,3,4)-- 123")));
-			// System.out.println(parser.parse(new SQLThread("UPDATE
-			// trad_composition/*123*/_fund_detail SET create_time = '2017-03-01
-			// 15:50:00' WHERE composition_detail_id = 415")));
-			// System.out.println(sql.mDigest);
-			// for (SqlDigestInfo info : sql.mDigest.mDigestStorage.mTokenArray)
-			// {
-			//// System.out.println(info.token + ":" + info.idName);
-			// System.out.println(LexInputStreamProcessor.getTokenString(info.token));
-			// }
-			// System.out.println(parser.parse(new SQLThread("select (select a
-			// from t3) from t1 inner join t2 on t1.a = t2.a")));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }

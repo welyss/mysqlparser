@@ -1,64 +1,65 @@
 package org.welyss.mysqlparser;
 
-import java.io.IOException;
+import java.util.List;
 
-public class SQLThread {
-	public StringBuilder sql;
-	public String msg;
-	public Lex lex;
-	public Item yylval;
+public class SQLThread implements SQLResult {
+	protected boolean ok;
+	protected StringBuilder sql;
+	protected String msg;
+	protected Lex lex;
+	protected Item yylval;
 	/** Current state of the lexical analyser. */
-	public MyLexStates nextState = MyLexStates.MY_LEX_START;
-	public int mTokStartPrev;
+	protected MyLexStates nextState = MyLexStates.MY_LEX_START;
+	protected int mTokStartPrev;
 	/** Starting position of the last token parsed, in the raw buffer. */
-	public int mTokStart;
+	protected int mTokStart;
 	/** Ending position of the previous token parsed, in the raw buffer. */
-	public int mTokEnd;
+	protected int mTokEnd;
 	/** Pointer to the current position in the raw input stream. */
-	public int mPtr;
+	protected int mPtr;
 	/** Current line number. */
-	public int lineno = 1;
+	protected int lineno = 1;
 	/**
 	 * Starting position of the TEXT_STRING or IDENT in the pre-processed
 	 * buffer.
 	 * 
 	 * NOTE: this member must be used within MYSQLlex() function only.
 	 */
-	public int mCppTextStart;
+	protected int mCppTextStart;
 	/**
 	 * Ending position of the TEXT_STRING or IDENT in the pre-processed buffer.
 	 * 
 	 * NOTE: this member must be used within MYSQLlex() function only.
 	 */
-	public int mCppTextEnd;
+	protected int mCppTextEnd;
 
 	/**
 	 * Starting position of the last token parsed, in the pre-processed buffer.
 	 */
-	public int mCppTokStart;
+	protected int mCppTokStart;
 
 	/** Pointer to the current position in the pre-processed input stream. */
-	public int mCppPtr;
-	public boolean textStringIs7bit;
+	protected int mCppPtr;
+	protected boolean textStringIs7bit;
 
 	/** State of the lexical analyser for comments. */
-	public EnumCommentState inComment;
-	public EnumCommentState inCommentSaved;
+	protected EnumCommentState inComment;
+	protected EnumCommentState inCommentSaved;
 
 	/**
 	 * LALR(2) resolution, look ahead token. Value of the next token to return,
 	 * if any, or -1, if no token was parsed in advance. Note: 0 is a legal
 	 * token, and represents YYEOF.
 	 */
-	public int lookaheadToken = -1;
+	protected int lookaheadToken = -1;
 
 	/** LALR(2) resolution, value of the look ahead token. */
-	public Item lookaheadYylval;
+	protected Item lookaheadYylval;
 
 	/**
 	 * Current statement digest instrumentation.
 	 */
-	public SQLDigestState mDigest;
+	protected SQLDigestState mDigest;
 
 	public SQLThread(String sql) {
 		this.sql = new StringBuilder(sql);
@@ -66,5 +67,25 @@ public class SQLThread {
 		mTokEnd = this.sql.length();
 		lex = new Lex();
 		mDigest = new SQLDigestState();
+	}
+
+	@Override
+	public boolean ok() {
+		return this.ok;
+	}
+
+	@Override
+	public SQLCommand getSQLCommand() {
+		return this.lex.sqlCommand;
+	}
+
+	@Override
+	public List<TableIdent> getTableList() {
+		return this.lex.selectLex.tableList;
+	}
+
+	@Override
+	public String getErrorMsg() {
+		return this.msg;
 	}
 }

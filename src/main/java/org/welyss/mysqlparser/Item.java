@@ -1,7 +1,7 @@
 package org.welyss.mysqlparser;
 
 public class Item {
-	public String lexStr;
+	String lexStr;
 
 	public Item() {
 	}
@@ -38,19 +38,5 @@ class KeywordToken extends Token {
 		public Symbol(String symbolStr) {
 			this.symbolStr = symbolStr;
 		}
-	}
-}
-
-class TableIdent extends Item {
-	String dbArg;
-	String tableArg;
-
-	public TableIdent(String dbArg, String tableArg) {
-		this.dbArg = dbArg;
-		this.tableArg = tableArg;
-	}
-
-	public TableIdent(String tableArg) {
-		this.tableArg = tableArg;
 	}
 }

@@ -1,6 +1,5 @@
 package org.welyss.mysqlparser;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,16 +35,11 @@ public class MyLexer implements Lexer {
 	}
 
 	@Override
-	public void yyerror(String s, SQLThread thd) {
+	public void mysqlError(String s, SQLThread thd) {
 		thd.msg = String.format(
 				"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server"
 						+ " version for the right syntax to use near '%s' at line %d",
-				thd.sql.substring(thd.mTokEnd, thd.sql.length() - 1), thd.lineno);
-	}
-
-	@Override
-	public int yylex(SQLThread thd) throws IOException {
-		return mySqlLex(thd);
+				thd.sql.substring(thd.mTokEnd, thd.sql.length()), thd.lineno);
 	}
 
 	/**
@@ -60,7 +54,8 @@ public class MyLexer implements Lexer {
 	 *            Last state was an ident, text or number (which can't be
 	 *            followed by a signed number)
 	 */
-	public int mySqlLex(SQLThread thd) {
+	@Override
+	public int mysqlLex(SQLThread thd) {
 		// Lex_input_stream *lip= & thd->m_parser_state->m_lip;
 		thd.yylval = new Item();
 		int token;
