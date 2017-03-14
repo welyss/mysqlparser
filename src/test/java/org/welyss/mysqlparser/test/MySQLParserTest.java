@@ -10,11 +10,11 @@ public class MySQLParserTest {
 	public static void main(String[] args) {
 		try {
 			MySQLParser parser = new MySQLParser();
-			SQLResult result = parser.parser("select * from acdb.anct_account inner join bkdb.bknt_account where id = 1");
+			SQLResult result = parser.parse("select * from acdb.anct_account inner join bkdb.bknt_account where id = 1");
 			System.out.println(result.ok());
 			if (result.ok()) {
 				System.out.println(result.getSQLCommand());
-				for(TableIdent ident : result.getTableList()) {
+				for (TableIdent ident : result.getTableList()) {
 					System.out.println(ident.getDb() + "." + ident.getTable());
 				}
 			} else {
@@ -23,4 +23,5 @@ public class MySQLParserTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}}
+	}
+}

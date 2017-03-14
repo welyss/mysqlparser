@@ -13,7 +13,7 @@ public class MySQLParser {
 		}
 	}
 
-	public SQLResult parser(String sql) {
+	public SQLResult parse(String sql) {
 		SQLThread result = new SQLThread(sql);
 		result.ok = myParser.parse(result);
 		return result;
