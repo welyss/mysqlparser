@@ -84,7 +84,7 @@ public class SQLThread implements SQLResult {
 
 	@Override
 	public List<TableIdent> getTableList() {
-		return this.lex.selectLex.tableList;
+		return this.lex.allTableList;
 	}
 
 	@Override
