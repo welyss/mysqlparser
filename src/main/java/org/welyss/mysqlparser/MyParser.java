@@ -2,6 +2,9 @@ package org.welyss.mysqlparser;
 
 import java.io.IOException;
 
+import org.welyss.mysqlparser.items.Item;
+import org.welyss.mysqlparser.items.TableIdent;
+import org.welyss.mysqlparser.items.Token;
 import org.welyss.mysqlparser.utils.MySQLParserUtils;
 
 /* A Bison parser, made by GNU Bison 2.7.  */
@@ -7032,7 +7035,7 @@ public class MyParser {
 				// is created correctly in this case
 				// */
 				// lex->current_select->table_list.save_and_clear(&lex->save_list);
-				// mysql_init_select(lex);
+				thd.lex.mysqlInitSelect();
 				// lex->current_select->parsing_place= SELECT_LIST;
 			}
 			;
@@ -12275,20 +12278,20 @@ public class MyParser {
 			}
 			;
 			break;
-		//
-		//
-		// case 1127:
-		// if (yyn == 1127)
-		// /* Line 350 of lalr1.java */
-		// /* Line 8678 of "sql_yacc.y" */
-		// {
-		// LEX *lex= Lex;
-		// SELECT_LEX *sel= lex->current_select;
-		// if (sel->linkage != UNION_TYPE)
-		// mysql_init_select(lex);
-		// lex->current_select->parsing_place= SELECT_LIST;
-		// };
-		// break;
+
+		case 1127:
+			if (yyn == 1127)
+			/* Line 350 of lalr1.java */
+			/* Line 8678 of "sql_yacc.y" */
+			{
+				// LEX *lex= Lex;
+				// SELECT_LEX *sel= lex->current_select;
+				// if (sel->linkage != UNION_TYPE)
+				if (thd.lex.selectLex == null) thd.lex.mysqlInitSelect();
+				// lex->current_select->parsing_place= SELECT_LIST;
+			}
+			;
+			break;
 		//
 		//
 		// case 1128:
@@ -16344,20 +16347,20 @@ public class MyParser {
 			}
 			;
 			break;
-		//
-		//
-		// case 1453:
-		// if (yyn == 1453)
-		// /* Line 350 of lalr1.java */
-		// /* Line 11005 of "sql_yacc.y" */
-		// {
-		// LEX *lex= Lex;
-		// SELECT_LEX *sel= lex->current_select;
-		// if (sel->linkage != UNION_TYPE)
-		// mysql_init_select(lex);
-		// lex->current_select->parsing_place= SELECT_LIST;
-		// };
-		// break;
+
+		case 1453:
+			if (yyn == 1453)
+			/* Line 350 of lalr1.java */
+			/* Line 11005 of "sql_yacc.y" */
+			{
+				// LEX *lex= Lex;
+				// SELECT_LEX *sel= lex->current_select;
+				// if (sel->linkage != UNION_TYPE)
+				if (thd.lex.selectLex == null) thd.lex.mysqlInitSelect();
+				// lex->current_select->parsing_place= SELECT_LIST;
+			}
+			;
+			break;
 		//
 		//
 		// case 1454:
@@ -16423,7 +16426,7 @@ public class MyParser {
 				// if (lex->current_select->linkage == GLOBAL_OPTIONS_TYPE ||
 				// mysql_new_select(lex, 1))
 				// return YYABORT;
-				// mysql_init_select(lex);
+				thd.lex.mysqlInitSelect();
 				// lex->current_select->linkage= DERIVED_TABLE_TYPE;
 				// lex->current_select->parsing_place= SELECT_LIST;
 			}
@@ -17780,7 +17783,7 @@ public class MyParser {
 			{
 				// LEX *lex=Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_DO;
-				// mysql_init_select(lex);
+				thd.lex.mysqlInitSelect();
 			}
 			;
 			break;
@@ -18113,7 +18116,7 @@ public class MyParser {
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_INSERT;
 				// lex->duplicates= DUP_ERROR;
-				// mysql_init_select(lex);
+				thd.lex.mysqlInitSelect();
 			}
 			;
 			break;
@@ -18145,7 +18148,7 @@ public class MyParser {
 				// LEX *lex=Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_REPLACE;
 				// lex->duplicates= DUP_REPLACE;
-				// mysql_init_select(lex);
+				thd.lex.mysqlInitSelect();
 			}
 			;
 			break;
@@ -18513,8 +18516,8 @@ public class MyParser {
 			/* Line 12206 of "sql_yacc.y" */
 			{
 				// LEX *lex= Lex;
-				// mysql_init_select(lex);
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_UPDATE;
+				thd.lex.mysqlInitSelect();
 				// lex->duplicates= DUP_ERROR;
 			}
 			;
@@ -18604,7 +18607,7 @@ public class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_DELETE;
-				// mysql_init_select(lex);
+				thd.lex.mysqlInitSelect();
 				// YYPS->m_lock_type= TL_WRITE_DEFAULT;
 				// YYPS->m_mdl_type= MDL_SHARED_WRITE;
 				//
@@ -18687,7 +18690,7 @@ public class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 12330 of "sql_yacc.y" */
 			{
-				TableIdent ti = new TableIdent(((Item) yystack.valueAt(2 - (1))).lexStr);
+				TableIdent ti = new TableIdent(((Token) yystack.valueAt(2 - (1))).lexStr);
 				if (!thd.lex.selectLex.addTableToList(thd, ti, null, null))
 					return YYABORT;
 			}
@@ -18699,8 +18702,8 @@ public class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 12343 of "sql_yacc.y" */
 			{
-				TableIdent ti = new TableIdent(((Item) yystack.valueAt(4 - (1))).lexStr,
-						((Item) (yystack.valueAt(4 - (3)))).lexStr);
+				TableIdent ti = new TableIdent(((Token) yystack.valueAt(4 - (1))).lexStr,
+						((Token) (yystack.valueAt(4 - (3)))).lexStr);
 				if (!thd.lex.selectLex.addTableToList(thd, ti, null, null))
 					return YYABORT;
 			}
@@ -18905,30 +18908,30 @@ public class MyParser {
 		// (3-(3)))).str);
 		// };
 		// break;
-		//
-		//
-		// case 1742:
-		// if (yyn == 1742)
-		// /* Line 350 of lalr1.java */
-		// /* Line 12463 of "sql_yacc.y" */
-		// {
-		// LEX *lex=Lex;
-		// lex->wild=0;
-		// mysql_init_select(lex);
-		// lex->current_select->parsing_place= SELECT_LIST;
-		// memset(&lex->create_info, 0, sizeof(lex->create_info));
-		// };
-		// break;
-		//
-		//
-		// case 1743:
-		// if (yyn == 1743)
-		// /* Line 350 of lalr1.java */
-		// /* Line 12471 of "sql_yacc.y" */
-		// {
-		// Select->parsing_place= NO_MATTER;
-		// };
-		// break;
+
+		case 1742:
+			if (yyn == 1742)
+			/* Line 350 of lalr1.java */
+			/* Line 12463 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// lex->wild=0;
+				thd.lex.mysqlInitSelect();
+				// lex->current_select->parsing_place= SELECT_LIST;
+				// memset(&lex->create_info, 0, sizeof(lex->create_info));
+				// };
+				// break;
+				//
+				//
+				// case 1743:
+				// if (yyn == 1743)
+				// /* Line 350 of lalr1.java */
+				// /* Line 12471 of "sql_yacc.y" */
+				// {
+				// Select->parsing_place= NO_MATTER;
+			}
+			;
+			break;
 
 		case 1744:
 			if (yyn == 1744)
@@ -19330,7 +19333,7 @@ public class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE;
-				if (!thd.lex.selectLex.addTableToList(thd, new TableIdent(((Item) yystack.valueAt(3 - (3))).lexStr), null, null))
+				if (!thd.lex.selectLex.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(3 - (3))).lexStr), null, null))
 					return YYABORT;
 				// lex->only_view= 0;
 				// lex->create_info.storage_media= HA_SM_DEFAULT;
@@ -19345,7 +19348,7 @@ public class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE;
-				if (!thd.lex.selectLex.addTableToList(thd, new TableIdent(((Item) yystack.valueAt(3 - (3))).lexStr), null, null))
+				if (!thd.lex.selectLex.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(3 - (3))).lexStr), null, null))
 					return YYABORT;
 				// lex->only_view= 1;
 			}
@@ -19596,7 +19599,7 @@ public class MyParser {
 			/* Line 12805 of "sql_yacc.y" */
 			{
 				// LEX *lex= Lex;
-				// mysql_init_select(lex);
+				thd.lex.mysqlInitSelect();
 				// lex->current_select->parsing_place= SELECT_LIST;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_FIELDS;
 				// lex->select_lex.db= 0;
@@ -20170,7 +20173,7 @@ public class MyParser {
 			/* Line 13106 of "sql_yacc.y" */
 			{
 				// LEX *lex=Lex;
-				if (!thd.lex.selectLex.addTableToList(thd, new TableIdent(((Item) yystack.valueAt(13 - (12))).lexStr), null,
+				if (!thd.lex.selectLex.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(13 - (12))).lexStr), null,
 						((Item) (yystack.valueAt(13 - (13))))))
 					return YYABORT;
 				// lex->field_list.empty();
@@ -21374,7 +21377,7 @@ public class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 13881 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(((Item) (yystack.valueAt(1 - (1)))).lexStr);
+				yyval = new TableIdent(((Token) (yystack.valueAt(1 - (1)))).lexStr);
 			}
 			;
 			break;
@@ -21384,7 +21387,7 @@ public class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 13887 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(((Item) (yystack.valueAt(3 - (1)))).lexStr, ((Item) (yystack.valueAt(3 - (3)))).lexStr);
+				yyval = new TableIdent(((Token) (yystack.valueAt(3 - (1)))).lexStr, ((Token) (yystack.valueAt(3 - (3)))).lexStr);
 			}
 			;
 			break;
@@ -21395,7 +21398,7 @@ public class MyParser {
 			/* Line 13893 of "sql_yacc.y" */
 			{
 				/* For Delphi */
-				yyval = new TableIdent(((Item) (yystack.valueAt(2 - (2)))).lexStr);
+				yyval = new TableIdent(((Token) (yystack.valueAt(2 - (2)))).lexStr);
 			}
 			;
 			break;
@@ -21405,7 +21408,7 @@ public class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 13903 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(((Item) (yystack.valueAt(2 - (1)))).lexStr);
+				yyval = new TableIdent(((Token) (yystack.valueAt(2 - (1)))).lexStr);
 			}
 			;
 			break;
@@ -21415,7 +21418,7 @@ public class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 13909 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(((Item) (yystack.valueAt(4 - (1)))).lexStr, ((Item) (yystack.valueAt(4 - (3)))).lexStr);
+				yyval = new TableIdent(((Token) (yystack.valueAt(4 - (1)))).lexStr, ((Token) (yystack.valueAt(4 - (3)))).lexStr);
 			}
 			;
 			break;
@@ -21425,7 +21428,7 @@ public class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 13918 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(LexConstants.ANY_DB, ((Item) yystack.valueAt(1 - (1))).lexStr);
+				yyval = new TableIdent(LexConstants.ANY_DB, ((Token) yystack.valueAt(1 - (1))).lexStr);
 			}
 			;
 			break;
@@ -24528,7 +24531,7 @@ public class MyParser {
 			/* Line 14500 of "sql_yacc.y" */
 			{
 				// LEX *lex= Lex;
-				// mysql_init_select(lex);
+				thd.lex.mysqlInitSelect();
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SET_OPTION;
 				// lex->option_type= OPT_SESSION;
 				// lex->var_list.empty();
@@ -25540,7 +25543,7 @@ public class MyParser {
 				// return YYABORT;
 				// }
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_OPEN;
-				if (!thd.lex.selectLex.addTableToList(thd, new TableIdent(((Item) yystack.valueAt(4 - (2))).lexStr),
+				if (!thd.lex.selectLex.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(4 - (2))).lexStr),
 						((Item) (yystack.valueAt(4 - (4)))), null))
 					return YYABORT;
 				// lex->m_sql_cmd= new (thd->mem_root) Sql_cmd_handler_open();

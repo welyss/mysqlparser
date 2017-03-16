@@ -3,6 +3,9 @@ package org.welyss.mysqlparser;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import org.welyss.mysqlparser.items.Item;
+import org.welyss.mysqlparser.items.Token;
+
 public class LexInputStreamProcessor {
 	public static int TOK_GENERIC_VALUE;
 	public static int TOK_GENERIC_VALUE_LIST;
@@ -58,7 +61,6 @@ public class LexInputStreamProcessor {
 	}
 
 	public LexInputStreamProcessor() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public static boolean myIsCntrl(char c) {
@@ -216,11 +218,11 @@ public class LexInputStreamProcessor {
 		return (thd.mPtr >= thd.sql.length());
 	}
 
-	public void addDigestToken(int token, SQLThread thd) {
-		if (thd.mDigest != null) {
-			thd.mDigest = digestAddToken(thd.mDigest, token, thd.yylval);
-		}
-	}
+//	public void addDigestToken(int token, SQLThread thd) {
+//		if (thd.mDigest != null) {
+//			thd.mDigest = digestAddToken(thd.mDigest, token, thd.yylval);
+//		}
+//	}
 
 	public SQLDigestState digestAddToken(SQLDigestState state, int token, Item yylval) {
 		SQLDigestStorage digestStorage = null;
@@ -377,7 +379,7 @@ public class LexInputStreamProcessor {
 		}
 		case MyParser.IDENT:
 		case MyParser.IDENT_QUOTED: {
-			Item lexToken = yylval;
+			Token lexToken = (Token)yylval;
 			String yytext = lexToken.lexStr;
 			// int yylen = lexToken.lexStr.length;
 

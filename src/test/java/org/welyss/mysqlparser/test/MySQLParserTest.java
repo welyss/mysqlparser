@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.welyss.mysqlparser.MySQLParser;
 import org.welyss.mysqlparser.SQLResult;
-import org.welyss.mysqlparser.TableIdent;
+import org.welyss.mysqlparser.items.TableIdent;
 
 public class MySQLParserTest {
 	public static void main(String[] args) {

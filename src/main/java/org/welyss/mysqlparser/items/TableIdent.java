@@ -1,4 +1,4 @@
-package org.welyss.mysqlparser;
+package org.welyss.mysqlparser.items;
 
 public class TableIdent extends Item {
 	String dbArg;

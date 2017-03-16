@@ -2,6 +2,9 @@ package org.welyss.mysqlparser;
 
 import java.util.List;
 
+import org.welyss.mysqlparser.items.Item;
+import org.welyss.mysqlparser.items.TableIdent;
+
 public class SQLThread implements SQLResult {
 	protected boolean ok;
 	protected StringBuilder sql;
