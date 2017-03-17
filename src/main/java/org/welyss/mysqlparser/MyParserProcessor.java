@@ -19,4 +19,11 @@ public class MyParserProcessor {
 		}
 		return success;
 	}
+
+	public static boolean mysqlNewSelect(Lex lex, boolean moveDown) {
+		boolean result = false;
+		lex.selectLex = new SelectLex();
+		lex.allSelectsList.add(lex.selectLex);
+		return result;
+	}
 }

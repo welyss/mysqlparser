@@ -9,7 +9,7 @@ public class MySQLParser {
 		try {
 			this.myParser = new MyParser(new MyLexer());
 		} catch (IOException e) {
-			throw new IOException("action table initial faild.", e);
+			throw new IOException("Action table file read faild.", e);
 		}
 	}
 
