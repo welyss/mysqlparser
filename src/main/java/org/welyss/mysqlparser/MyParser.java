@@ -31,7 +31,7 @@ import org.welyss.mysqlparser.utils.MySQLParserUtils;
  *
  * @author LALR (1) parser skeleton written by Paolo Bonzini.
  */
-public class MyParser {
+class MyParser {
 	/** Version number for the Bison executable that generated this parser. */
 	public static final String bisonVersion = "2.7";
 
@@ -1316,17 +1316,17 @@ public class MyParser {
 	}
 
 	/** The object doing lexical analysis for us. */
-	private Lexer yylexer;
+	protected Lexer myLexer;
 
 	/**
 	 * Instantiates the Bison-generated parser.
 	 * 
-	 * @param yylexer
+	 * @param myLexer
 	 *            The scanner that will supply tokens to the parser.
 	 * @throws IOException
 	 */
-	public MyParser(Lexer yylexer) throws IOException {
-		this.yylexer = yylexer;
+	public MyParser(Lexer myLexer) throws IOException {
+		this.myLexer = myLexer;
 		// Initial
 		yypact_ = MySQLParserUtils.initArrayForInt("yypact");
 		yydefact_ = MySQLParserUtils.initArrayForShort("yydefact");
@@ -1386,11 +1386,11 @@ public class MyParser {
 	}
 
 	private final int yylex(SQLThread thd) {
-		return yylexer.mysqlLex(thd);
+		return myLexer.mysqlLex(thd);
 	}
 
 	protected final void yyerror(String s, SQLThread thd) {
-		yylexer.mysqlError(s, thd);
+		myLexer.mysqlError(s, thd);
 	}
 
 	protected final void yycdebug(String s) {
@@ -28238,7 +28238,7 @@ public class MyParser {
 					// System.out.println(LexInputStreamProcessor.getTokenString(yychar));
 					// System.out.println(yychar);
 
-					yylval = yylexer.getLVal(thd);
+					yylval = myLexer.getLVal(thd);
 				}
 
 				/* Convert token to internal form. */

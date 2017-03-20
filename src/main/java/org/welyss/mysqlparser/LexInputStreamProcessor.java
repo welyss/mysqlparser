@@ -54,7 +54,7 @@ public class LexInputStreamProcessor {
 	 * TRUE if we're parsing a prepared statement: in this mode we should allow
 	 * placeholders.
 	 */
-	public boolean stmtPrepareMode;
+	public boolean stmtPrepareMode = true;
 
 	static {
 		computeTokens();

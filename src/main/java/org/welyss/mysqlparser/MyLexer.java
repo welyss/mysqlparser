@@ -7,10 +7,7 @@ import org.welyss.mysqlparser.MyParser.Lexer;
 import org.welyss.mysqlparser.items.KeywordToken;
 import org.welyss.mysqlparser.items.Token;
 
-public class MyLexer implements Lexer {
-	private Map<Character, MyLexStates> stateMap;
-	private Map<Character, Boolean> identMap;
-	private LexInputStreamProcessor lip;
+class MyLexer implements Lexer {
 	public Variables variables = new Variables();
 	public static final int LONG_LEN = 10;
 	public static final char[] LONG_STR = new char[] { '2', '1', '4', '7', '4', '8', '3', '6', '4', '7' };
@@ -21,6 +18,9 @@ public class MyLexer implements Lexer {
 	public static final int SIGNED_LONGLONG_LEN = 19;
 	public static final char[] UNSIGNED_LONGLONG_STR = new char[] { '1', '8', '4', '4', '6', '7', '4', '4', '0', '7', '3', '7', '0', '9', '5', '5', '1', '6', '1', '5' };
 	public static final int UNSIGNED_LONGLONG_LEN = 20;
+	protected LexInputStreamProcessor lip;
+	private Map<Character, MyLexStates> stateMap;
+	private Map<Character, Boolean> identMap;
 	private boolean ignoreSpace = (variables.sqlMode & Variables.MODE_IGNORE_SPACE) == Variables.MODE_IGNORE_SPACE;
 
 	public MyLexer() {
