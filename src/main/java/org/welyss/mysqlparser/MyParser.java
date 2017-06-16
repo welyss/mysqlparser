@@ -1485,15 +1485,13 @@ class MyParser {
 	private static final int YYERRLAB1 = 7;
 	private static final int YYRETURN = 8;
 
-	private int yyerrstatus_ = 0;
-
 	/**
 	 * Return whether error recovery is being done. In this state, the parser
 	 * reads token until it reaches a known state, and then restarts normal
 	 * operation.
 	 */
-	public final boolean recovering() {
-		return yyerrstatus_ == 0;
+	public final boolean recovering(SQLThread thd) {
+		return thd.yyerrstatus_ == 0;
 	}
 
 	/**
@@ -28203,7 +28201,7 @@ class MyParser {
 		Object yylval = null;
 
 		yycdebug("Starting parse\n");
-		yyerrstatus_ = 0;
+		thd.yyerrstatus_ = 0;
 
 		/* Initialize the stack. */
 		yystack.push(yystate, yylval);
@@ -28279,8 +28277,8 @@ class MyParser {
 					 * Count tokens shifted since error; after three, turn off
 					 * error status.
 					 */
-					if (yyerrstatus_ > 0)
-						--yyerrstatus_;
+					if (thd.yyerrstatus_ > 0)
+						--thd.yyerrstatus_;
 
 					yystate = yyn;
 					yystack.push(yystate, yylval);
@@ -28315,14 +28313,14 @@ class MyParser {
 				/*
 				 * If not already recovering from an error, report this error.
 				 */
-				if (yyerrstatus_ == 0) {
+				if (thd.yyerrstatus_ == 0) {
 					++yynerrs_;
 					if (yychar == yyempty_)
 						yytoken = yyempty_;
 					yyerror(yysyntax_error(yystate, yytoken), thd);
 				}
 
-				if (yyerrstatus_ == 3) {
+				if (thd.yyerrstatus_ == 3) {
 					/*
 					 * If just tried and failed to reuse lookahead token after
 					 * an error, discard it.
@@ -28362,7 +28360,7 @@ class MyParser {
 			| yyerrlab1 -- common code for both syntax error and YYERROR.  |
 			`-------------------------------------------------------------*/
 			case YYERRLAB1:
-				yyerrstatus_ = 3; /* Each real token shifted decrements this. */
+				thd.yyerrstatus_ = 3; /* Each real token shifted decrements this. */
 
 				for (;;) {
 					yyn = yypact_[yystate];

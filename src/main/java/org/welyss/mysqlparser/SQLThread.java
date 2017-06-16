@@ -63,6 +63,7 @@ public class SQLThread implements SQLResult {
 	 * Current statement digest instrumentation.
 	 */
 	protected SQLDigestState mDigest;
+	protected int yyerrstatus_ = 0;
 
 	public SQLThread(String sql) {
 		this.sql = new StringBuilder(sql);
