@@ -18938,8 +18938,8 @@ class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_DATABASES;
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_SCHEMATA))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_SCHEMATA))
+					return YYABORT;
 			}
 			;
 			break;
@@ -18953,8 +18953,8 @@ class MyParser {
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_TABLES;
 				// lex->select_lex.db= ((simple_string)(yystack.valueAt
 				// (4-(3))));
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_TABLE_NAMES))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_TABLE_NAMES))
+					return YYABORT;
 			}
 			;
 			break;
@@ -18968,8 +18968,8 @@ class MyParser {
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_TRIGGERS;
 				// lex->select_lex.db= ((simple_string)(yystack.valueAt
 				// (4-(3))));
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_TRIGGERS))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_TRIGGERS))
+					return YYABORT;
 			}
 			;
 			break;
@@ -18983,8 +18983,8 @@ class MyParser {
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_EVENTS;
 				// lex->select_lex.db= ((simple_string)(yystack.valueAt
 				// (3-(2))));
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_EVENTS))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_EVENTS))
+					return YYABORT;
 			}
 			;
 			break;
@@ -18998,8 +18998,8 @@ class MyParser {
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_TABLE_STATUS;
 				// lex->select_lex.db= ((simple_string)(yystack.valueAt
 				// (4-(3))));
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_TABLES))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_TABLES))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19013,8 +19013,8 @@ class MyParser {
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_OPEN_TABLES;
 				// lex->select_lex.db= ((simple_string)(yystack.valueAt
 				// (4-(3))));
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_OPEN_TABLES))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_OPEN_TABLES))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19026,8 +19026,8 @@ class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_PLUGINS;
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_PLUGINS))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_PLUGINS))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19059,9 +19059,9 @@ class MyParser {
 				// ((table)(yystack.valueAt
 				// (6-(4))))->change_db(((simple_string)(yystack.valueAt
 				// (6-(5)))));
-				// if (prepare_schema_table(YYTHD, lex, ((table)(yystack.valueAt
-				// (6-(4)))), SCH_COLUMNS))
-				// return YYABORT;
+				if (!MyParserProcessor.prepareSchemaTable(thd, ((TableIdent) (yystack.valueAt(6 - (4)))),
+						SchemaTables.SCH_COLUMNS))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19119,9 +19119,9 @@ class MyParser {
 				// ((table)(yystack.valueAt
 				// (5-(3))))->change_db(((simple_string)(yystack.valueAt
 				// (5-(4)))));
-				// if (prepare_schema_table(YYTHD, lex, ((table)(yystack.valueAt
-				// (5-(3)))), SCH_STATISTICS))
-				// return YYABORT;
+				if (!MyParserProcessor.prepareSchemaTable(thd, ((TableIdent) (yystack.valueAt(5 - (3)))),
+						SchemaTables.SCH_STATISTICS))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19133,8 +19133,8 @@ class MyParser {
 			{
 				// LEX *lex=Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_STORAGE_ENGINES;
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_ENGINES))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_ENGINES))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19211,9 +19211,8 @@ class MyParser {
 				// "SHOW PROFILE", "Performance Schema");
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_PROFILE;
-				// if (prepare_schema_table(YYTHD, lex, NULL, SCH_PROFILES) !=
-				// 0)
-				// YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_PROFILES))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19226,8 +19225,8 @@ class MyParser {
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_STATUS;
 				// lex->option_type= ((var_type)(yystack.valueAt (3-(1))));
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_STATUS))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_STATUS))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19250,8 +19249,8 @@ class MyParser {
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_VARIABLES;
 				// lex->option_type= ((var_type)(yystack.valueAt (3-(1))));
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_VARIABLES))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_VARIABLES))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19263,8 +19262,8 @@ class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CHARSETS;
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_CHARSETS))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_CHARSETS))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19276,8 +19275,8 @@ class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_COLLATIONS;
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_COLLATIONS))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_COLLATIONS))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19418,8 +19417,8 @@ class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_STATUS_PROC;
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_PROCEDURES))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_PROCEDURES))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19431,8 +19430,8 @@ class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_STATUS_FUNC;
-				// if (prepare_schema_table(YYTHD, lex, 0, SCH_PROCEDURES))
-				// return YYABORT;
+				if (MyParserProcessor.prepareSchemaTable(thd, null, SchemaTables.SCH_PROCEDURES))
+					return YYABORT;
 			}
 			;
 			break;
@@ -19602,9 +19601,9 @@ class MyParser {
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_FIELDS;
 				// lex->select_lex.db= 0;
 				// lex->verbose= 0;
-				// if (prepare_schema_table(YYTHD, lex, ((table)(yystack.valueAt
-				// (2-(2)))), SCH_COLUMNS))
-				// return YYABORT;
+				if (!MyParserProcessor.prepareSchemaTable(thd, ((TableIdent) (yystack.valueAt(2 - (2)))),
+						SchemaTables.SCH_COLUMNS))
+					return YYABORT;
 			}
 			;
 			break;
