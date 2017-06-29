@@ -8,12 +8,16 @@ import org.welyss.mysqlparser.items.TableIdent;
 public class Lex {
 	SQLCommand sqlCommand;
 	SelectLex selectLex;
-	List<SelectLex> allSelectsList = new ArrayList<SelectLex>();
-	List<TableIdent> allTableList = new ArrayList<TableIdent>();
+	AlterInfo alterInfo;
+	List<SelectLex> allSelectsList;
+	List<TableIdent> allTableList;
 	public long grant;
 	public int allPrivileges;
 
 	public Lex() {
+		alterInfo = new AlterInfo();
+		allSelectsList = new ArrayList<SelectLex>();
+		allTableList = new ArrayList<TableIdent>();
 	}
 }
 

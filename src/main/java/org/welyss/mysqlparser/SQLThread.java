@@ -1,6 +1,7 @@
 package org.welyss.mysqlparser;
 
 import java.util.List;
+import java.util.Set;
 
 import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.TableIdent;
@@ -91,5 +92,10 @@ public class SQLThread implements SQLResult {
 	@Override
 	public String getErrorMsg() {
 		return this.msg;
+	}
+
+	@Override
+	public Set<AlterFlag> getAlterFlags() {
+		return lex.alterInfo.flags;
 	}
 }

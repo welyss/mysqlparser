@@ -5936,13 +5936,12 @@ class MyParser {
 		// /* Line 5239 of "sql_yacc.y" */
 		// {};
 		// break;
-		//
-		//
-		// case 480:
-		// if (yyn == 480)
-		// /* Line 350 of lalr1.java */
-		// /* Line 5245 of "sql_yacc.y" */
-		// {
+
+		case 480:
+		if (yyn == 480)
+		/* Line 350 of lalr1.java */
+		/* Line 5245 of "sql_yacc.y" */
+		{
 		// LEX *lex= Lex;
 		// lex->part_info= new partition_info();
 		// if (!lex->part_info)
@@ -5950,12 +5949,12 @@ class MyParser {
 		// mem_alloc_error(sizeof(partition_info));
 		// return YYABORT;
 		// }
-		// if (thd.lex.sqlCommand == SQLCOM_ALTER_TABLE)
-		// {
-		// lex->alter_info.flags|= Alter_info::ALTER_PARTITION;
-		// }
-		// };
-		// break;
+			if (thd.lex.sqlCommand == SQLCommand.SQLCOM_ALTER_TABLE)
+			{
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_PARTITION);
+			}
+		};
+		break;
 		//
 		//
 		// case 482:
@@ -7866,13 +7865,12 @@ class MyParser {
 		// return YYABORT;
 		// };
 		// break;
-		//
-		//
-		// case 648:
-		// if (yyn == 648)
-		// /* Line 350 of lalr1.java */
-		// /* Line 6358 of "sql_yacc.y" */
-		// {
+
+		case 648:
+		if (yyn == 648)
+		/* Line 350 of lalr1.java */
+		/* Line 6358 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// Key *key= new Foreign_key(((lex_str)(yystack.valueAt (8-(4)))).str ?
 		// ((lex_str)(yystack.valueAt (8-(4)))) : ((lex_str)(yystack.valueAt
@@ -7892,9 +7890,9 @@ class MyParser {
 		// &default_key_create_info, 1))
 		// return YYABORT;
 		// /* Only used for ALTER TABLE. Ignored otherwise. */
-		// lex->alter_info.flags|= Alter_info::ADD_FOREIGN_KEY;
-		// };
-		// break;
+			thd.lex.alterInfo.flags.add(AlterFlag.ADD_FOREIGN_KEY);
+		};
+		break;
 		//
 		//
 		// case 649:
@@ -8866,54 +8864,50 @@ class MyParser {
 		// /* Line 6741 of "sql_yacc.y" */
 		// { Lex->type|= AUTO_INCREMENT_FLAG | NOT_NULL_FLAG; };
 		// break;
-		//
-		//
-		// case 758:
-		// if (yyn == 758)
-		// /* Line 350 of lalr1.java */
-		// /* Line 6743 of "sql_yacc.y" */
-		// {
+
+		case 758:
+		if (yyn == 758)
+		/* Line 350 of lalr1.java */
+		/* Line 6743 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// lex->type|= AUTO_INCREMENT_FLAG | NOT_NULL_FLAG | UNIQUE_FLAG;
-		// lex->alter_info.flags|= Alter_info::ALTER_ADD_INDEX;
-		// };
-		// break;
-		//
-		//
-		// case 759:
-		// if (yyn == 759)
-		// /* Line 350 of lalr1.java */
-		// /* Line 6749 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
+		};
+		break;
+
+		case 759:
+		if (yyn == 759)
+		/* Line 350 of lalr1.java */
+		/* Line 6749 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// lex->type|= PRI_KEY_FLAG | NOT_NULL_FLAG;
-		// lex->alter_info.flags|= Alter_info::ALTER_ADD_INDEX;
-		// };
-		// break;
-		//
-		//
-		// case 760:
-		// if (yyn == 760)
-		// /* Line 350 of lalr1.java */
-		// /* Line 6755 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
+		};
+		break;
+
+		case 760:
+		if (yyn == 760)
+		/* Line 350 of lalr1.java */
+		/* Line 6755 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// lex->type|= UNIQUE_FLAG;
-		// lex->alter_info.flags|= Alter_info::ALTER_ADD_INDEX;
-		// };
-		// break;
-		//
-		//
-		// case 761:
-		// if (yyn == 761)
-		// /* Line 350 of lalr1.java */
-		// /* Line 6761 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
+		};
+		break;
+
+		case 761:
+		if (yyn == 761)
+		/* Line 350 of lalr1.java */
+		/* Line 6761 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// lex->type|= UNIQUE_KEY_FLAG;
-		// lex->alter_info.flags|= Alter_info::ALTER_ADD_INDEX;
-		// };
-		// break;
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
+		};
+		break;
 		//
 		//
 		// case 762:
@@ -10488,28 +10482,26 @@ class MyParser {
 		// return YYABORT;
 		// };
 		// break;
-		//
-		//
-		// case 939:
-		// if (yyn == 939)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7598 of "sql_yacc.y" */
-		// {
-		// Lex->alter_info.flags|= Alter_info::ALTER_DROP_PARTITION;
-		// };
-		// break;
-		//
-		//
-		// case 940:
-		// if (yyn == 940)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7603 of "sql_yacc.y" */
-		// {
+
+		case 939:
+		if (yyn == 939)
+		/* Line 350 of lalr1.java */
+		/* Line 7598 of "sql_yacc.y" */
+		{
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_PARTITION);
+		};
+		break;
+
+		case 940:
+		if (yyn == 940)
+		/* Line 350 of lalr1.java */
+		/* Line 7603 of "sql_yacc.y" */
+		{
 		// LEX *lex= Lex;
-		// lex->alter_info.flags|= Alter_info::ALTER_REBUILD_PARTITION;
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_REBUILD_PARTITION);
 		// lex->no_write_to_binlog= ((num)(yystack.valueAt (4-(3))));
-		// };
-		// break;
+		};
+		break;
 		//
 		//
 		// case 941:
@@ -10581,19 +10573,18 @@ class MyParser {
 		// return YYABORT;
 		// };
 		// break;
-		//
-		//
-		// case 948:
-		// if (yyn == 948)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7662 of "sql_yacc.y" */
-		// {
+
+		case 948:
+		if (yyn == 948)
+		/* Line 350 of lalr1.java */
+		/* Line 7662 of "sql_yacc.y" */
+		{
 		// LEX *lex= Lex;
-		// lex->alter_info.flags|= Alter_info::ALTER_COALESCE_PARTITION;
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_COALESCE_PARTITION);
 		// lex->no_write_to_binlog= ((num)(yystack.valueAt (4-(3))));
 		// lex->alter_info.num_parts= ((ulong_num)(yystack.valueAt (4-(4))));
-		// };
-		// break;
+		};
+		break;
 		//
 		//
 		// case 949:
@@ -10628,7 +10619,7 @@ class MyParser {
 				// return YYABORT;
 				// }
 				// lex->name= ((table)(yystack.valueAt (7-(6))))->table;
-				// lex->alter_info.flags|= Alter_info::ALTER_EXCHANGE_PARTITION;
+					thd.lex.alterInfo.flags.add(AlterFlag.ALTER_EXCHANGE_PARTITION);
 				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(7 - (6)), null, null))
 					return YYABORT;
 				// DBUG_ASSERT(!lex->m_sql_cmd);
@@ -10639,33 +10630,30 @@ class MyParser {
 			}
 			;
 			break;
-		//
-		//
-		// case 952:
-		// if (yyn == 952)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7709 of "sql_yacc.y" */
-		// {
-		// Lex->alter_info.flags|= Alter_info::ALTER_REMOVE_PARTITIONING;
-		// };
-		// break;
-		//
-		//
-		// case 953:
-		// if (yyn == 953)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7716 of "sql_yacc.y" */
-		// {
-		// Lex->alter_info.flags|= Alter_info::ALTER_ALL_PARTITION;
-		// };
-		// break;
-		//
-		//
-		// case 955:
-		// if (yyn == 955)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7724 of "sql_yacc.y" */
-		// {
+
+		case 952:
+		if (yyn == 952)
+		/* Line 350 of lalr1.java */
+		/* Line 7709 of "sql_yacc.y" */
+		{
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_REMOVE_PARTITIONING);
+		};
+		break;
+
+		case 953:
+		if (yyn == 953)
+		/* Line 350 of lalr1.java */
+		/* Line 7716 of "sql_yacc.y" */
+		{
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ALL_PARTITION);
+		};
+		break;
+
+		case 955:
+		if (yyn == 955)
+		/* Line 350 of lalr1.java */
+		/* Line 7724 of "sql_yacc.y" */
+		{
 		// LEX *lex= Lex;
 		// lex->part_info= new partition_info();
 		// if (!lex->part_info)
@@ -10673,10 +10661,10 @@ class MyParser {
 		// mem_alloc_error(sizeof(partition_info));
 		// return YYABORT;
 		// }
-		// lex->alter_info.flags|= Alter_info::ALTER_ADD_PARTITION;
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_PARTITION);
 		// lex->no_write_to_binlog= ((num)(yystack.valueAt (3-(3))));
-		// };
-		// break;
+		};
+		break;
 		//
 		//
 		// case 956:
@@ -10723,26 +10711,24 @@ class MyParser {
 		// lex->no_write_to_binlog= ((num)(yystack.valueAt (3-(3))));
 		// };
 		// break;
-		//
-		//
-		// case 962:
-		// if (yyn == 962)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7769 of "sql_yacc.y" */
-		// {
-		// Lex->alter_info.flags|= Alter_info::ALTER_TABLE_REORG;
-		// };
-		// break;
-		//
-		//
-		// case 963:
-		// if (yyn == 963)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7773 of "sql_yacc.y" */
-		// {
-		// Lex->alter_info.flags|= Alter_info::ALTER_REORGANIZE_PARTITION;
-		// };
-		// break;
+
+		case 962:
+		if (yyn == 962)
+		/* Line 350 of lalr1.java */
+		/* Line 7769 of "sql_yacc.y" */
+		{
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_TABLE_REORG);
+		};
+		break;
+
+		case 963:
+		if (yyn == 963)
+		/* Line 350 of lalr1.java */
+		/* Line 7773 of "sql_yacc.y" */
+		{
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_REORGANIZE_PARTITION);
+		};
+		break;
 		//
 		//
 		// case 964:
@@ -10786,18 +10772,17 @@ class MyParser {
 		// }
 		// };
 		// break;
-		//
-		//
-		// case 970:
-		// if (yyn == 970)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7810 of "sql_yacc.y" */
-		// {
+
+		case 970:
+		if (yyn == 970)
+		/* Line 350 of lalr1.java */
+		/* Line 7810 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// lex->change=0;
-		// lex->alter_info.flags|= Alter_info::ALTER_ADD_COLUMN;
-		// };
-		// break;
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_COLUMN);
+		};
+		break;
 		//
 		//
 		// case 971:
@@ -10808,40 +10793,37 @@ class MyParser {
 		// Lex->create_last_non_select_table= Lex->last_table();
 		// };
 		// break;
-		//
-		//
-		// case 972:
-		// if (yyn == 972)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7823 of "sql_yacc.y" */
-		// {
+
+		case 972:
+		if (yyn == 972)
+		/* Line 350 of lalr1.java */
+		/* Line 7823 of "sql_yacc.y" */
+		{
 		// Lex->create_last_non_select_table= Lex->last_table();
-		// Lex->alter_info.flags|= Alter_info::ALTER_ADD_INDEX;
-		// };
-		// break;
-		//
-		//
-		// case 973:
-		// if (yyn == 973)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7828 of "sql_yacc.y" */
-		// {
-		// Lex->alter_info.flags|= Alter_info::ALTER_ADD_COLUMN |
-		// Alter_info::ALTER_ADD_INDEX;
-		// };
-		// break;
-		//
-		//
-		// case 974:
-		// if (yyn == 974)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7833 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
+		};
+		break;
+
+		case 973:
+		if (yyn == 973)
+		/* Line 350 of lalr1.java */
+		/* Line 7828 of "sql_yacc.y" */
+		{
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_COLUMN);
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
+		};
+		break;
+
+		case 974:
+		if (yyn == 974)
+		/* Line 350 of lalr1.java */
+		/* Line 7833 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// lex->change= ((lex_str)(yystack.valueAt (3-(3)))).str;
-		// lex->alter_info.flags|= Alter_info::ALTER_CHANGE_COLUMN;
-		// };
-		// break;
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN);
+		};
+		break;
 		//
 		//
 		// case 975:
@@ -10852,21 +10834,20 @@ class MyParser {
 		// Lex->create_last_non_select_table= Lex->last_table();
 		// };
 		// break;
-		//
-		//
-		// case 976:
-		// if (yyn == 976)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7843 of "sql_yacc.y" */
-		// {
+
+		case 976:
+		if (yyn == 976)
+		/* Line 350 of lalr1.java */
+		/* Line 7843 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// lex->length=lex->dec=0; lex->type=0;
 		// lex->default_value= lex->on_update_value= 0;
 		// lex->comment=null_lex_str;
 		// lex->charset= NULL;
-		// lex->alter_info.flags|= Alter_info::ALTER_CHANGE_COLUMN;
-		// };
-		// break;
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN);
+		};
+		break;
 		//
 		//
 		// case 977:
@@ -10896,132 +10877,123 @@ class MyParser {
 		// Lex->create_last_non_select_table= Lex->last_table();
 		// };
 		// break;
-		//
-		//
-		// case 979:
-		// if (yyn == 979)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7868 of "sql_yacc.y" */
-		// {
+
+		case 979:
+		if (yyn == 979)
+		/* Line 350 of lalr1.java */
+		/* Line 7868 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// Alter_drop *ad= new Alter_drop(Alter_drop::COLUMN,
 		// ((lex_str)(yystack.valueAt (4-(3)))).str);
 		// if (ad == NULL)
 		// return YYABORT;
 		// lex->alter_info.drop_list.push_back(ad);
-		// lex->alter_info.flags|= Alter_info::ALTER_DROP_COLUMN;
-		// };
-		// break;
-		//
-		//
-		// case 980:
-		// if (yyn == 980)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7877 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_COLUMN);
+		};
+		break;
+
+		case 980:
+		if (yyn == 980)
+		/* Line 350 of lalr1.java */
+		/* Line 7877 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// Alter_drop *ad= new Alter_drop(Alter_drop::FOREIGN_KEY,
 		// ((lex_str)(yystack.valueAt (4-(4)))).str);
 		// if (ad == NULL)
 		// return YYABORT;
 		// lex->alter_info.drop_list.push_back(ad);
-		// lex->alter_info.flags|= Alter_info::DROP_FOREIGN_KEY;
-		// };
-		// break;
-		//
-		//
-		// case 981:
-		// if (yyn == 981)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7886 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.DROP_FOREIGN_KEY);
+		};
+		break;
+
+		case 981:
+		if (yyn == 981)
+		/* Line 350 of lalr1.java */
+		/* Line 7886 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// Alter_drop *ad= new Alter_drop(Alter_drop::KEY, primary_key_name);
 		// if (ad == NULL)
 		// return YYABORT;
 		// lex->alter_info.drop_list.push_back(ad);
-		// lex->alter_info.flags|= Alter_info::ALTER_DROP_INDEX;
-		// };
-		// break;
-		//
-		//
-		// case 982:
-		// if (yyn == 982)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7895 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_INDEX);
+		};
+		break;
+
+		case 982:
+		if (yyn == 982)
+		/* Line 350 of lalr1.java */
+		/* Line 7895 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// Alter_drop *ad= new Alter_drop(Alter_drop::KEY,
 		// ((lex_str)(yystack.valueAt (3-(3)))).str);
 		// if (ad == NULL)
 		// return YYABORT;
 		// lex->alter_info.drop_list.push_back(ad);
-		// lex->alter_info.flags|= Alter_info::ALTER_DROP_INDEX;
-		// };
-		// break;
-		//
-		//
-		// case 983:
-		// if (yyn == 983)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7904 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_INDEX);
+		};
+		break;
+
+		case 983:
+		if (yyn == 983)
+		/* Line 350 of lalr1.java */
+		/* Line 7904 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// lex->alter_info.keys_onoff= Alter_info::DISABLE;
-		// lex->alter_info.flags|= Alter_info::ALTER_KEYS_ONOFF;
-		// };
-		// break;
-		//
-		//
-		// case 984:
-		// if (yyn == 984)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7910 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_KEYS_ONOFF);
+		};
+		break;
+
+		case 984:
+		if (yyn == 984)
+		/* Line 350 of lalr1.java */
+		/* Line 7910 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// lex->alter_info.keys_onoff= Alter_info::ENABLE;
-		// lex->alter_info.flags|= Alter_info::ALTER_KEYS_ONOFF;
-		// };
-		// break;
-		//
-		//
-		// case 985:
-		// if (yyn == 985)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7916 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_KEYS_ONOFF);
+		};
+		break;
+
+		case 985:
+		if (yyn == 985)
+		/* Line 350 of lalr1.java */
+		/* Line 7916 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// Alter_column *ac= new Alter_column(((lex_str)(yystack.valueAt
 		// (6-(3)))).str,((item)(yystack.valueAt (6-(6)))));
 		// if (ac == NULL)
 		// return YYABORT;
 		// lex->alter_info.alter_list.push_back(ac);
-		// lex->alter_info.flags|= Alter_info::ALTER_CHANGE_COLUMN_DEFAULT;
-		// };
-		// break;
-		//
-		//
-		// case 986:
-		// if (yyn == 986)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7925 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN_DEFAULT);
+		};
+		break;
+
+		case 986:
+		if (yyn == 986)
+		/* Line 350 of lalr1.java */
+		/* Line 7925 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// Alter_column *ac= new Alter_column(((lex_str)(yystack.valueAt
 		// (5-(3)))).str, (Item*) 0);
 		// if (ac == NULL)
 		// return YYABORT;
 		// lex->alter_info.alter_list.push_back(ac);
-		// lex->alter_info.flags|= Alter_info::ALTER_CHANGE_COLUMN_DEFAULT;
-		// };
-		// break;
-		//
-		//
-		// case 987:
-		// if (yyn == 987)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7934 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN_DEFAULT);
+		};
+		break;
+
+		case 987:
+		if (yyn == 987)
+		/* Line 350 of lalr1.java */
+		/* Line 7934 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
 		// size_t dummy;
 		// lex->select_lex.db=((table)(yystack.valueAt (3-(3))))->db.str;
@@ -11051,16 +11023,15 @@ class MyParser {
 		// FALSE) != IDENT_NAME_OK))
 		// return YYABORT;
 		// lex->name= ((table)(yystack.valueAt (3-(3))))->table;
-		// lex->alter_info.flags|= Alter_info::ALTER_RENAME;
-		// };
-		// break;
-		//
-		//
-		// case 988:
-		// if (yyn == 988)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7962 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_RENAME);
+		};
+		break;
+
+		case 988:
+		if (yyn == 988)
+		/* Line 350 of lalr1.java */
+		/* Line 7962 of "sql_yacc.y" */
+		{
 		// if (!((charset)(yystack.valueAt (5-(4)))))
 		// {
 		// THD *thd= YYTHD;
@@ -11084,46 +11055,43 @@ class MyParser {
 		// (5-(5))));
 		// lex->create_info.used_fields|= (HA_CREATE_USED_CHARSET |
 		// HA_CREATE_USED_DEFAULT_CHARSET);
-		// lex->alter_info.flags|= Alter_info::ALTER_OPTIONS;
-		// };
-		// break;
-		//
-		//
-		// case 989:
-		// if (yyn == 989)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7983 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_OPTIONS);
+		};
+		break;
+
+		case 989:
+		if (yyn == 989)
+		/* Line 350 of lalr1.java */
+		/* Line 7983 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
-		// lex->alter_info.flags|= Alter_info::ALTER_OPTIONS;
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_OPTIONS);
 		// if ((lex->create_info.used_fields & HA_CREATE_USED_ENGINE) &&
 		// !lex->create_info.db_type)
 		// {
 		// lex->create_info.used_fields&= ~HA_CREATE_USED_ENGINE;
 		// }
-		// };
-		// break;
-		//
-		//
-		// case 990:
-		// if (yyn == 990)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7993 of "sql_yacc.y" */
-		// {
-		// Lex->alter_info.flags|= Alter_info::ALTER_RECREATE;
-		// };
-		// break;
-		//
-		//
-		// case 991:
-		// if (yyn == 991)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7997 of "sql_yacc.y" */
-		// {
+		};
+		break;
+
+		case 990:
+		if (yyn == 990)
+		/* Line 350 of lalr1.java */
+		/* Line 7993 of "sql_yacc.y" */
+		{
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_RECREATE);
+		};
+		break;
+
+		case 991:
+		if (yyn == 991)
+		/* Line 350 of lalr1.java */
+		/* Line 7997 of "sql_yacc.y" */
+		{
 		// LEX *lex=Lex;
-		// lex->alter_info.flags|= Alter_info::ALTER_ORDER;
-		// };
-		// break;
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ORDER);
+		};
+		break;
 		//
 		//
 		// case 999:
@@ -11243,28 +11211,26 @@ class MyParser {
 		// /* Line 8061 of "sql_yacc.y" */
 		// {};
 		// break;
-		//
-		//
-		// case 1011:
-		// if (yyn == 1011)
-		// /* Line 350 of lalr1.java */
-		// /* Line 8063 of "sql_yacc.y" */
-		// {
+
+		case 1011:
+		if (yyn == 1011)
+		/* Line 350 of lalr1.java */
+		/* Line 8063 of "sql_yacc.y" */
+		{
 		// store_position_for_column(((lex_str)(yystack.valueAt (2-(2)))).str);
-		// Lex->alter_info.flags |= Alter_info::ALTER_COLUMN_ORDER;
-		// };
-		// break;
-		//
-		//
-		// case 1012:
-		// if (yyn == 1012)
-		// /* Line 350 of lalr1.java */
-		// /* Line 8068 of "sql_yacc.y" */
-		// {
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_COLUMN_ORDER);
+		};
+		break;
+
+		case 1012:
+		if (yyn == 1012)
+		/* Line 350 of lalr1.java */
+		/* Line 8068 of "sql_yacc.y" */
+		{
 		// store_position_for_column(first_keyword);
-		// Lex->alter_info.flags |= Alter_info::ALTER_COLUMN_ORDER;
-		// };
-		// break;
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_COLUMN_ORDER);
+		};
+		break;
 		//
 		//
 		// case 1013:
@@ -12172,16 +12138,15 @@ class MyParser {
 			}
 			;
 			break;
-		//
-		//
-		// case 1110:
-		// if (yyn == 1110)
-		// /* Line 350 of lalr1.java */
-		// /* Line 8591 of "sql_yacc.y" */
-		// {
-		// Lex->alter_info.flags|= Alter_info::ALTER_ADMIN_PARTITION;
-		// };
-		// break;
+
+		case 1110:
+		if (yyn == 1110)
+		/* Line 350 of lalr1.java */
+		/* Line 8591 of "sql_yacc.y" */
+		{
+			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADMIN_PARTITION);
+		};
+		break;
 		//
 		//
 		// case 1112:
@@ -17839,7 +17804,7 @@ class MyParser {
 				// return YYABORT;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_INDEX;
 				// lex->alter_info.reset();
-				// lex->alter_info.flags= Alter_info::ALTER_DROP_INDEX;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_INDEX);
 				// lex->alter_info.drop_list.push_back(ad);
 				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(6 - (5)), null, null))
 					return YYABORT;
