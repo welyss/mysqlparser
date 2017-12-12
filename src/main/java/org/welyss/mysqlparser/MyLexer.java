@@ -693,7 +693,7 @@ class MyLexer implements Lexer {
 					thd.nextState = MyLexStates.MY_LEX_HOSTNAME;
 					break;
 				}
-				token.lexStr = String.valueOf(lip.yyGet(thd));
+				token.lexStr = String.valueOf(lip.yyPeekn(thd, -1));
 				return ((int) '@');
 			case MY_LEX_HOSTNAME: // end '@' of user@hostname
 				for (c = lip.yyGet(thd); LexInputStreamProcessor.myIsalnum(c) || c == '.' || c == '_'
