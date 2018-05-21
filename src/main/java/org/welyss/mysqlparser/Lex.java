@@ -7,7 +7,7 @@ import org.welyss.mysqlparser.items.TableIdent;
 
 public class Lex {
 	SQLCommand sqlCommand;
-	SelectLex selectLex;
+	SelectLex selectLex = new SelectLex();
 	AlterInfo alterInfo;
 	List<SelectLex> allSelectsList;
 	List<TableIdent> allTableList;

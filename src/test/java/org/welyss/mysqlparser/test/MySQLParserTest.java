@@ -10,7 +10,7 @@ public class MySQLParserTest {
 	public static void main(String[] args) {
 		try {
 			MySQLParser parser = new MySQLParser();
-			SQLResult result = parser.parse("select * from acdb.anct_account inner join bkdb.bknt_account where id = 1");
+			SQLResult result = parser.parse("/*导入历史清算数据*/\nINSERT tg_mimicplaid_yield_history (mimicplaid,day_yield,last_date) \nSELECT mimicplaid,profit_rate,STR_TO_DATE(CALC_DATE,'%Y%m%d') from  tg_yield where serialno!=3534");
 			System.out.println(result.ok());
 			if (result.ok()) {
 				System.out.println(result.getSQLCommand());
