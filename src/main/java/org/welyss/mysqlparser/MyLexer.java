@@ -952,25 +952,28 @@ class MyLexer implements Lexer {
 
 	private KeywordToken getHashSymbol(SQLThread thd, int len, boolean function) {
 		KeywordToken keywordToken = null;
-		String tokstring = thd.sql.substring(thd.mTokStart, thd.mTokStart + len);
-		String tokstringUpp = tokstring.toUpperCase();
-		Integer token;
-		if (function) {
-			token = LexConstants.sqlFunctions.get(tokstringUpp);
-		} else {
-			token = LexConstants.symbols.get(tokstringUpp);
-		}
-		if (token != null) {
-			keywordToken = new KeywordToken(token, tokstring, tokstringUpp);
-		} else {
+		if (len > 0) {
+			String tokstring = thd.sql.substring(thd.mTokStart, thd.mTokStart + len);
+			String tokstringUpp = tokstring.toUpperCase();
+			Integer token;
 			if (function) {
-				token = LexConstants.symbols.get(tokstringUpp);
-			} else {
 				token = LexConstants.sqlFunctions.get(tokstringUpp);
+			} else {
+				token = LexConstants.symbols.get(tokstringUpp);
 			}
 			if (token != null) {
 				keywordToken = new KeywordToken(token, tokstring, tokstringUpp);
 			}
+//			else {
+//				if (function) {
+//					token = LexConstants.symbols.get(tokstringUpp);
+//				} else {
+//					token = LexConstants.sqlFunctions.get(tokstringUpp);
+//				}
+//				if (token != null) {
+//					keywordToken = new KeywordToken(token, tokstring, tokstringUpp);
+//				}
+//			}
 		}
 		return keywordToken;
 	}
