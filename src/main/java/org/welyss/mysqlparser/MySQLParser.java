@@ -39,4 +39,12 @@ public class MySQLParser {
 	public boolean isStmtPrepareMode() {
 		return ((MyLexer)myParser.myLexer).lip.stmtPrepareMode;
 	}
+
+	/**
+	 * set debug level.
+	 * @param level
+	 */
+	public void setDebugLevel(int level) {
+		myParser.setDebugLevel(level);
+	}
 }

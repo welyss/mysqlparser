@@ -955,10 +955,11 @@ class MyLexer implements Lexer {
 		if (len > 0) {
 			String tokstring = thd.sql.substring(thd.mTokStart, thd.mTokStart + len);
 			String tokstringUpp = tokstring.toUpperCase();
-			Integer token;
+			Integer token = null;
 			if (function) {
 				token = LexConstants.sqlFunctions.get(tokstringUpp);
-			} else {
+			}
+			if (token == null) {
 				token = LexConstants.symbols.get(tokstringUpp);
 			}
 			if (token != null) {
