@@ -18,7 +18,8 @@ class MyLexer implements Lexer {
 	public static final int SIGNED_LONGLONG_LEN = 19;
 	public static final char[] UNSIGNED_LONGLONG_STR = new char[] { '1', '8', '4', '4', '6', '7', '4', '4', '0', '7', '3', '7', '0', '9', '5', '5', '1', '6', '1', '5' };
 	public static final int UNSIGNED_LONGLONG_LEN = 20;
-	protected LexInputStreamProcessor lip;
+	/** Lex_input_stream **/
+	public LexInputStreamProcessor lip;
 	private Map<Character, MyLexStates> stateMap;
 	private Map<Character, Boolean> identMap;
 	private boolean ignoreSpace = (variables.sqlMode & Variables.MODE_IGNORE_SPACE) == Variables.MODE_IGNORE_SPACE;
@@ -133,7 +134,7 @@ class MyLexer implements Lexer {
 			case MY_LEX_OPERATOR_OR_IDENT: // Next is operator or keyword
 			case MY_LEX_START: // Start of token
 				// Skip starting whitespace
-				while (stateMap.get(lip.yyPeek(thd)) == MyLexStates.MY_LEX_SKIP) {
+				while (state(lip.yyPeek(thd)) == MyLexStates.MY_LEX_SKIP) {
 					if (c == '\n')
 						thd.lineno++;
 					lip.yySkip(thd);
@@ -142,7 +143,7 @@ class MyLexer implements Lexer {
 				/* Start of real token */
 				lip.restartToken(thd);
 				c = lip.yyGet(thd);
-				state = stateMap.get(c);
+				state = state(c);
 				break;
 			case MY_LEX_ESCAPE:
 				if (lip.yyGet(thd) == 'N') { // Allow \N as shortcut for NULL
@@ -178,7 +179,7 @@ class MyLexer implements Lexer {
 					 * replaced with its value in a query for the binlog, the
 					 * query must stay grammatically correct.
 					 */
-					if (c == '?' && lip.stmtPrepareMode && !identMap.get(lip.yyPeek(thd)))
+					if (c == '?' && lip.stmtPrepareMode && !ident(lip.yyPeek(thd)))
 						return (MyParser.PARAM_MARKER);
 				}
 
@@ -210,7 +211,7 @@ class MyLexer implements Lexer {
 				}
 			case MY_LEX_IDENT:
 				int start; {
-				for (result_state = c; identMap.get(c = lip.yyGet(thd)); result_state |= c)
+				for (result_state = c; ident(c = lip.yyGet(thd)); result_state |= c)
 					;
 				/*
 				 * If there were non-ASCII characters, mark that we must convert
@@ -224,10 +225,10 @@ class MyLexer implements Lexer {
 					 * If we find a space then this can't be an identifier. We
 					 * notice this below by checking start != lex->ptr.
 					 */
-					for (; stateMap.get(c) == MyLexStates.MY_LEX_SKIP; c = lip.yyGet(thd))
+					for (; state(c) == MyLexStates.MY_LEX_SKIP; c = lip.yyGet(thd))
 						;
 				}
-				if (start == lip.getPtr(thd) && c == '.' && identMap.get(lip.yyPeek(thd)))
+				if (start == lip.getPtr(thd) && c == '.' && ident(lip.yyPeek(thd)))
 					thd.nextState = MyLexStates.MY_LEX_IDENT_SEP;
 				else { // '(' must follow directly if function
 					lip.yyUnget(thd);
@@ -277,7 +278,7 @@ class MyLexer implements Lexer {
 				thd.nextState = MyLexStates.MY_LEX_IDENT_START;// Next is an
 																// ident (not a
 																// keyword)
-				if (!identMap.get(lip.yyPeek(thd))) // Probably ` or "
+				if (!ident(lip.yyPeek(thd))) // Probably ` or "
 					thd.nextState = MyLexStates.MY_LEX_START;
 				return ((int) c);
 
@@ -287,7 +288,7 @@ class MyLexer implements Lexer {
 					if (c == 'x') {
 						while (Character.isDigit(c = lip.yyGet(thd)))
 							;
-						if ((lip.yyLength(thd) >= 3) && !identMap.get(c)) {
+						if ((lip.yyLength(thd) >= 3) && !ident(c)) {
 							/* skip '0x' */
 							token.lexStr = getToken(thd, 2, lip.yyLength(thd) - 2);
 							return (MyParser.HEX_NUM);
@@ -298,7 +299,7 @@ class MyLexer implements Lexer {
 					} else if (c == 'b') {
 						while ((c = lip.yyGet(thd)) == '0' || c == '1')
 							;
-						if ((lip.yyLength(thd) >= 3) && !identMap.get(c)) {
+						if ((lip.yyLength(thd) >= 3) && !ident(c)) {
 							/* Skip '0b' */
 							token.lexStr = getToken(thd, 2, lip.yyLength(thd) - 2);
 							return (MyParser.BIN_NUM);
@@ -312,7 +313,7 @@ class MyLexer implements Lexer {
 
 				while (Character.isDigit(c = lip.yyGet(thd)))
 					;
-				if (!identMap.get(c)) { // Can't be identifier
+				if (!ident(c)) { // Can't be identifier
 					state = MyLexStates.MY_LEX_INT_OR_REAL;
 					break;
 				}
@@ -337,14 +338,14 @@ class MyLexer implements Lexer {
 				// fall through
 			case MY_LEX_IDENT_START: // We come here after '.'
 				result_state = MyParser.IDENT; {
-				for (result_state = 0; identMap.get(c = lip.yyGet(thd)); result_state |= c)
+				for (result_state = 0; ident(c = lip.yyGet(thd)); result_state |= c)
 					;
 				/*
 				 * If there were non-ASCII characters, mark that we must convert
 				 */
 				result_state = (result_state & 0x80) == 0x80 ? MyParser.IDENT_QUOTED : MyParser.IDENT;
 			}
-				if (c == '.' && identMap.get(lip.yyPeek(thd)))
+				if (c == '.' && ident(lip.yyPeek(thd)))
 					thd.nextState = MyLexStates.MY_LEX_IDENT_SEP;// Next is '.'
 
 				token.lexStr = getToken(thd, 0, lip.yyLength(thd));
@@ -446,8 +447,8 @@ class MyLexer implements Lexer {
 				return (MyParser.BIN_NUM);
 
 			case MY_LEX_CMP_OP: // Incomplete comparison operator
-				if (stateMap.get(lip.yyPeek(thd)) == MyLexStates.MY_LEX_CMP_OP
-						|| stateMap.get(lip.yyPeek(thd)) == MyLexStates.MY_LEX_LONG_CMP_OP)
+				if (state(lip.yyPeek(thd)) == MyLexStates.MY_LEX_CMP_OP
+						|| state(lip.yyPeek(thd)) == MyLexStates.MY_LEX_LONG_CMP_OP)
 					lip.yySkip(thd);
 				if ((tokval = findKeyword(thd, lip.yyLength(thd) + 1, false)) > 0) {
 					thd.nextState = MyLexStates.MY_LEX_START; // Allow signed
@@ -458,10 +459,10 @@ class MyLexer implements Lexer {
 				break;
 
 			case MY_LEX_LONG_CMP_OP: // Incomplete comparison operator
-				if (stateMap.get(lip.yyPeek(thd)) == MyLexStates.MY_LEX_CMP_OP
-						|| stateMap.get(lip.yyPeek(thd)) == MyLexStates.MY_LEX_LONG_CMP_OP) {
+				if (state(lip.yyPeek(thd)) == MyLexStates.MY_LEX_CMP_OP
+						|| state(lip.yyPeek(thd)) == MyLexStates.MY_LEX_LONG_CMP_OP) {
 					lip.yySkip(thd);
-					if (stateMap.get(lip.yyPeek(thd)) == MyLexStates.MY_LEX_CMP_OP)
+					if (state(lip.yyPeek(thd)) == MyLexStates.MY_LEX_CMP_OP)
 						lip.yySkip(thd);
 				}
 				if ((tokval = findKeyword(thd, lip.yyLength(thd) + 1, false)) > 0) {
@@ -681,7 +682,7 @@ class MyLexer implements Lexer {
 				}
 				break;
 			case MY_LEX_USER_END: // end '@' of user@hostname
-				switch (stateMap.get(lip.yyPeek(thd))) {
+				switch (state(lip.yyPeek(thd))) {
 				case MY_LEX_STRING:
 				case MY_LEX_USER_VARIABLE_DELIMITER:
 				case MY_LEX_STRING_OR_DELIMITER:
@@ -704,7 +705,7 @@ class MyLexer implements Lexer {
 			case MY_LEX_SYSTEM_VAR:
 				token.lexStr = String.valueOf(lip.yyGet(thd));
 				lip.yySkip(thd); // Skip '@'
-				thd.nextState = (stateMap.get(lip.yyPeek(thd)) == MyLexStates.MY_LEX_USER_VARIABLE_DELIMITER
+				thd.nextState = (state(lip.yyPeek(thd)) == MyLexStates.MY_LEX_USER_VARIABLE_DELIMITER
 						? MyLexStates.MY_LEX_OPERATOR_OR_IDENT : MyLexStates.MY_LEX_IDENT_OR_KEYWORD);
 				return ((int) '@');
 			case MY_LEX_IDENT_OR_KEYWORD:
@@ -713,7 +714,7 @@ class MyLexer implements Lexer {
 				 * now be able to handle: [(global | local | session)
 				 * .]variable_name
 				 */
-				for (result_state = 0; identMap.get(c = lip.yyGet(thd)); result_state |= c)
+				for (result_state = 0; ident(c = lip.yyGet(thd)); result_state |= c)
 					;
 				/*
 				 * If there were non-ASCII characters, mark that we must convert
@@ -1060,7 +1061,7 @@ class MyLexer implements Lexer {
 		 */
 		for (int i = 0; i < 256; i++) {
 			char c = (char) i;
-			identMap.put(c, stateMap.get(c) == MyLexStates.MY_LEX_IDENT || stateMap.get(c) == MyLexStates.MY_LEX_NUMBER_IDENT);
+			identMap.put(c, state(c) == MyLexStates.MY_LEX_IDENT || state(c) == MyLexStates.MY_LEX_NUMBER_IDENT);
 		}
 
 		/* Special handling of hex and binary strings */
@@ -1071,6 +1072,32 @@ class MyLexer implements Lexer {
 		stateMap.put('n', MyLexStates.MY_LEX_IDENT_OR_NCHAR);
 		stateMap.put('N', MyLexStates.MY_LEX_IDENT_OR_NCHAR);
 		return true;
+	}
+
+	/**
+	 * get state from stateMap, if c > 255, then default to MY_LEX_IDENT.
+	 * @param c char
+	 * @return LexState
+	 */
+	MyLexStates state(char c) {
+		MyLexStates result = stateMap.get(c);
+		if (result == null) {
+			result = MyLexStates.MY_LEX_IDENT;
+		}
+		return result;
+	}
+
+	/**
+	 * check whether the c is an ident.
+	 * @param c char
+	 * @return if c is an ident, then true, or false.
+	 */
+	Boolean ident(char c) {
+		Boolean result = true;
+		if (identMap.containsKey(c)) {
+			result = identMap.get(c);
+		}
+		return result;
 	}
 
 	class Variables {
