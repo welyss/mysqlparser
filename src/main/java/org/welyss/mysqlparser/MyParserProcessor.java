@@ -20,6 +20,15 @@ public class MyParserProcessor {
 		return success;
 	}
 
+	public static boolean addTableToList(Lex lex, TableIdent table, Item alias, Item partitionNames) {
+		boolean success = false;
+		if (table != null) {
+			lex.allTableList.add(table);
+			success = true;
+		}
+		return success;
+	}
+
 	public static boolean mysqlNewSelect(Lex lex, boolean moveDown) {
 		boolean result = false;
 		lex.selectLex = new SelectLex();

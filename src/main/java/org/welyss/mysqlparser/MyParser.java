@@ -2110,16 +2110,17 @@ class MyParser {
 		// break;
 		//
 		//
-		// case 112:
-		// if (yyn == 112)
-		// /* Line 350 of lalr1.java */
-		// /* Line 2439 of "sql_yacc.y" */
-		// {
-		// if (add_create_index_prepare(Lex, ((table)(yystack.valueAt
-		// (7-(7))))))
-		// return YYABORT;
-		// };
-		// break;
+		case 112:
+		if (yyn == 112)
+		/* Line 350 of lalr1.java */
+		/* Line 2439 of "sql_yacc.y" */
+		{
+//		 if (add_create_index_prepare(Lex, ((table)(yystack.valueAt
+//		 (7-(7))))))
+			if (!addCreateIndexPrepare(thd.lex, (TableIdent)yystack.valueAt(7 - (7))))
+				return YYABORT;
+		};
+		break;
 		//
 		//
 		// case 113:
@@ -2142,16 +2143,17 @@ class MyParser {
 		// break;
 		//
 		//
-		// case 115:
-		// if (yyn == 115)
-		// /* Line 350 of lalr1.java */
-		// /* Line 2451 of "sql_yacc.y" */
-		// {
-		// if (add_create_index_prepare(Lex, ((table)(yystack.valueAt
-		// (7-(7))))))
-		// return YYABORT;
-		// };
-		// break;
+		case 115:
+		if (yyn == 115)
+		/* Line 350 of lalr1.java */
+		/* Line 2451 of "sql_yacc.y" */
+		{
+//		 if (add_create_index_prepare(Lex, ((table)(yystack.valueAt
+//		 (7-(7))))))
+			if (!addCreateIndexPrepare(thd.lex, (TableIdent)yystack.valueAt(7 - (7))))
+				return YYABORT;
+		};
+		break;
 		//
 		//
 		// case 116:
@@ -2174,16 +2176,17 @@ class MyParser {
 		// break;
 		//
 		//
-		// case 118:
-		// if (yyn == 118)
-		// /* Line 350 of lalr1.java */
-		// /* Line 2463 of "sql_yacc.y" */
-		// {
+		case 118:
+		if (yyn == 118)
+		/* Line 350 of lalr1.java */
+		/* Line 2463 of "sql_yacc.y" */
+		{
 		// if (add_create_index_prepare(Lex, ((table)(yystack.valueAt
 		// (7-(7))))))
-		// return YYABORT;
-		// };
-		// break;
+			if (!addCreateIndexPrepare(thd.lex, (TableIdent)yystack.valueAt(7 - (7))))
+				return YYABORT;
+		};
+		break;
 		//
 		//
 		// case 119:
@@ -28559,4 +28562,23 @@ class MyParser {
 	private static final int yyundef_token_ = 2;
 
 	/* User implementation code. */
+	private boolean addCreateIndexPrepare(Lex lex, TableIdent table) {
+		lex.sqlCommand = SQLCommand.SQLCOM_CREATE_INDEX;
+		if (MyParserProcessor.addTableToList(lex, table, null, null)) {
+			return true;
+		} else {
+			return false;
+		}
+//	  lex->sql_command= SQLCOM_CREATE_INDEX;
+//	  if (!lex->current_select->add_table_to_list(lex->thd, table, NULL,
+//	                                              TL_OPTION_UPDATING,
+//	                                              TL_READ_NO_INSERT,
+//	                                              MDL_SHARED_UPGRADABLE))
+//	    return TRUE;
+//	  lex->alter_info.reset();
+//	  lex->alter_info.flags= Alter_info::ALTER_ADD_INDEX;
+//	  lex->col_list.empty();
+//	  lex->change= NullS;
+//	  return FALSE;
+	}
 }
