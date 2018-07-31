@@ -5,10 +5,52 @@ import java.util.Set;
 
 import org.welyss.mysqlparser.items.TableIdent;
 
-public interface SQLResult {
-	boolean ok();
-	SQLCommand getSQLCommand();
-	List<TableIdent> getTableList();
-	String getErrorMsg();
-	Set<AlterFlag> getAlterFlags();
+public class SQLResult {
+	private boolean success;
+	private SQLCommand sqlCommand;
+	private List<TableIdent> tables;
+	private String errorMsg;
+	private Set<AlterFlag> alterFlags;
+
+	public SQLResult(boolean success, SQLCommand sqlCommand,
+			List<TableIdent> tables, String errorMsg,
+			Set<AlterFlag> alterFlags) {
+		this.success = success;
+		this.sqlCommand = sqlCommand;
+		this.tables = tables;
+		this.errorMsg = errorMsg;
+		this.alterFlags = alterFlags;
+	}
+
+	public boolean isSuccess() {
+		return success;
+	}
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+	public SQLCommand getSqlCommand() {
+		return sqlCommand;
+	}
+	public void setSqlCommand(SQLCommand sqlCommand) {
+		this.sqlCommand = sqlCommand;
+	}
+	public List<TableIdent> getTables() {
+		return tables;
+	}
+	public void setTables(List<TableIdent> tables) {
+		this.tables = tables;
+	}
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
+	}
+	public Set<AlterFlag> getAlterFlags() {
+		return alterFlags;
+	}
+	public void setAlterFlags(Set<AlterFlag> alterFlags) {
+		this.alterFlags = alterFlags;
+	}
+
 }

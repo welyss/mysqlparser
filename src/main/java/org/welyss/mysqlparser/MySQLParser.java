@@ -1,6 +1,8 @@
 package org.welyss.mysqlparser;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MySQLParser {
 	private MyParser myParser;
@@ -18,9 +20,16 @@ public class MySQLParser {
 	 * @param sql
 	 * @return Parsed Info
 	 */
-	public SQLResult parse(String sql) {
-		SQLThread result = new SQLThread(sql);
-		result.ok = myParser.parse(result);
+	public List<SQLResult> parse(String sql) {
+		List<SQLResult> result = new ArrayList<>();
+		SQLThread sqlThread = new SQLThread(sql);
+		sqlThread.success = myParser.parse(sqlThread);
+		result.add(sqlThread.getSQLResultAndReset());
+		while(sqlThread.success && sqlThread.foundSemicolon > 0 && !myParser.myLexer.lip.eof(sqlThread)) {
+			sqlThread.nextState = MyLexStates.MY_LEX_START;
+			sqlThread.success = myParser.parse(sqlThread);
+			result.add(sqlThread.getSQLResultAndReset());
+		}
 		return result;
 	}
 

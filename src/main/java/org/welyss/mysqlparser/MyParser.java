@@ -1316,7 +1316,7 @@ class MyParser {
 	}
 
 	/** The object doing lexical analysis for us. */
-	protected Lexer myLexer;
+	protected MyLexer myLexer;
 
 	/**
 	 * Instantiates the Bison-generated parser.
@@ -1325,7 +1325,7 @@ class MyParser {
 	 *            The scanner that will supply tokens to the parser.
 	 * @throws IOException
 	 */
-	public MyParser(Lexer myLexer) throws IOException {
+	public MyParser(MyLexer myLexer) throws IOException {
 		this.myLexer = myLexer;
 		// Initial
 		yypact_ = MySQLParserUtils.initArrayForInt("yypact");
@@ -1538,13 +1538,20 @@ class MyParser {
 			}
 			;
 			break;
-		//
-		//
-		// case 3:
-		// if (yyn == 3)
-		// /* Line 350 of lalr1.java */
-		// /* Line 1982 of "sql_yacc.y" */
-		// {
+		
+		
+		case 3:
+		if (yyn == 3)
+		/* Line 350 of lalr1.java */
+		/* Line 1982 of "sql_yacc.y" */
+		{
+			if (myLexer.lip.eof(thd)) {
+				thd.parsedSqls.add(thd.sql.substring(thd.foundSemicolon, myLexer.lip.getPtr(thd)));
+			} else {
+				thd.nextState = MyLexStates.MY_LEX_END;
+				thd.parsedSqls.add(thd.sql.substring(thd.foundSemicolon, myLexer.lip.getPtr(thd)));
+			}
+			thd.foundSemicolon = myLexer.lip.getPtr(thd);
 		// Lex_input_stream *lip = YYLIP;
 		//
 		// if ((YYTHD->client_capabilities & CLIENT_MULTI_QUERIES) &&
@@ -1565,8 +1572,8 @@ class MyParser {
 		// /* Single query, terminated. */
 		// lip->found_semicolon= NULL;
 		// }
-		// };
-		// break;
+		};
+		break;
 		//
 		//
 		// case 5:
@@ -18495,7 +18502,7 @@ class MyParser {
 			/* Line 12214 of "sql_yacc.y" */
 			{
 				// LEX *lex= Lex;
-				if (thd.lex.selectLex.tableList.size() > 1)
+				if (thd.lex.tables.size() > 1)
 					thd.lex.sqlCommand = SQLCommand.SQLCOM_UPDATE_MULTI;
 				// else if (lex->select_lex.get_table_list()->derived)
 				// {

@@ -14,7 +14,7 @@ public class MyParserProcessor {
 	public static boolean addTableToList(SQLThread thd, TableIdent table, Item alias, Item partitionNames) {
 		boolean success = false;
 		if (table != null) {
-			thd.lex.allTableList.add(table);
+			thd.lex.tables.add(table);
 			success = true;
 		}
 		return success;
@@ -23,7 +23,7 @@ public class MyParserProcessor {
 	public static boolean addTableToList(Lex lex, TableIdent table, Item alias, Item partitionNames) {
 		boolean success = false;
 		if (table != null) {
-			lex.allTableList.add(table);
+			lex.tables.add(table);
 			success = true;
 		}
 		return success;
@@ -75,7 +75,7 @@ public class MyParserProcessor {
 			break;
 		}
 		if (table != null) {
-			thd.lex.allTableList.add(table);
+			thd.lex.tables.add(table);
 			success = true;
 		}
 		return success;

@@ -1,14 +1,17 @@
 package org.welyss.mysqlparser;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 
 import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.TableIdent;
 
-public class SQLThread implements SQLResult {
-	protected boolean ok;
+public class SQLThread {
+	protected Boolean success;
 	protected StringBuilder sql;
+	protected List<String> parsedSqls = new ArrayList<String>();
+	protected int foundSemicolon;
 	protected String msg;
 	protected Lex lex;
 	protected Item yylval;
@@ -74,28 +77,13 @@ public class SQLThread implements SQLResult {
 		mDigest = new SQLDigestState();
 	}
 
-	@Override
-	public boolean ok() {
-		return this.ok;
-	}
-
-	@Override
-	public SQLCommand getSQLCommand() {
-		return this.lex.sqlCommand;
-	}
-
-	@Override
-	public List<TableIdent> getTableList() {
-		return this.lex.allTableList;
-	}
-
-	@Override
-	public String getErrorMsg() {
-		return this.msg;
-	}
-
-	@Override
-	public Set<AlterFlag> getAlterFlags() {
-		return lex.alterInfo.flags;
+	protected SQLResult getSQLResultAndReset() {
+		SQLResult result = new SQLResult(success, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags));
+//		success = null;
+		this.lex.sqlCommand = null;
+		this.lex.tables.clear();
+		this.msg = null;
+		lex.alterInfo.flags.clear();
+		return result;
 	}
 }
