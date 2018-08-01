@@ -20,8 +20,8 @@ public class MySQLParser {
 	 * @param sql
 	 * @return Parsed Info
 	 */
-	public List<SQLResult> parse(String sql) {
-		List<SQLResult> result = new ArrayList<>();
+	public List<ParseResult> parse(String sql) {
+		List<ParseResult> result = new ArrayList<>();
 		SQLThread sqlThread = new SQLThread(sql);
 		sqlThread.success = myParser.parse(sqlThread);
 		result.add(sqlThread.getSQLResultAndReset());

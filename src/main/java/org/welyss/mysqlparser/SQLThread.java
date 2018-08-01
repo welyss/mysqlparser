@@ -77,8 +77,8 @@ public class SQLThread {
 		mDigest = new SQLDigestState();
 	}
 
-	protected SQLResult getSQLResultAndReset() {
-		SQLResult result = new SQLResult(success, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags));
+	protected ParseResult getSQLResultAndReset() {
+		ParseResult result = new ParseResult(success, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags));
 //		success = null;
 		this.lex.sqlCommand = null;
 		this.lex.tables.clear();

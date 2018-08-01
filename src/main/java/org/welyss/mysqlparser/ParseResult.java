@@ -5,14 +5,14 @@ import java.util.Set;
 
 import org.welyss.mysqlparser.items.TableIdent;
 
-public class SQLResult {
+public class ParseResult {
 	private boolean success;
 	private SQLCommand sqlCommand;
 	private List<TableIdent> tables;
 	private String errorMsg;
 	private Set<AlterFlag> alterFlags;
 
-	public SQLResult(boolean success, SQLCommand sqlCommand,
+	public ParseResult(boolean success, SQLCommand sqlCommand,
 			List<TableIdent> tables, String errorMsg,
 			Set<AlterFlag> alterFlags) {
 		this.success = success;
