@@ -7,15 +7,17 @@ import org.welyss.mysqlparser.items.TableIdent;
 
 public class ParseResult {
 	private boolean success;
+	private String parsedSQL;
 	private SQLCommand sqlCommand;
 	private List<TableIdent> tables;
 	private String errorMsg;
 	private Set<AlterFlag> alterFlags;
 
-	public ParseResult(boolean success, SQLCommand sqlCommand,
+	public ParseResult(boolean success, String parsedSQL, SQLCommand sqlCommand,
 			List<TableIdent> tables, String errorMsg,
 			Set<AlterFlag> alterFlags) {
 		this.success = success;
+		this.parsedSQL = parsedSQL;
 		this.sqlCommand = sqlCommand;
 		this.tables = tables;
 		this.errorMsg = errorMsg;
@@ -51,6 +53,14 @@ public class ParseResult {
 	}
 	public void setAlterFlags(Set<AlterFlag> alterFlags) {
 		this.alterFlags = alterFlags;
+	}
+
+	public String getParsedSQL() {
+		return parsedSQL;
+	}
+
+	public void setParsedSQL(String parsedSQL) {
+		this.parsedSQL = parsedSQL;
 	}
 
 }

@@ -16,6 +16,7 @@ public class MySQLParserTest {
 					+ "insert into test values(1);insert into test values(2);alter table test add index `idx_test`(`idnm`)");
 			for(ParseResult result : resultList) {
 				System.out.println("==================================");
+				System.out.println(result.getParsedSQL());
 				System.out.println(result.isSuccess());
 				if (result.isSuccess()) {
 					System.out.println(result.getSqlCommand());

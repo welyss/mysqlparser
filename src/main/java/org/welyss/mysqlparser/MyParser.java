@@ -1546,10 +1546,10 @@ class MyParser {
 		/* Line 1982 of "sql_yacc.y" */
 		{
 			if (myLexer.lip.eof(thd)) {
-				thd.parsedSqls.add(thd.sql.substring(thd.foundSemicolon, myLexer.lip.getPtr(thd)));
+				thd.parsedSqls.add(thd.sql.substring(thd.foundSemicolon, myLexer.lip.getPtr(thd) - 1));
 			} else {
 				thd.nextState = MyLexStates.MY_LEX_END;
-				thd.parsedSqls.add(thd.sql.substring(thd.foundSemicolon, myLexer.lip.getPtr(thd)));
+				thd.parsedSqls.add(thd.sql.substring(thd.foundSemicolon, myLexer.lip.getPtr(thd) - 1));
 			}
 			thd.foundSemicolon = myLexer.lip.getPtr(thd);
 		// Lex_input_stream *lip = YYLIP;
