@@ -78,7 +78,7 @@ public class SQLThread {
 	}
 
 	protected ParseResult getSQLResultAndReset() {
-		String parsedSQL = foundSemicolon > 0 ? parsedSqls.get(parsedSqls.size() - 1) : sql.toString();
+		String parsedSQL = parsedSqls.get(parsedSqls.size() - 1);
 		ParseResult result = new ParseResult(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags));
 //		success = null;
 		this.lex.sqlCommand = null;

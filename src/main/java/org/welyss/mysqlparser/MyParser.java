@@ -1574,17 +1574,18 @@ class MyParser {
 		// }
 		};
 		break;
-		//
-		//
-		// case 5:
-		// if (yyn == 5)
-		// /* Line 350 of lalr1.java */
-		// /* Line 2007 of "sql_yacc.y" */
-		// {
-		// /* Single query, not terminated. */
-		// YYLIP->found_semicolon= NULL;
-		// };
-		// break;
+
+
+		case 5:
+		if (yyn == 5)
+		/* Line 350 of lalr1.java */
+		/* Line 2007 of "sql_yacc.y" */
+		{
+		/* Single query, not terminated. */
+//		YYLIP->found_semicolon= NULL;
+			thd.parsedSqls.add(thd.sql.substring(thd.foundSemicolon, myLexer.lip.getPtr(thd) - 1));
+		};
+		break;
 
 		case 62:
 			if (yyn == 62)
