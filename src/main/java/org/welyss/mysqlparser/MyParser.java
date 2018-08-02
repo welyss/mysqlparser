@@ -1534,6 +1534,7 @@ class MyParser {
 				// return YYABORT;
 				// }
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_EMPTY_QUERY;
+				thd.parsedSqls.add(thd.sql.substring(thd.foundSemicolon, myLexer.lip.getPtr(thd) - 1));
 				// YYLIP->found_semicolon= NULL;
 			}
 			;

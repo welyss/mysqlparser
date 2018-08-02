@@ -78,7 +78,7 @@ public class SQLThread {
 	}
 
 	protected ParseResult getSQLResultAndReset() {
-		String parsedSQL = parsedSqls.get(parsedSqls.size() - 1);
+		String parsedSQL = success ? parsedSqls.get(parsedSqls.size() - 1) : sql.substring(mPtr, sql.length());
 		ParseResult result = new ParseResult(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags));
 //		success = null;
 		this.lex.sqlCommand = null;
