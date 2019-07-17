@@ -6,12 +6,14 @@ this is a mysql parser, lexer is modified from mysql5.6.35 source code to java b
 		
 		try {
 			MySQLParser parser = new MySQLParser();
-			List<SQLResult> resultList = parser.parse("insert into test values(1);alter table test add index `idx_test`(`idnm`)");
-			for(SQLResult result : resultList) {
+			List<ParseResult> resultList = parser.parse("select * from acdb.acc where id = 1;delete from acdb.acc;insert into acdb.acc select * from acdb.acc where id = 1;");
+			for(ParseResult result : resultList) {
 				System.out.println("==================================");
+				System.out.println(result.getParsedSQL());
 				System.out.println(result.isSuccess());
 				if (result.isSuccess()) {
 					System.out.println(result.getSqlCommand());
+					System.out.println("inWhere: " + result.inWhere());
 					for (AlterFlag af : result.getAlterFlags()) {
 						System.out.println(af);
 					}
@@ -25,4 +27,3 @@ this is a mysql parser, lexer is modified from mysql5.6.35 source code to java b
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	
