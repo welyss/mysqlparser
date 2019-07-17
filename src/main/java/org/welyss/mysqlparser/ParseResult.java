@@ -12,16 +12,18 @@ public class ParseResult {
 	private List<TableIdent> tables;
 	private String errorMsg;
 	private Set<AlterFlag> alterFlags;
+	private boolean inWhere;
 
 	public ParseResult(boolean success, String parsedSQL, SQLCommand sqlCommand,
 			List<TableIdent> tables, String errorMsg,
-			Set<AlterFlag> alterFlags) {
+			Set<AlterFlag> alterFlags, boolean inWhere) {
 		this.success = success;
 		this.parsedSQL = parsedSQL;
 		this.sqlCommand = sqlCommand;
 		this.tables = tables;
 		this.errorMsg = errorMsg;
 		this.alterFlags = alterFlags;
+		this.inWhere = inWhere;
 	}
 
 	public boolean isSuccess() {
@@ -54,13 +56,16 @@ public class ParseResult {
 	public void setAlterFlags(Set<AlterFlag> alterFlags) {
 		this.alterFlags = alterFlags;
 	}
-
 	public String getParsedSQL() {
 		return parsedSQL;
 	}
-
 	public void setParsedSQL(String parsedSQL) {
 		this.parsedSQL = parsedSQL;
 	}
-
+	public boolean inWhere() {
+		return inWhere;
+	}
+	public void setInWhere(boolean inWhere) {
+		this.inWhere = inWhere;
+	}
 }

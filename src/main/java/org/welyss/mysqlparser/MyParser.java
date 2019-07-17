@@ -16858,15 +16858,15 @@ class MyParser {
 		// break;
 		//
 		//
-		// case 1523:
-		// if (yyn == 1523)
-		// /* Line 350 of lalr1.java */
-		// /* Line 11244 of "sql_yacc.y" */
-		// {
-		// Select->parsing_place= IN_WHERE;
-		// };
-		// break;
-		//
+		case 1523:
+		if (yyn == 1523)
+		/* Line 350 of lalr1.java */
+		/* Line 11244 of "sql_yacc.y" */
+		{
+			thd.inWhere = true;
+		};
+		break;
+
 		//
 		// case 1524:
 		// if (yyn == 1524)

@@ -12,6 +12,7 @@ public class SQLThread {
 	protected StringBuilder sql;
 	protected List<String> parsedSqls = new ArrayList<String>();
 	protected int foundSemicolon;
+	protected boolean inWhere;
 	protected String msg;
 	protected Lex lex;
 	protected Item yylval;
@@ -79,11 +80,12 @@ public class SQLThread {
 
 	protected ParseResult getSQLResultAndReset() {
 		String parsedSQL = success ? parsedSqls.get(parsedSqls.size() - 1) : sql.substring(mPtr, sql.length());
-		ParseResult result = new ParseResult(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags));
+		ParseResult result = new ParseResult(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags), this.inWhere);
 //		success = null;
 		this.lex.sqlCommand = null;
 		this.lex.tables.clear();
 		this.msg = null;
+		this.inWhere = false;
 		lex.alterInfo.flags.clear();
 		return result;
 	}
