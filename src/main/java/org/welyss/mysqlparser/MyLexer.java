@@ -211,13 +211,13 @@ class MyLexer implements Lexer {
 				}
 			case MY_LEX_IDENT:
 				int start; {
-				for (result_state = c; ident(c = lip.yyGet(thd)); result_state |= c)
-					;
-				/*
-				 * If there were non-ASCII characters, mark that we must convert
-				 */
-				result_state = (result_state & 0x80) == 0x80 ? MyParser.IDENT_QUOTED : MyParser.IDENT;
-			}
+					for (result_state = c; ident(c = lip.yyGet(thd)); result_state |= c)
+						;
+					/*
+					 * If there were non-ASCII characters, mark that we must convert
+					 */
+					result_state = (result_state & 0x80) == 0x80 ? MyParser.IDENT_QUOTED : MyParser.IDENT;
+				}
 				length = lip.yyLength(thd);
 				start = lip.getPtr(thd);
 				if (ignoreSpace) {
@@ -237,6 +237,8 @@ class MyLexer implements Lexer {
 																	// signed
 																	// numbers
 						return (tokval); // Was keyword
+					} else {
+						((Token)thd.yylval).lexStr = thd.sql.substring(thd.mTokStart, thd.mTokStart + length);
 					}
 					lip.yySkip(thd); // next state does a unget
 				}
@@ -338,13 +340,13 @@ class MyLexer implements Lexer {
 				// fall through
 			case MY_LEX_IDENT_START: // We come here after '.'
 				result_state = MyParser.IDENT; {
-				for (result_state = 0; ident(c = lip.yyGet(thd)); result_state |= c)
-					;
-				/*
-				 * If there were non-ASCII characters, mark that we must convert
-				 */
-				result_state = (result_state & 0x80) == 0x80 ? MyParser.IDENT_QUOTED : MyParser.IDENT;
-			}
+					for (result_state = 0; ident(c = lip.yyGet(thd)); result_state |= c)
+						;
+					/*
+					 * If there were non-ASCII characters, mark that we must convert
+					 */
+					result_state = (result_state & 0x80) == 0x80 ? MyParser.IDENT_QUOTED : MyParser.IDENT;
+				}
 				if (c == '.' && ident(lip.yyPeek(thd)))
 					thd.nextState = MyLexStates.MY_LEX_IDENT_SEP;// Next is '.'
 
