@@ -28,4 +28,12 @@ public class TableIdent extends Item {
 	public void setDbStartPos(int pos) {
 		if (dbArg != null) dbArg.pos = pos;
 	}
+
+	public Integer getTableStartPos() {
+		return tableArg == null ? null : tableArg.pos;
+	}
+
+	public void setTableStartPos(int pos) {
+		if (tableArg != null) tableArg.pos = pos;
+	}
 }

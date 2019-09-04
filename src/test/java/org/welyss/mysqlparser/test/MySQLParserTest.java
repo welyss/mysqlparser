@@ -19,9 +19,9 @@ public class MySQLParserTest {
 			for(ParseResult result : resultList) {
 				System.out.println("==================================");
 				System.out.println(result.isSuccess());
+				System.out.println(result.getParsedSQL());
 				if (result.isSuccess()) {
-					result.resetSchema("yyyy");
-					System.out.println(result.getParsedSQL());
+					System.out.println(result.hack("yyyyyffffy", "wysjsjsjsjsj"));
 					System.out.println(result.getSqlCommand());
 					System.out.println("inWhere: " + result.inWhere());
 					for (AlterFlag af : result.getAlterFlags()) {
