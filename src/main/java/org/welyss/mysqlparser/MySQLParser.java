@@ -24,11 +24,12 @@ public class MySQLParser {
 		List<ParseResult> result = new ArrayList<>();
 		SQLThread sqlThread = new SQLThread(sql);
 		sqlThread.success = myParser.parse(sqlThread);
-		result.add(sqlThread.getSQLResultAndReset());
+		result.add(sqlThread.getSQLResultAndReset(0));
 		while(sqlThread.success && sqlThread.foundSemicolon > 0 && !myParser.myLexer.lip.eof(sqlThread)) {
+			int lastPos = sqlThread.mPtr;
 			sqlThread.nextState = MyLexStates.MY_LEX_START;
 			sqlThread.success = myParser.parse(sqlThread);
-			result.add(sqlThread.getSQLResultAndReset());
+			result.add(sqlThread.getSQLResultAndReset(lastPos));
 		}
 		return result;
 	}

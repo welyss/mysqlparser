@@ -1,23 +1,31 @@
 package org.welyss.mysqlparser.items;
 
 public class TableIdent extends Item {
-	String dbArg;
-	String tableArg;
+	Token dbArg;
+	Token tableArg;
 
-	public TableIdent(String dbArg, String tableArg) {
+	public TableIdent(Token dbArg, Token tableArg) {
 		this.dbArg = dbArg;
 		this.tableArg = tableArg;
 	}
 
-	public TableIdent(String tableArg) {
+	public TableIdent(Token tableArg) {
 		this.tableArg = tableArg;
 	}
 
 	public String getDb() {
-		return dbArg;
+		return dbArg == null ? null : dbArg.lexStr;
 	}
 
 	public String getTable() {
-		return tableArg;
+		return tableArg.lexStr;
+	}
+
+	public Integer getDbStartPos() {
+		return dbArg == null ? null : dbArg.pos;
+	}
+
+	public void setDbStartPos(int pos) {
+		if (dbArg != null) dbArg.pos = pos;
 	}
 }

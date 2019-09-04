@@ -18665,7 +18665,7 @@ class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 12330 of "sql_yacc.y" */
 			{
-				TableIdent ti = new TableIdent(((Token) yystack.valueAt(2 - (1))).lexStr);
+				TableIdent ti = new TableIdent(((Token) yystack.valueAt(2 - (1))));
 				if (!MyParserProcessor.addTableToList(thd, ti, null, null))
 					return YYABORT;
 			}
@@ -18677,8 +18677,8 @@ class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 12343 of "sql_yacc.y" */
 			{
-				TableIdent ti = new TableIdent(((Token) yystack.valueAt(4 - (1))).lexStr,
-						((Token) (yystack.valueAt(4 - (3)))).lexStr);
+				TableIdent ti = new TableIdent(((Token) yystack.valueAt(4 - (1))),
+						((Token) (yystack.valueAt(4 - (3)))));
 				if (!MyParserProcessor.addTableToList(thd, ti, null, null))
 					return YYABORT;
 			}
@@ -19307,7 +19307,7 @@ class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE;
-				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(3 - (3))).lexStr), null, null))
+				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(3 - (3)))), null, null))
 					return YYABORT;
 				// lex->only_view= 0;
 				// lex->create_info.storage_media= HA_SM_DEFAULT;
@@ -19322,7 +19322,7 @@ class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE;
-				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(3 - (3))).lexStr), null, null))
+				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(3 - (3)))), null, null))
 					return YYABORT;
 				// lex->only_view= 1;
 			}
@@ -20147,7 +20147,7 @@ class MyParser {
 			/* Line 13106 of "sql_yacc.y" */
 			{
 				// LEX *lex=Lex;
-				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(13 - (12))).lexStr), null,
+				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(13 - (12)))), null,
 						((Item) (yystack.valueAt(13 - (13))))))
 					return YYABORT;
 				// lex->field_list.empty();
@@ -21351,7 +21351,7 @@ class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 13881 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(((Token) (yystack.valueAt(1 - (1)))).lexStr);
+				yyval = new TableIdent(((Token) (yystack.valueAt(1 - (1)))));
 			}
 			;
 			break;
@@ -21361,7 +21361,7 @@ class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 13887 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(((Token) (yystack.valueAt(3 - (1)))).lexStr, ((Token) (yystack.valueAt(3 - (3)))).lexStr);
+				yyval = new TableIdent(((Token) (yystack.valueAt(3 - (1)))), ((Token) (yystack.valueAt(3 - (3)))));
 			}
 			;
 			break;
@@ -21372,7 +21372,7 @@ class MyParser {
 			/* Line 13893 of "sql_yacc.y" */
 			{
 				/* For Delphi */
-				yyval = new TableIdent(((Token) (yystack.valueAt(2 - (2)))).lexStr);
+				yyval = new TableIdent(((Token) (yystack.valueAt(2 - (2)))));
 			}
 			;
 			break;
@@ -21382,7 +21382,7 @@ class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 13903 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(((Token) (yystack.valueAt(2 - (1)))).lexStr);
+				yyval = new TableIdent(((Token) (yystack.valueAt(2 - (1)))));
 			}
 			;
 			break;
@@ -21392,7 +21392,7 @@ class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 13909 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(((Token) (yystack.valueAt(4 - (1)))).lexStr, ((Token) (yystack.valueAt(4 - (3)))).lexStr);
+				yyval = new TableIdent(((Token) (yystack.valueAt(4 - (1)))), ((Token) (yystack.valueAt(4 - (3)))));
 			}
 			;
 			break;
@@ -21402,7 +21402,7 @@ class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 13918 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(LexConstants.ANY_DB, ((Token) yystack.valueAt(1 - (1))).lexStr);
+				yyval = new TableIdent(new Token(LexConstants.ANY_DB, 0, 0), ((Token) yystack.valueAt(1 - (1))));
 			}
 			;
 			break;
@@ -25517,7 +25517,7 @@ class MyParser {
 				// return YYABORT;
 				// }
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_OPEN;
-				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(4 - (2))).lexStr),
+				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(4 - (2)))),
 						((Item) (yystack.valueAt(4 - (4)))), null))
 					return YYABORT;
 				// lex->m_sql_cmd= new (thd->mem_root) Sql_cmd_handler_open();

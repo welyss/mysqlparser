@@ -78,8 +78,11 @@ public class SQLThread {
 		mDigest = new SQLDigestState();
 	}
 
-	protected ParseResult getSQLResultAndReset() {
+	protected ParseResult getSQLResultAndReset(int lastPos) {
 		String parsedSQL = success ? parsedSqls.get(parsedSqls.size() - 1) : sql.substring(mPtr, sql.length());
+		for(TableIdent ti : this.lex.tables) {
+			if (ti.getDbStartPos() != null) ti.setDbStartPos(ti.getDbStartPos() - lastPos);
+		}
 		ParseResult result = new ParseResult(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags), this.inWhere);
 //		success = null;
 		this.lex.sqlCommand = null;

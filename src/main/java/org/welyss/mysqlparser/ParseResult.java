@@ -68,4 +68,14 @@ public class ParseResult {
 	public void setInWhere(boolean inWhere) {
 		this.inWhere = inWhere;
 	}
+	public void resetSchema(String schema) {
+		if (!sqlCommand.equals(SQLCommand.SQLCOM_EMPTY_QUERY)) {
+			TableIdent ti = tables.get(0);
+			if (ti.getDbStartPos() != null) {
+				StringBuilder sb = new StringBuilder(parsedSQL);
+				sb.delete(ti.getDbStartPos(), ti.getDbStartPos() + ti.getDb().length()).insert(ti.getDbStartPos(), schema);
+				parsedSQL = sb.toString();
+			}
+		}
+	}
 }
