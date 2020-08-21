@@ -19307,7 +19307,7 @@ class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE;
-				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(3 - (3)))), null, null))
+				if (!MyParserProcessor.addTableToList(thd, (TableIdent)yystack.valueAt(3 - (3)), null, null))
 					return YYABORT;
 				// lex->only_view= 0;
 				// lex->create_info.storage_media= HA_SM_DEFAULT;
@@ -19322,7 +19322,7 @@ class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE;
-				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(3 - (3)))), null, null))
+				if (!MyParserProcessor.addTableToList(thd, (TableIdent)yystack.valueAt(3 - (3)), null, null))
 					return YYABORT;
 				// lex->only_view= 1;
 			}
