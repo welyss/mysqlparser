@@ -100,7 +100,7 @@ public class LexInputStreamProcessor {
 	 *            offset of the character to look up
 	 */
 	public char yyPeekn(SQLThread thd, int n) {
-		return thd.mPtr < thd.sql.length() ? thd.sql.charAt(thd.mPtr + n) : MyParser.EOF;
+		return thd.mPtr + n < thd.sql.length() ? thd.sql.charAt(thd.mPtr + n) : MyParser.EOF;
 	}
 
 	/**
