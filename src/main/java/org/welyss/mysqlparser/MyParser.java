@@ -7254,15 +7254,18 @@ class MyParser {
 		// break;
 		//
 		//
-		// case 592:
-		// if (yyn == 592)
-		// /* Line 350 of lalr1.java */
-		// /* Line 6025 of "sql_yacc.y" */
-		// {
-		// Lex->create_info.comment=((lex_str)(yystack.valueAt (3-(3))));
-		// Lex->create_info.used_fields|= HA_CREATE_USED_COMMENT;
-		// };
-		// break;
+		 case 592:
+		 if (yyn == 592)
+		 /* Line 350 of lalr1.java */
+		 /* Line 6025 of "sql_yacc.y" */
+		 {
+//		 Lex->create_info.comment=((lex_str)(yystack.valueAt (3-(3))));
+//		 Lex->create_info.used_fields|= HA_CREATE_USED_COMMENT;
+			 Object commentObj = yystack.valueAt (3-(3));
+			 thd.lex.createInfo.comment = commentObj == null ? "":((Token)commentObj).lexStr;
+			 thd.lex.createInfo.usedFields |= CreateInfo.HA_CREATE_USED_COMMENT;
+		 };
+		 break;
 		//
 		//
 		// case 593:
@@ -8922,12 +8925,16 @@ class MyParser {
 		break;
 		//
 		//
-		// case 762:
-		// if (yyn == 762)
+		 case 762:
+		 if (yyn == 762)
 		// /* Line 350 of lalr1.java */
 		// /* Line 6766 of "sql_yacc.y" */
 		// { Lex->comment= ((lex_str)(yystack.valueAt (2-(2)))); };
-		// break;
+		 {
+			Object commentObj = yystack.valueAt (2-(2));
+			 thd.lex.comment = commentObj == null ? "":((Token)commentObj).lexStr;
+		 }
+		 break;
 		//
 		//
 		// case 763:
@@ -10833,6 +10840,7 @@ class MyParser {
 		{
 		// LEX *lex=Lex;
 		// lex->change= ((lex_str)(yystack.valueAt (3-(3)))).str;
+			Object changeObj = yystack.valueAt (3-(3));
 			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN);
 		};
 		break;
