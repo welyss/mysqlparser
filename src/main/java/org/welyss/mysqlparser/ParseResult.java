@@ -13,10 +13,11 @@ public class ParseResult {
 	private String errorMsg;
 	private Set<AlterFlag> alterFlags;
 	private boolean inWhere;
+	private String alterCommands;
 
 	public ParseResult(boolean success, String parsedSQL, SQLCommand sqlCommand,
 			List<TableIdent> tables, String errorMsg,
-			Set<AlterFlag> alterFlags, boolean inWhere) {
+			Set<AlterFlag> alterFlags, boolean inWhere, String mSqlCmd) {
 		this.success = success;
 		this.parsedSQL = parsedSQL;
 		this.sqlCommand = sqlCommand;
@@ -24,6 +25,9 @@ public class ParseResult {
 		this.errorMsg = errorMsg;
 		this.alterFlags = alterFlags;
 		this.inWhere = inWhere;
+		if (mSqlCmd != null) {
+			this.alterCommands = mSqlCmd.trim().replaceAll(";\\s*$", "");
+		}
 	}
 
 	public boolean isSuccess() {
@@ -68,6 +72,13 @@ public class ParseResult {
 	public void setInWhere(boolean inWhere) {
 		this.inWhere = inWhere;
 	}
+	public String getAlterCommands() {
+		return alterCommands;
+	}
+	public void setAlterCommands(String alterCommands) {
+		this.alterCommands = alterCommands;
+	}
+
 	public String hack(String schema, String table) {
 		StringBuilder result = new StringBuilder(parsedSQL);
 		if (!sqlCommand.equals(SQLCommand.SQLCOM_EMPTY_QUERY)) {

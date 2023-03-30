@@ -13,6 +13,7 @@ public class Lex {
 	List<TableIdent> tables;
 	public long grant;
 	public int allPrivileges;
+	public String mSqlCmd;
 
 	public Lex() {
 		alterInfo = new AlterInfo();
