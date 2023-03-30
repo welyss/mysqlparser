@@ -9,13 +9,16 @@ public class Lex {
 	SQLCommand sqlCommand;
 	SelectLex selectLex = new SelectLex();
 	AlterInfo alterInfo;
+	CreateInfo createInfo;
 	List<SelectLex> allSelectsList;
 	List<TableIdent> tables;
 	public long grant;
 	public int allPrivileges;
 	public String mSqlCmd;
+	String comment;
 
 	public Lex() {
+		createInfo = new CreateInfo();
 		alterInfo = new AlterInfo();
 		allSelectsList = new ArrayList<SelectLex>();
 		tables = new ArrayList<TableIdent>();
