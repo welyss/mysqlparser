@@ -1534,7 +1534,7 @@ class MyParser {
 				// return YYABORT;
 				// }
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_EMPTY_QUERY;
-				thd.parsedSqls.add(thd.sql.substring(thd.foundSemicolon, myLexer.lip.getPtr(thd) - 1));
+				thd.addSQL(myLexer.lip.getPtr(thd) - 1);
 				// YYLIP->found_semicolon= NULL;
 			}
 			;
@@ -1547,10 +1547,10 @@ class MyParser {
 		/* Line 1982 of "sql_yacc.y" */
 		{
 			if (myLexer.lip.eof(thd)) {
-				thd.parsedSqls.add(thd.sql.substring(thd.foundSemicolon, myLexer.lip.getPtr(thd) - 1));
+				thd.addSQL(myLexer.lip.getPtr(thd) - 1);
 			} else {
 				thd.nextState = MyLexStates.MY_LEX_END;
-				thd.parsedSqls.add(thd.sql.substring(thd.foundSemicolon, myLexer.lip.getPtr(thd) - 1));
+				thd.addSQL(myLexer.lip.getPtr(thd) - 1);
 			}
 			thd.foundSemicolon = myLexer.lip.getPtr(thd);
 		// Lex_input_stream *lip = YYLIP;
@@ -1584,7 +1584,7 @@ class MyParser {
 		{
 		/* Single query, not terminated. */
 //		YYLIP->found_semicolon= NULL;
-			thd.parsedSqls.add(thd.sql.substring(thd.foundSemicolon, myLexer.lip.getPtr(thd) - 1));
+			thd.addSQL(myLexer.lip.getPtr(thd) - 1);
 		};
 		break;
 
@@ -10048,7 +10048,7 @@ class MyParser {
 				// lex->name.str= 0;
 				// lex->name.length= 0;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_TABLE;
-				thd.lex.mSqlCmd = thd.sql.substring(thd.mTokStart);
+				thd.lex.alterPos = thd.mTokStart;
 				// lex->duplicates= DUP_ERROR;
 				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(4 - (4)), null, null))
 					return YYABORT;

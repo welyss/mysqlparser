@@ -10,7 +10,7 @@ import org.welyss.mysqlparser.items.TableIdent;
 public class SQLThread {
 	protected Boolean success;
 	protected StringBuilder sql;
-	protected List<String> parsedSqls = new ArrayList<String>();
+	protected List<SQLInfo> parsedSqls = new ArrayList<SQLInfo>();
 	protected int foundSemicolon;
 	protected boolean inWhere;
 	protected String msg;
@@ -79,12 +79,13 @@ public class SQLThread {
 	}
 
 	protected ParseResult getSQLResultAndReset(int lastPos) {
-		String parsedSQL = success ? parsedSqls.get(parsedSqls.size() - 1) : sql.substring(mPtr, sql.length());
+		SQLInfo sqlInfo = parsedSqls.get(parsedSqls.size() - 1);
+		String parsedSQL = success ? sqlInfo.sql : sql.substring(mPtr, sql.length());
 		for(TableIdent ti : this.lex.tables) {
 			if (ti.getDbStartPos() != null) ti.setDbStartPos(ti.getDbStartPos() - lastPos);
 			if (ti.getTableStartPos() != null) ti.setTableStartPos(ti.getTableStartPos() - lastPos);
 		}
-		ParseResult result = new ParseResult(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags), this.inWhere, this.lex.mSqlCmd);
+		ParseResult result = new ParseResult(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags), this.inWhere, sqlInfo.alterCommand);
 //		success = null;
 		this.lex.sqlCommand = null;
 		this.lex.tables.clear();
@@ -92,5 +93,14 @@ public class SQLThread {
 		this.inWhere = false;
 		lex.alterInfo.flags.clear();
 		return result;
+	}
+
+	protected void addSQL(int eof) {
+		String alterCmd = null;
+		if (lex.alterPos != null && lex.alterPos < eof) {
+			alterCmd = sql.substring(lex.alterPos, eof);
+			lex.alterPos = null;
+		}
+		parsedSqls.add(new SQLInfo(sql.substring(foundSemicolon, eof), alterCmd));
 	}
 }

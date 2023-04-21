@@ -14,7 +14,7 @@ public class Lex {
 	List<TableIdent> tables;
 	public long grant;
 	public int allPrivileges;
-	public String mSqlCmd;
+	public Integer alterPos;
 	String comment;
 
 	public Lex() {
