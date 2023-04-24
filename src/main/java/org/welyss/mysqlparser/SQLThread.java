@@ -80,7 +80,7 @@ public class SQLThread {
 
 	protected ParseResult getSQLResultAndReset(int lastPos) {
 		SQLInfo sqlInfo = parsedSqls.get(parsedSqls.size() - 1);
-		String parsedSQL = success ? sqlInfo.sql : sql.substring(mPtr, sql.length());
+		String parsedSQL = success ? sqlInfo.sql.trim() : sql.substring(mPtr, sql.length());
 		for(TableIdent ti : this.lex.tables) {
 			if (ti.getDbStartPos() != null) ti.setDbStartPos(ti.getDbStartPos() - lastPos);
 			if (ti.getTableStartPos() != null) ti.setTableStartPos(ti.getTableStartPos() - lastPos);
