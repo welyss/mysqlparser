@@ -98,7 +98,7 @@ public class SQLThread {
 	protected void addSQL(int eof) {
 		String alterCmd = null;
 		if (lex.alterPos != null && lex.alterPos < eof) {
-			alterCmd = sql.substring(lex.alterPos, eof);
+			alterCmd = sql.substring(lex.alterPos, eof).trim();
 			lex.alterPos = null;
 		}
 		parsedSqls.add(new SQLInfo(sql.substring(foundSemicolon, eof), alterCmd));

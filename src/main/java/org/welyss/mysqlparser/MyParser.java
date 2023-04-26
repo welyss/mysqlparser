@@ -10048,7 +10048,7 @@ class MyParser {
 				// lex->name.str= 0;
 				// lex->name.length= 0;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_TABLE;
-				thd.lex.alterPos = thd.mTokStart;
+				thd.lex.alterPos = thd.mCppTextEnd + 1;
 				// lex->duplicates= DUP_ERROR;
 				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(4 - (4)), null, null))
 					return YYABORT;
