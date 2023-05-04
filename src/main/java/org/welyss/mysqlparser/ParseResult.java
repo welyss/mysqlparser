@@ -57,7 +57,7 @@ public class ParseResult {
 		this.alterFlags = alterFlags;
 	}
 	public String getParsedSQL() {
-		return parsedSQL;
+		return parsedSQL.trim();
 	}
 	public void setParsedSQL(String parsedSQL) {
 		this.parsedSQL = parsedSQL;
@@ -95,7 +95,7 @@ public class ParseResult {
 				}
 			}
 		}
-		return result.toString();
+		return result.toString().trim();
 	}
 	public String hack(String schema) {
 		return hack(schema, null);
