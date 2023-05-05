@@ -79,14 +79,21 @@ public class SQLThread {
 	}
 
 	protected ParseResult getSQLResultAndReset(int lastPos) {
-		SQLInfo sqlInfo = parsedSqls.get(parsedSqls.size() - 1);
-//		String parsedSQL = success ? sqlInfo.sql.trim() : sql.substring(mPtr, sql.length());
-		String parsedSQL = success ? sqlInfo.sql : sql.substring(mPtr, sql.length());
-		for(TableIdent ti : this.lex.tables) {
-			if (ti.getDbStartPos() != null) ti.setDbStartPos(ti.getDbStartPos() - lastPos);
-			if (ti.getTableStartPos() != null) ti.setTableStartPos(ti.getTableStartPos() - lastPos);
+		String parsedSQL;
+		String alterCommand;
+		if (success) {
+			SQLInfo sqlInfo = parsedSqls.get(parsedSqls.size() - 1);
+			alterCommand = sqlInfo.alterCommand;
+			parsedSQL = sqlInfo.sql;
+			for(TableIdent ti : this.lex.tables) {
+				if (ti.getDbStartPos() != null) ti.setDbStartPos(ti.getDbStartPos() - lastPos);
+				if (ti.getTableStartPos() != null) ti.setTableStartPos(ti.getTableStartPos() - lastPos);
+			}
+		} else {
+			parsedSQL = sql.toString();
+			alterCommand = null;
 		}
-		ParseResult result = new ParseResult(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags), this.inWhere, sqlInfo.alterCommand);
+		ParseResult result = new ParseResult(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags), this.inWhere, alterCommand);
 //		success = null;
 		this.lex.sqlCommand = null;
 		this.lex.tables.clear();
