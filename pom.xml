@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.welyss</groupId>
 	<artifactId>mysqlparser</artifactId>
-	<version>1.0.0</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<name>mysql parser</name>
 	<build>
 		<plugins>
@@ -30,7 +30,7 @@
 						</goals>
 						<configuration>
 							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteSnapshots>true</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
 						</configuration>
 					</execution>
@@ -41,4 +41,17 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>hbec internal releases repository</name>
+            <url>http://maven.dev.hbec.com/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>hbec internal snapshots repository</name>
+            <url>http://maven.dev.hbec.com/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

@@ -36,9 +36,8 @@ class MyLexer implements Lexer {
 
 	@Override
 	public void mysqlError(String s, SQLThread thd) {
-		thd.msg = String.format(
-				"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server"
-						+ " version for the right syntax to use near '%s' at line %d",
+		thd.msg = String.format("You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '%s' at line %d",
+//				thd.sql.substring(thd.mCppTextStart, thd.sql.length()), thd.lineno);
 				thd.sql.substring(thd.mTokEnd, thd.sql.length()), thd.lineno);
 	}
 
