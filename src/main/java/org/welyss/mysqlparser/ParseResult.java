@@ -78,20 +78,22 @@ public class ParseResult {
 	public String hack(String schema, String table) {
 		StringBuilder result = new StringBuilder(parsedSQL);
 		if (!sqlCommand.equals(SQLCommand.SQLCOM_EMPTY_QUERY)) {
-			TableIdent ti = tables.get(0);
-			if (ti.getDbStartPos() != null) {
-				int offset = 0;
-				if (schema != null && schema.trim().length() > 0) {
-					result.delete(ti.getDbStartPos(), ti.getDbStartPos() + ti.getDb().length()).insert(ti.getDbStartPos(), schema);
-					offset = ti.getDb().length() - schema.length();
-				}
-				if (table != null && table.trim().length() > 0) {
-					offset = ti.getTableStartPos() - offset;
-					result.delete(offset, offset + ti.getTable().length()).insert(offset, table);
-				}
-			} else if (ti.getTableStartPos() != null) {
-				if (table != null && table.trim().length() > 0) {
-					result.delete(ti.getTableStartPos(), ti.getTableStartPos() + ti.getTable().length()).insert(ti.getTableStartPos(), table);
+			if (tables.size() > 0) {
+				TableIdent ti = tables.get(0);
+				if (ti.getDbStartPos() != null) {
+					int offset = 0;
+					if (schema != null && schema.trim().length() > 0) {
+						result.delete(ti.getDbStartPos(), ti.getDbStartPos() + ti.getDb().length()).insert(ti.getDbStartPos(), schema);
+						offset = ti.getDb().length() - schema.length();
+					}
+					if (table != null && table.trim().length() > 0) {
+						offset = ti.getTableStartPos() - offset;
+						result.delete(offset, offset + ti.getTable().length()).insert(offset, table);
+					}
+				} else if (ti.getTableStartPos() != null) {
+					if (table != null && table.trim().length() > 0) {
+						result.delete(ti.getTableStartPos(), ti.getTableStartPos() + ti.getTable().length()).insert(ti.getTableStartPos(), table);
+					}
 				}
 			}
 		}
