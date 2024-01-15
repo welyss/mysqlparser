@@ -551,6 +551,7 @@ class MyLexer implements Lexer {
 					if (Character.isDigit(version_str[0]) && Character.isDigit(version_str[1])
 							&& Character.isDigit(version_str[2]) && Character.isDigit(version_str[3])
 							&& Character.isDigit(version_str[4])) {
+						// TODO 特殊注释当做真实语句处理
 						// long version;
 						// version=strtol(version_str, NULL, 10);
 
