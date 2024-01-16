@@ -20,6 +20,7 @@ class MyLexer implements Lexer {
 	public static final int UNSIGNED_LONGLONG_LEN = 20;
 	/** Lex_input_stream **/
 	public LexInputStreamProcessor lip;
+	public long mysqlVersionId;
 	private Map<Character, MyLexStates> stateMap;
 	private Map<Character, Boolean> identMap;
 	private boolean ignoreSpace = (variables.sqlMode & Variables.MODE_IGNORE_SPACE) == Variables.MODE_IGNORE_SPACE;
@@ -541,45 +542,41 @@ class MyLexer implements Lexer {
 					 * then 2 digits (dot). 32302 -> 3.23.02 50032 -> 5.0.32
 					 * 50114 -> 5.1.14
 					 */
-					char version_str[] = new char[6];
+					char version_str[] = new char[5];
 					version_str[0] = lip.yyPeekn(thd, 0);
 					version_str[1] = lip.yyPeekn(thd, 1);
 					version_str[2] = lip.yyPeekn(thd, 2);
 					version_str[3] = lip.yyPeekn(thd, 3);
 					version_str[4] = lip.yyPeekn(thd, 4);
-					version_str[5] = 0;
 					if (Character.isDigit(version_str[0]) && Character.isDigit(version_str[1])
 							&& Character.isDigit(version_str[2]) && Character.isDigit(version_str[3])
 							&& Character.isDigit(version_str[4])) {
-						// TODO 特殊注释当做真实语句处理
 						// long version;
-						// version=strtol(version_str, NULL, 10);
+						long version = Long.parseLong(new String(version_str));
 
-						// if (version <= MYSQL_VERSION_ID)
-						// {
-						// /* Accept 'M' 'm' 'm' 'd' 'd' */
-						// lip.yySkipn(5);
-						// /* Expand the content of the special comment as real
-						// code */
-						// lip.set_echo(TRUE);
-						// state=MY_LEX_START;
-						// break; /* Do not treat contents as a comment. */
-						// }
-						// else
-						// {
-						/*
-						 * Patch and skip the conditional comment to avoid it
-						 * being propagated infinitely (eg. to a slave).
-						 */
-						lip.yyUnput(thd, ' ');
-						comment_closed = !consumeComment(thd, 1);
-						if (!comment_closed) {
-							thd.sql.setCharAt(lip.yyGet(thd), '!');
+						if (version <= mysqlVersionId) {
+							/* Accept 'M' 'm' 'm' 'd' 'd' */
+							lip.yySkipn(thd, 5);
+							/*
+							 * Expand the content of the special comment as real code
+							 */
+//						 lip.set_echo(TRUE);
+							state = MyLexStates.MY_LEX_START;
+							break; /* Do not treat contents as a comment. */
+						} else {
+							/*
+							 * Patch and skip the conditional comment to avoid it being propagated
+							 * infinitely (eg. to a slave).
+							 */
+							lip.yyUnput(thd, ' ');
+							comment_closed = !consumeComment(thd, 1);
+							if (!comment_closed) {
+								thd.sql.setCharAt(lip.yyGet(thd), '!');
+							}
+							/*
+							 * version allowed to have one level of comment inside.
+							 */
 						}
-						/*
-						 * version allowed to have one level of comment inside.
-						 */
-						// }
 					} else {
 						/* Not a version comment. */
 						state = MyLexStates.MY_LEX_START;

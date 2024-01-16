@@ -8,8 +8,14 @@ public class MySQLParser {
 	private MyParser myParser;
 
 	public MySQLParser() throws IOException {
+		this(50644);
+	}
+
+	public MySQLParser(long version) throws IOException {
 		try {
-			myParser = new MyParser(new MyLexer());
+			MyLexer lexer = new MyLexer();
+			lexer.mysqlVersionId = version;
+			myParser = new MyParser(lexer);
 		} catch (IOException e) {
 			throw new IOException("Action table file read faild.", e);
 		}
