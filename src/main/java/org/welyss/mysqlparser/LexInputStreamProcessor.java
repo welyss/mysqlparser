@@ -64,7 +64,7 @@ public class LexInputStreamProcessor {
 	}
 
 	public static boolean myIsCntrl(char c) {
-		return (ctypeLatin1[c] & _MY_CTR) == _MY_CTR;
+		return c < ctypeLatin1.length && (ctypeLatin1[c] & _MY_CTR) == _MY_CTR;
 	}
 
 	public static int myMbcharlen(char c) {
@@ -72,11 +72,11 @@ public class LexInputStreamProcessor {
 	}
 
 	public static boolean myIsDigit(char c) {
-		return (ctypeLatin1[c] & _MY_NMR) == _MY_NMR;
+		return c < ctypeLatin1.length && ((ctypeLatin1[c] & _MY_NMR) == _MY_NMR);
 	}
 
 	public static boolean myIsalnum(char c) {
-		return (ctypeLatin1[c] & _MY_U) == _MY_U || (ctypeLatin1[c] & _MY_L) == _MY_L || (ctypeLatin1[c] & _MY_NMR) == _MY_NMR;
+		return c < ctypeLatin1.length && ((ctypeLatin1[c] & _MY_U) == _MY_U || (ctypeLatin1[c] & _MY_L) == _MY_L || (ctypeLatin1[c] & _MY_NMR) == _MY_NMR);
 	}
 
 	/** Mark the stream position as the start of a new token. */
