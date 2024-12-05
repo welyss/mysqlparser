@@ -12,10 +12,11 @@ public class ParseResult {
 	private List<TableIdent> tables;
 	private String errorMsg;
 	private Set<AlterFlag> alterFlags;
+	private List<ColumnInfo> alterColumnInfos;
 	private boolean inWhere;
 	private String alterCommand;
 
-	public ParseResult(boolean success, String parsedSQL, SQLCommand sqlCommand, List<TableIdent> tables, String errorMsg, Set<AlterFlag> alterFlags, boolean inWhere, String alterCommand) {
+	public ParseResult(boolean success, String parsedSQL, SQLCommand sqlCommand, List<TableIdent> tables, String errorMsg, Set<AlterFlag> alterFlags, boolean inWhere, String alterCommand, List<ColumnInfo> alterColumnInfos) {
 		this.success = success;
 		this.parsedSQL = parsedSQL;
 		this.sqlCommand = sqlCommand;
@@ -24,6 +25,7 @@ public class ParseResult {
 		this.alterFlags = alterFlags;
 		this.inWhere = inWhere;
 		this.alterCommand = alterCommand;
+		this.alterColumnInfos = alterColumnInfos;
 	}
 
 	public boolean isSuccess() {
@@ -73,6 +75,14 @@ public class ParseResult {
 	}
 	public void setAlterCommands(String alterCommands) {
 		this.alterCommand = alterCommands;
+	}
+
+	public List<ColumnInfo> getAlterColumnInfos() {
+		return alterColumnInfos;
+	}
+
+	public void setAlterColumnInfos(List<ColumnInfo> alterColumnInfos) {
+		this.alterColumnInfos = alterColumnInfos;
 	}
 
 	public String hack(String schema, String table) {

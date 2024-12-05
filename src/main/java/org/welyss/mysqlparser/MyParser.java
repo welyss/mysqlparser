@@ -7959,22 +7959,36 @@ class MyParser {
 		// break;
 		//
 		//
-		// case 657:
-		// if (yyn == 657)
-		// /* Line 350 of lalr1.java */
-		// /* Line 6411 of "sql_yacc.y" */
-		// {
-		// LEX *lex=Lex;
-		// if (add_field_to_list(lex->thd, &((lex_str)(yystack.valueAt
-		// (4-(1)))), (enum enum_field_types) ((num)(yystack.valueAt (4-(3)))),
-		// lex->length,lex->dec,lex->type,
-		// lex->default_value, lex->on_update_value,
-		// &lex->comment,
-		// lex->change,&lex->interval_list,lex->charset,
-		// lex->uint_geom_type))
-		// return YYABORT;
-		// };
-		// break;
+		 case 657:
+		 if (yyn == 657)
+		 /* Line 350 of lalr1.java */
+		 /* Line 6411 of "sql_yacc.y" */
+		 {
+//		 LEX *lex=Lex;
+//		 if (add_field_to_list(lex->thd, &((lex_str)(yystack.valueAt
+//		 (4-(1)))), (enum enum_field_types) ((num)(yystack.valueAt (4-(3)))),
+//		 lex->length,lex->dec,lex->type,
+//		 lex->default_value, lex->on_update_value,
+//		 &lex->comment,
+//		 lex->change,&lex->interval_list,lex->charset,
+//		 lex->uint_geom_type))
+			 // TODO  
+			 if (thd.lex.alterInfo.flags.contains(AlterFlag.ALTER_ADD_COLUMN)) {
+				 Object columnNameObj = yystack.valueAt(4-(1));
+				 Object columnTypeObj = yystack.valueAt(4-(3));
+				 String columnName = null;
+				 String columnType = null;
+				 if (columnNameObj != null) {
+					 columnName = ((Token)columnNameObj).lexStr;
+				 }
+				 if (columnTypeObj != null) {
+					 columnType = ((Token)columnTypeObj).lexStr;
+				 }
+				 MyParserProcessor.addFieldToList(thd, columnName, columnType);
+			 }
+//			 return YYABORT;
+		 };
+		 break;
 		//
 		//
 		// case 658:

@@ -1,5 +1,7 @@
 package org.welyss.mysqlparser;
 
+import java.util.ArrayList;
+
 import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.TableIdent;
 
@@ -79,5 +81,19 @@ public class MyParserProcessor {
 			success = true;
 		}
 		return success;
+	}
+
+	public static boolean addFieldToList(SQLThread thd, String column, String type) {
+		boolean result = false;
+		if (column != null) {
+			ColumnInfo curCol = new ColumnInfo();
+			curCol.name = column;
+			if (type != null) {
+				curCol.typeName = type;
+			}
+			thd.lex.alterInfo.columns.add(curCol);
+			result = true;
+		}
+		return result;
 	}
 }

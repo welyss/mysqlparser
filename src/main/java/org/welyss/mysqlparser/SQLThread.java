@@ -93,13 +93,14 @@ public class SQLThread {
 			parsedSQL = sql.toString();
 			alterCommand = null;
 		}
-		ParseResult result = new ParseResult(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, new TreeSet<AlterFlag>(lex.alterInfo.flags), this.inWhere, alterCommand);
+		ParseResult result = new ParseResult(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, lex.alterInfo.flags, this.inWhere, alterCommand, lex.alterInfo.columns);
 //		success = null;
 		this.lex.sqlCommand = null;
 		this.lex.tables.clear();
 		this.msg = null;
 		this.inWhere = false;
-		lex.alterInfo.flags.clear();
+		lex.alterInfo.flags = new TreeSet<AlterFlag>();
+		lex.alterInfo.columns = new ArrayList<ColumnInfo>();
 		return result;
 	}
 
