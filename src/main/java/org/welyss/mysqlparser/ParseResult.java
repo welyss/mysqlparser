@@ -12,11 +12,11 @@ public class ParseResult {
 	private List<TableIdent> tables;
 	private String errorMsg;
 	private Set<AlterFlag> alterFlags;
-	private List<ColumnInfo> alterColumnInfos;
+	private List<AlterColumnInfo> alterColumnInfos;
 	private boolean inWhere;
 	private String alterCommand;
 
-	public ParseResult(boolean success, String parsedSQL, SQLCommand sqlCommand, List<TableIdent> tables, String errorMsg, Set<AlterFlag> alterFlags, boolean inWhere, String alterCommand, List<ColumnInfo> alterColumnInfos) {
+	public ParseResult(boolean success, String parsedSQL, SQLCommand sqlCommand, List<TableIdent> tables, String errorMsg, Set<AlterFlag> alterFlags, boolean inWhere, String alterCommand, List<AlterColumnInfo> alterColumnInfos) {
 		this.success = success;
 		this.parsedSQL = parsedSQL;
 		this.sqlCommand = sqlCommand;
@@ -70,18 +70,18 @@ public class ParseResult {
 	public void setInWhere(boolean inWhere) {
 		this.inWhere = inWhere;
 	}
-	public String getAlterCommands() {
+	public String getAlterCommand() {
 		return alterCommand;
 	}
-	public void setAlterCommands(String alterCommands) {
-		this.alterCommand = alterCommands;
+	public void setAlterCommand(String alterCommand) {
+		this.alterCommand = alterCommand;
 	}
 
-	public List<ColumnInfo> getAlterColumnInfos() {
+	public List<AlterColumnInfo> getAlterColumnInfos() {
 		return alterColumnInfos;
 	}
 
-	public void setAlterColumnInfos(List<ColumnInfo> alterColumnInfos) {
+	public void setAlterColumnInfos(List<AlterColumnInfo> alterColumnInfos) {
 		this.alterColumnInfos = alterColumnInfos;
 	}
 

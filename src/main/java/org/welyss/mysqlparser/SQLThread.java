@@ -100,7 +100,7 @@ public class SQLThread {
 		this.msg = null;
 		this.inWhere = false;
 		lex.alterInfo.flags = new TreeSet<AlterFlag>();
-		lex.alterInfo.columns = new ArrayList<ColumnInfo>();
+		lex.alterInfo.columns = new ArrayList<AlterColumnInfo>();
 		return result;
 	}
 

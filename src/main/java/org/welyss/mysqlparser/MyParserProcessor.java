@@ -1,7 +1,5 @@
 package org.welyss.mysqlparser;
 
-import java.util.ArrayList;
-
 import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.TableIdent;
 
@@ -83,14 +81,20 @@ public class MyParserProcessor {
 		return success;
 	}
 
-	public static boolean addFieldToList(SQLThread thd, String column, String type) {
+	public static boolean addFieldToList(SQLThread thd, String column, String type, AlterFlag af) {
+		return addFieldToList(thd, column, null, type, af);
+	}
+
+	public static boolean addFieldToList(SQLThread thd, String columnName, String changedName, String type, AlterFlag af) {
 		boolean result = false;
-		if (column != null) {
-			ColumnInfo curCol = new ColumnInfo();
-			curCol.name = column;
+		if (columnName != null) {
+			AlterColumnInfo curCol = new AlterColumnInfo();
+			curCol.name = columnName;
+			curCol.changedName = changedName;
 			if (type != null) {
 				curCol.typeName = type;
 			}
+			curCol.alterFlag = af;
 			thd.lex.alterInfo.columns.add(curCol);
 			result = true;
 		}

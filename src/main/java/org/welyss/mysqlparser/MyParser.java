@@ -1,6 +1,7 @@
 package org.welyss.mysqlparser;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.TableIdent;
@@ -7972,20 +7973,40 @@ class MyParser {
 //		 &lex->comment,
 //		 lex->change,&lex->interval_list,lex->charset,
 //		 lex->uint_geom_type))
-			 // TODO  
-			 if (thd.lex.alterInfo.flags.contains(AlterFlag.ALTER_ADD_COLUMN)) {
-				 Object columnNameObj = yystack.valueAt(4-(1));
-				 Object columnTypeObj = yystack.valueAt(4-(3));
-				 String columnName = null;
-				 String columnType = null;
-				 if (columnNameObj != null) {
-					 columnName = ((Token)columnNameObj).lexStr;
-				 }
-				 if (columnTypeObj != null) {
-					 columnType = ((Token)columnTypeObj).lexStr;
-				 }
-				 MyParserProcessor.addFieldToList(thd, columnName, columnType);
-			 }
+			int flagSize = thd.lex.alterInfo.flags.size();
+			if (flagSize > 0) {
+				AlterFlag[] af = new AlterFlag[flagSize];
+				thd.lex.alterInfo.flags.toArray(af);
+				AlterFlag curFlag = af[af.length - 1];
+				if (AlterFlag.ALTER_ADD_COLUMN.equals(curFlag) || AlterFlag.ALTER_CHANGE_COLUMN.equals(curFlag)) {
+					Object columnNameObj = yystack.valueAt(4 - (1));
+					Object columnTypeObj = yystack.valueAt(4 - (3));
+					String columnName = null;
+					String columnType = null;
+					if (columnNameObj != null) {
+						columnName = ((Token) columnNameObj).lexStr;
+					}
+					if (columnTypeObj != null) {
+						columnType = ((Token) columnTypeObj).lexStr;
+					}
+					if (AlterFlag.ALTER_ADD_COLUMN.equals(curFlag)) {
+						MyParserProcessor.addFieldToList(thd, columnName, columnType, curFlag);
+					} else if (AlterFlag.ALTER_CHANGE_COLUMN.equals(curFlag)) {
+						// ALTER CHANGE field_ident [field_ident] [field_spec]
+						List<AlterColumnInfo> alterColumns = thd.lex.alterInfo.columns;
+						if (alterColumns.size() > 0) {
+							AlterColumnInfo curAlterColumnInfo = alterColumns.get(alterColumns.size() - 1);
+							if (curAlterColumnInfo.changedName != null) {
+								Object fieldIdent = yystack.valueAt(1 - (1));
+								if (fieldIdent != null) {
+									curAlterColumnInfo.changedName = columnName;
+									curAlterColumnInfo.typeName = columnType;
+								}
+							}
+						}
+					}
+				}
+			}
 //			 return YYABORT;
 		 };
 		 break;
@@ -10855,8 +10876,14 @@ class MyParser {
 		{
 		// LEX *lex=Lex;
 		// lex->change= ((lex_str)(yystack.valueAt (3-(3)))).str;
-			Object changeObj = yystack.valueAt (3-(3));
+			// ALTER CHANGE [field_ident]
 			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN);
+			Object columnNameObj = yystack.valueAt (3-(3));
+			String columnName = null;
+			if (columnNameObj != null) {
+				columnName = ((Token)columnNameObj).lexStr;
+			}
+			MyParserProcessor.addFieldToList(thd, columnName, "", null, AlterFlag.ALTER_CHANGE_COLUMN);
 		};
 		break;
 		//
@@ -10880,16 +10907,22 @@ class MyParser {
 		// lex->default_value= lex->on_update_value= 0;
 		// lex->comment=null_lex_str;
 		// lex->charset= NULL;
+			// ALTER MODIFY
 			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN);
+			Object columnNameObj = yystack.valueAt (3-(3));
+			String columnName = null;
+			if (columnNameObj != null) {
+				columnName = ((Token) columnNameObj).lexStr;
+			}
+			MyParserProcessor.addFieldToList(thd, columnName, null, AlterFlag.ALTER_CHANGE_COLUMN);
 		};
 		break;
-		//
-		//
-		// case 977:
-		// if (yyn == 977)
-		// /* Line 350 of lalr1.java */
-		// /* Line 7852 of "sql_yacc.y" */
-		// {
+		
+		 case 977:
+		 if (yyn == 977)
+		 /* Line 350 of lalr1.java */
+		 /* Line 7852 of "sql_yacc.y" */
+		 {
 		// LEX *lex=Lex;
 		// if (add_field_to_list(lex->thd,&((lex_str)(yystack.valueAt (6-(3)))),
 		// (enum enum_field_types) ((num)(yystack.valueAt (6-(5)))),
@@ -10900,8 +10933,18 @@ class MyParser {
 		// lex->charset,
 		// lex->uint_geom_type))
 		// return YYABORT;
-		// };
-		// break;
+			List<AlterColumnInfo> alterColumns = thd.lex.alterInfo.columns;
+			if (alterColumns.size() > 0) {
+				AlterColumnInfo curAlterColumnInfo = alterColumns.get(alterColumns.size() - 1);
+				if (AlterFlag.ALTER_CHANGE_COLUMN.equals(curAlterColumnInfo.alterFlag)) {
+					Object type = yystack.valueAt(6 - (5));
+					if (type != null) {
+						curAlterColumnInfo.typeName = ((Token) type).lexStr;
+					}
+				}
+			}
+		 };
+		 break;
 		//
 		//
 		// case 978:
@@ -10925,6 +10968,12 @@ class MyParser {
 		// return YYABORT;
 		// lex->alter_info.drop_list.push_back(ad);
 			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_COLUMN);
+			Object columnNameObj = yystack.valueAt(4-(3));
+			String columnName = null;
+			if (columnNameObj != null) {
+				columnName = ((Token)columnNameObj).lexStr;
+			}
+			MyParserProcessor.addFieldToList(thd, columnName, null, AlterFlag.ALTER_DROP_COLUMN);
 		};
 		break;
 
@@ -21310,19 +21359,22 @@ class MyParser {
 		// break;
 		//
 		//
-		// case 1962:
-		// if (yyn == 1962)
-		// /* Line 350 of lalr1.java */
-		// /* Line 13849 of "sql_yacc.y" */
-		// { yyval=((lex_str)(yystack.valueAt (1-(1))));};
-		// break;
-		//
-		//
-		// case 1963:
-		// if (yyn == 1963)
-		// /* Line 350 of lalr1.java */
-		// /* Line 13851 of "sql_yacc.y" */
-		// {
+		 case 1962:
+		 if (yyn == 1962)
+		 /* Line 350 of lalr1.java */
+		 /* Line 13849 of "sql_yacc.y" */
+		 {
+//			 yyval=((lex_str)(yystack.valueAt (1-(1))));
+			 // field_ident
+		 };
+		 break;
+		
+		
+		 case 1963:
+		 if (yyn == 1963)
+		 /* Line 350 of lalr1.java */
+		 /* Line 13851 of "sql_yacc.y" */
+		 {
 		// TABLE_LIST *table= Select->table_list.first;
 		// if (my_strcasecmp(table_alias_charset, ((lex_str)(yystack.valueAt
 		// (5-(1)))).str, table->db))
@@ -21340,15 +21392,16 @@ class MyParser {
 		// return YYABORT;
 		// }
 		// yyval=((lex_str)(yystack.valueAt (5-(5))));
-		// };
-		// break;
+//			 Object fieldIdent = yystack.valueAt(5-(1));
+		 };
+		 break;
 		//
 		//
-		// case 1964:
-		// if (yyn == 1964)
-		// /* Line 350 of lalr1.java */
-		// /* Line 13867 of "sql_yacc.y" */
-		// {
+		 case 1964:
+		 if (yyn == 1964)
+		 /* Line 350 of lalr1.java */
+		 /* Line 13867 of "sql_yacc.y" */
+		 {
 		// TABLE_LIST *table= Select->table_list.first;
 		// if (my_strcasecmp(table_alias_charset, ((lex_str)(yystack.valueAt
 		// (3-(1)))).str, table->alias))
@@ -21358,16 +21411,20 @@ class MyParser {
 		// return YYABORT;
 		// }
 		// yyval=((lex_str)(yystack.valueAt (3-(3))));
-		// };
-		// break;
+//			 Object fieldIdent = yystack.valueAt(3-(1));
+		 };
+		 break;
 		//
 		//
-		// case 1965:
-		// if (yyn == 1965)
-		// /* Line 350 of lalr1.java */
-		// /* Line 13876 of "sql_yacc.y" */
-		// { yyval=((lex_str)(yystack.valueAt (2-(2))));};
-		// break;
+		 case 1965:
+		 if (yyn == 1965)
+		 /* Line 350 of lalr1.java */
+		 /* Line 13876 of "sql_yacc.y" */
+		 {
+//			 yyval=((lex_str)(yystack.valueAt (2-(2))));
+//			 Object fieldIdent = yystack.valueAt(2-(2));
+		 };
+		 break;
 
 		case 1966:
 			if (yyn == 1966)
