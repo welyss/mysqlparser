@@ -54,4 +54,12 @@
             <url>http://maven.dev.hbec.com/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+    <dependencies>
+    	<dependency>
+    		<groupId>junit</groupId>
+    		<artifactId>junit</artifactId>
+    		<version>4.13.2</version>
+    		<scope>test</scope>
+    	</dependency>
+    </dependencies>
 </project>
