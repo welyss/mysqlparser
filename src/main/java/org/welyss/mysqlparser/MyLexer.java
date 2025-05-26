@@ -3,7 +3,7 @@ package org.welyss.mysqlparser;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.welyss.mysqlparser.MyParser.Lexer;
+import org.welyss.mysqlparser.MyParser56.Lexer;
 import org.welyss.mysqlparser.items.KeywordToken;
 import org.welyss.mysqlparser.items.Token;
 
@@ -78,7 +78,7 @@ class MyLexer implements Lexer {
 //		}
 
 		switch (token) {
-		case MyParser.WITH:
+		case MyParser56.WITH:
 			/*
 			 * Parsing 'WITH' 'ROLLUP' or 'WITH' 'CUBE' requires 2 look ups,
 			 * which makes the grammar LALR(2). Replace by a single
@@ -87,12 +87,12 @@ class MyLexer implements Lexer {
 			 */
 			token = lexOneToken(thd);
 			switch (token) {
-			case MyParser.CUBE_SYM:
+			case MyParser56.CUBE_SYM:
 //				lip.addDigestToken(MyParser.WITH_CUBE_SYM, thd);
-				return MyParser.WITH_CUBE_SYM;
-			case MyParser.ROLLUP_SYM:
+				return MyParser56.WITH_CUBE_SYM;
+			case MyParser56.ROLLUP_SYM:
 //				lip.addDigestToken(MyParser.WITH_ROLLUP_SYM, thd);
-				return MyParser.WITH_ROLLUP_SYM;
+				return MyParser56.WITH_ROLLUP_SYM;
 			default:
 				/*
 				 * Save the token following 'WITH'
@@ -101,7 +101,7 @@ class MyLexer implements Lexer {
 				thd.yylval = null;
 				thd.lookaheadToken = token;
 //				lip.addDigestToken(MyParser.WITH, thd);
-				return MyParser.WITH;
+				return MyParser56.WITH;
 			}
 			// break;
 		default:
@@ -148,7 +148,7 @@ class MyLexer implements Lexer {
 			case MY_LEX_ESCAPE:
 				if (lip.yyGet(thd) == 'N') { // Allow \N as shortcut for NULL
 					token.lexStr = "\\N";
-					return MyParser.NULL_SYM;
+					return MyParser56.NULL_SYM;
 				}
 			case MY_LEX_CHAR: // Unknown or single char token
 			case MY_LEX_SKIP: // This should not happen
@@ -180,7 +180,7 @@ class MyLexer implements Lexer {
 					 * query must stay grammatically correct.
 					 */
 					if (c == '?' && lip.stmtPrepareMode && !ident(lip.yyPeek(thd)))
-						return (MyParser.PARAM_MARKER);
+						return (MyParser56.PARAM_MARKER);
 				}
 
 				return ((int) c);
@@ -197,7 +197,7 @@ class MyLexer implements Lexer {
 					break;
 				}
 				thd.textStringIs7bit = (lip.tokBitmap & 0x80) == 0x80 ? false : true;
-				return (MyParser.NCHAR_STRING);
+				return (MyParser56.NCHAR_STRING);
 
 			case MY_LEX_IDENT_OR_HEX:
 				if (lip.yyPeek(thd) == '\'') { // Found x'hex-number'
@@ -217,7 +217,7 @@ class MyLexer implements Lexer {
 					/*
 					 * If there were non-ASCII characters, mark that we must convert
 					 */
-					result_state = (result_state & 0x80) == 0x80 ? MyParser.IDENT_QUOTED : MyParser.IDENT;
+					result_state = (result_state & 0x80) == 0x80 ? MyParser56.IDENT_QUOTED : MyParser56.IDENT;
 				}
 				length = lip.yyLength(thd);
 				start = lip.getPtr(thd);
@@ -294,7 +294,7 @@ class MyLexer implements Lexer {
 						if ((lip.yyLength(thd) >= 3) && !ident(c)) {
 							/* skip '0x' */
 							token.lexStr = getToken(thd, 2, lip.yyLength(thd) - 2);
-							return (MyParser.HEX_NUM);
+							return (MyParser56.HEX_NUM);
 						}
 						lip.yyUnget(thd);
 						state = MyLexStates.MY_LEX_IDENT_START;
@@ -305,7 +305,7 @@ class MyLexer implements Lexer {
 						if ((lip.yyLength(thd) >= 3) && !ident(c)) {
 							/* Skip '0b' */
 							token.lexStr = getToken(thd, 2, lip.yyLength(thd) - 2);
-							return (MyParser.BIN_NUM);
+							return (MyParser56.BIN_NUM);
 						}
 						lip.yyUnget(thd);
 						state = MyLexStates.MY_LEX_IDENT_START;
@@ -333,20 +333,20 @@ class MyLexer implements Lexer {
 							while (Character.isDigit(lip.yyGet(thd)))
 								;
 							token.lexStr = getToken(thd, 0, lip.yyLength(thd));
-							return (MyParser.FLOAT_NUM);
+							return (MyParser56.FLOAT_NUM);
 						}
 					}
 					lip.yyUnget(thd);
 				}
 				// fall through
 			case MY_LEX_IDENT_START: // We come here after '.'
-				result_state = MyParser.IDENT; {
+				result_state = MyParser56.IDENT; {
 					for (result_state = 0; ident(c = lip.yyGet(thd)); result_state |= c)
 						;
 					/*
 					 * If there were non-ASCII characters, mark that we must convert
 					 */
-					result_state = (result_state & 0x80) == 0x80 ? MyParser.IDENT_QUOTED : MyParser.IDENT;
+					result_state = (result_state & 0x80) == 0x80 ? MyParser56.IDENT_QUOTED : MyParser56.IDENT;
 				}
 				if (c == '.' && ident(lip.yyPeek(thd)))
 					thd.nextState = MyLexStates.MY_LEX_IDENT_SEP;// Next is '.'
@@ -369,7 +369,7 @@ class MyLexer implements Lexer {
 					c = lip.yyGet(thd);
 					if (c == 0) {
 						lip.yyUnget(thd);
-						return MyParser.ABORT_SYM; // Unmatched quotes
+						return MyParser56.ABORT_SYM; // Unmatched quotes
 					}
 
 					// int var_length;
@@ -397,7 +397,7 @@ class MyLexer implements Lexer {
 				// lip.body_utf8_append_literal(thd, &yylval->lex_str, cs,
 				// lip.m_cpp_text_end);
 
-				return (MyParser.IDENT_QUOTED);
+				return (MyParser56.IDENT_QUOTED);
 			}
 			case MY_LEX_INT_OR_REAL: // Complete int or incomplete real
 				if (c != '.') { // Found complete integer number.
@@ -420,36 +420,36 @@ class MyLexer implements Lexer {
 					while (Character.isDigit(lip.yyGet(thd)))
 						;
 					token.lexStr = getToken(thd, 0, lip.yyLength(thd));
-					return (MyParser.FLOAT_NUM);
+					return (MyParser56.FLOAT_NUM);
 				}
 				token.lexStr = getToken(thd, 0, lip.yyLength(thd));
-				return (MyParser.DECIMAL_NUM);
+				return (MyParser56.DECIMAL_NUM);
 
 			case MY_LEX_HEX_NUMBER: // Found x'hexstring'
 				lip.yySkip(thd); // Accept opening '
 				while (Character.isDigit(c = lip.yyGet(thd)))
 					;
 				if (c != '\'')
-					return (MyParser.ABORT_SYM); // Illegal hex constant
+					return (MyParser56.ABORT_SYM); // Illegal hex constant
 				lip.yySkip(thd); // Accept closing '
 				length = lip.yyLength(thd); // Length of hexnum+3
 				if ((length % 2) == 0)
-					return (MyParser.ABORT_SYM); // odd number of hex digits
+					return (MyParser56.ABORT_SYM); // odd number of hex digits
 				token.lexStr = getToken(thd, 2, // skip x'
 						length - 3); // don't count x' and last '
-				return (MyParser.HEX_NUM);
+				return (MyParser56.HEX_NUM);
 
 			case MY_LEX_BIN_NUMBER: // Found b'bin-string'
 				lip.yySkip(thd); // Accept opening '
 				while ((c = lip.yyGet(thd)) == '0' || c == '1')
 					;
 				if (c != '\'')
-					return (MyParser.ABORT_SYM); // Illegal hex constant
+					return (MyParser56.ABORT_SYM); // Illegal hex constant
 				lip.yySkip(thd); // Accept closing '
 				length = lip.yyLength(thd); // Length of bin-num + 3
 				token.lexStr = getToken(thd, 2, // skip b'
 						length - 3); // don't count b' and last '
-				return (MyParser.BIN_NUM);
+				return (MyParser56.BIN_NUM);
 
 			case MY_LEX_CMP_OP: // Incomplete comparison operator
 				if (state(lip.yyPeek(thd)) == MyLexStates.MY_LEX_CMP_OP
@@ -508,7 +508,7 @@ class MyLexer implements Lexer {
 				// lip.m_underscore_cs= NULL;
 
 				thd.textStringIs7bit = (lip.tokBitmap & 0x80) == 0x80 ? false : true;
-				return (MyParser.TEXT_STRING);
+				return (MyParser56.TEXT_STRING);
 
 			case MY_LEX_COMMENT: // Comment
 				thd.lex.selectLex.options |= SQLPrivConstants.OPTION_FOUND_COMMENT;
@@ -609,7 +609,7 @@ class MyLexer implements Lexer {
 				 * Unbalanced comments with a missing '*' '/' are a syntax error
 				 */
 				if (!comment_closed)
-					return (MyParser.ABORT_SYM);
+					return (MyParser56.ABORT_SYM);
 				state = MyLexStates.MY_LEX_START; // Try again
 				lip.restoreInCommentState(thd);
 				break;
@@ -648,7 +648,7 @@ class MyLexer implements Lexer {
 					break;
 				}
 				lip.yySkip(thd);
-				return (MyParser.SET_VAR);
+				return (MyParser56.SET_VAR);
 			case MY_LEX_SEMICOLON: // optional line terminator
 				state = MyLexStates.MY_LEX_CHAR; // Return ';'
 				break;
@@ -663,10 +663,10 @@ class MyLexer implements Lexer {
 					 * error
 					 */
 					if (thd.inComment != EnumCommentState.NO_COMMENT)
-						return (MyParser.ABORT_SYM);
+						return (MyParser56.ABORT_SYM);
 					thd.nextState = MyLexStates.MY_LEX_END; // Mark for next
 															// loop
-					return (MyParser.END_OF_INPUT);
+					return (MyParser56.END_OF_INPUT);
 				}
 				state = MyLexStates.MY_LEX_CHAR;
 				break;
@@ -703,7 +703,7 @@ class MyLexer implements Lexer {
 						|| c == '$'; c = lip.yyGet(thd))
 					;
 				token.lexStr = getToken(thd, 0, lip.yyLength(thd));
-				return (MyParser.LEX_HOSTNAME);
+				return (MyParser56.LEX_HOSTNAME);
 			case MY_LEX_SYSTEM_VAR:
 				token.lexStr = String.valueOf(lip.yyGet(thd));
 				lip.yySkip(thd); // Skip '@'
@@ -721,13 +721,13 @@ class MyLexer implements Lexer {
 				/*
 				 * If there were non-ASCII characters, mark that we must convert
 				 */
-				result_state = (result_state & 0x80) == 0x80 ? MyParser.IDENT_QUOTED : MyParser.IDENT;
+				result_state = (result_state & 0x80) == 0x80 ? MyParser56.IDENT_QUOTED : MyParser56.IDENT;
 
 				if (c == '.')
 					thd.nextState = MyLexStates.MY_LEX_IDENT_SEP;
 				length = lip.yyLength(thd);
 				if (length == 0)
-					return (MyParser.ABORT_SYM); // Names must be nonempty.
+					return (MyParser56.ABORT_SYM); // Names must be nonempty.
 				if ((tokval = findKeyword(thd, length, false)) > 0) {
 					lip.yyUnget(thd); // Put back 'c'
 					return (tokval); // Was keyword
@@ -875,7 +875,7 @@ class MyLexer implements Lexer {
 
 	public int intToken(String str, int length) {
 		if (length < LONG_LEN) // quick normal case
-			return MyParser.NUM;
+			return MyParser56.NUM;
 		boolean neg = false;
 
 		int index = 0;
@@ -893,42 +893,42 @@ class MyLexer implements Lexer {
 			length--;
 		}
 		if (length < LONG_LEN)
-			return MyParser.NUM;
+			return MyParser56.NUM;
 
 		int smaller, bigger;
 		char[] cmp;
 		if (neg) {
 			if (length == LONG_LEN) {
 				System.arraycopy(SIGNED_LONG_STR, 1, cmp = new char[SIGNED_LONG_STR.length - 1], 0, SIGNED_LONG_STR.length - 1);
-				smaller = MyParser.NUM; // If <= signed_long_str
-				bigger = MyParser.LONG_NUM; // If >= signed_long_str
+				smaller = MyParser56.NUM; // If <= signed_long_str
+				bigger = MyParser56.LONG_NUM; // If >= signed_long_str
 			} else if (length < SIGNED_LONGLONG_LEN)
-				return MyParser.LONG_NUM;
+				return MyParser56.LONG_NUM;
 			else if (length > SIGNED_LONGLONG_LEN)
-				return MyParser.DECIMAL_NUM;
+				return MyParser56.DECIMAL_NUM;
 			else {
 				System.arraycopy(SIGNED_LONGLONG_STR, 1, cmp = new char[SIGNED_LONGLONG_STR.length - 1], 0,
 						SIGNED_LONGLONG_STR.length - 1);
-				smaller = MyParser.LONG_NUM; // If <= signed_longlong_str
-				bigger = MyParser.DECIMAL_NUM;
+				smaller = MyParser56.LONG_NUM; // If <= signed_longlong_str
+				bigger = MyParser56.DECIMAL_NUM;
 			}
 		} else {
 			if (length == LONG_LEN) {
 				cmp = LONG_STR;
-				smaller = MyParser.NUM;
-				bigger = MyParser.LONG_NUM;
+				smaller = MyParser56.NUM;
+				bigger = MyParser56.LONG_NUM;
 			} else if (length < LONGLONG_LEN)
-				return MyParser.LONG_NUM;
+				return MyParser56.LONG_NUM;
 			else if (length > LONGLONG_LEN) {
 				if (length > UNSIGNED_LONGLONG_LEN)
-					return MyParser.DECIMAL_NUM;
+					return MyParser56.DECIMAL_NUM;
 				cmp = UNSIGNED_LONGLONG_STR;
-				smaller = MyParser.ULONGLONG_NUM;
-				bigger = MyParser.DECIMAL_NUM;
+				smaller = MyParser56.ULONGLONG_NUM;
+				bigger = MyParser56.DECIMAL_NUM;
 			} else {
 				cmp = LONGLONG_STR;
-				smaller = MyParser.LONG_NUM;
-				bigger = MyParser.ULONGLONG_NUM;
+				smaller = MyParser56.LONG_NUM;
+				bigger = MyParser56.ULONGLONG_NUM;
 			}
 		}
 		int cmpIndex = 0;
@@ -941,12 +941,12 @@ class MyLexer implements Lexer {
 		KeywordToken keywordToken = getHashSymbol(thd, len, function);
 		if (keywordToken != null) {
 			thd.yylval = keywordToken;
-			if ((keywordToken.token == MyParser.NOT_SYM)
+			if ((keywordToken.token == MyParser56.NOT_SYM)
 					&& (variables.sqlMode & Variables.MODE_HIGH_NOT_PRECEDENCE) == Variables.MODE_HIGH_NOT_PRECEDENCE)
-				return MyParser.NOT2_SYM;
-			if ((keywordToken.token == MyParser.OR_OR_SYM)
+				return MyParser56.NOT2_SYM;
+			if ((keywordToken.token == MyParser56.OR_OR_SYM)
 					&& !((variables.sqlMode & Variables.MODE_PIPES_AS_CONCAT) == Variables.MODE_PIPES_AS_CONCAT))
-				return MyParser.OR2_SYM;
+				return MyParser56.OR2_SYM;
 
 			return ((Token)thd.yylval).token;
 		}

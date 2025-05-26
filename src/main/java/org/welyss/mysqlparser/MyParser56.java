@@ -32,7 +32,7 @@ import org.welyss.mysqlparser.utils.MySQLParserUtils;
  *
  * @author LALR (1) parser skeleton written by Paolo Bonzini.
  */
-class MyParser {
+class MyParser56 {
 	/** Version number for the Bison executable that generated this parser. */
 	public static final String bisonVersion = "2.7";
 
@@ -1326,7 +1326,7 @@ class MyParser {
 	 *            The scanner that will supply tokens to the parser.
 	 * @throws IOException
 	 */
-	public MyParser(MyLexer myLexer) throws IOException {
+	public MyParser56(MyLexer myLexer) throws IOException {
 		this.myLexer = myLexer;
 		// Initial
 		yypact_ = MySQLParserUtils.initArrayForInt("yypact");

@@ -100,7 +100,7 @@ public class LexInputStreamProcessor {
 	 *            offset of the character to look up
 	 */
 	public char yyPeekn(SQLThread thd, int n) {
-		return thd.mPtr + n < thd.sql.length() ? thd.sql.charAt(thd.mPtr + n) : MyParser.EOF;
+		return thd.mPtr + n < thd.sql.length() ? thd.sql.charAt(thd.mPtr + n) : MyParser56.EOF;
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class LexInputStreamProcessor {
 		if (thd.mPtr < thd.sql.length())
 			c = thd.sql.charAt(thd.mPtr);
 		else
-			c = MyParser.EOF;
+			c = MyParser56.EOF;
 		thd.mPtr++;
 		return c;
 	}
@@ -232,7 +232,7 @@ public class LexInputStreamProcessor {
 		 * Stop collecting further tokens if digest storage is full or if END
 		 * token is received.
 		 */
-		if (digestStorage.mFull || token == MyParser.END_OF_INPUT)
+		if (digestStorage.mFull || token == MyParser56.END_OF_INPUT)
 			return null;
 
 		/*
@@ -243,13 +243,13 @@ public class LexInputStreamProcessor {
 		int[] lastToken = new int[2];
 
 		switch (token) {
-		case MyParser.NUM:
-		case MyParser.LONG_NUM:
-		case MyParser.ULONGLONG_NUM:
-		case MyParser.DECIMAL_NUM:
-		case MyParser.FLOAT_NUM:
-		case MyParser.BIN_NUM:
-		case MyParser.HEX_NUM: {
+		case MyParser56.NUM:
+		case MyParser56.LONG_NUM:
+		case MyParser56.ULONGLONG_NUM:
+		case MyParser56.DECIMAL_NUM:
+		case MyParser56.FLOAT_NUM:
+		case MyParser56.BIN_NUM:
+		case MyParser56.HEX_NUM: {
 			boolean found_unary;
 			do {
 				found_unary = false;
@@ -293,10 +293,10 @@ public class LexInputStreamProcessor {
 			} while (found_unary);
 		}
 		/* fall through, for case NULL_SYM below */
-		case MyParser.LEX_HOSTNAME:
-		case MyParser.TEXT_STRING:
-		case MyParser.NCHAR_STRING:
-		case MyParser.PARAM_MARKER: {
+		case MyParser56.LEX_HOSTNAME:
+		case MyParser56.TEXT_STRING:
+		case MyParser56.NCHAR_STRING:
+		case MyParser56.PARAM_MARKER: {
 			/*
 			 * REDUCE: TOK_GENERIC_VALUE := BIN_NUM | DECIMAL_NUM | ... |
 			 * ULONGLONG_NUM
@@ -377,8 +377,8 @@ public class LexInputStreamProcessor {
 			storeToken(digestStorage, token);
 			break;
 		}
-		case MyParser.IDENT:
-		case MyParser.IDENT_QUOTED: {
+		case MyParser56.IDENT:
+		case MyParser56.IDENT_QUOTED: {
 			Token lexToken = (Token)yylval;
 			String yytext = lexToken.lexStr;
 			// int yylen = lexToken.lexStr.length;
@@ -473,49 +473,49 @@ public class LexInputStreamProcessor {
 		/*
 		 * String terminal tokens, used in sql_yacc.yy
 		 */
-		setToken(MyParser.NEG, "~");
-		setToken(MyParser.TABLE_REF_PRIORITY, "TABLE_REF_PRIORITY");
+		setToken(MyParser56.NEG, "~");
+		setToken(MyParser56.TABLE_REF_PRIORITY, "TABLE_REF_PRIORITY");
 
 		/*
 		 * Tokens hard coded in sql_lex.cc
 		 */
 
-		setToken(MyParser.WITH_CUBE_SYM, "WITH CUBE");
-		setToken(MyParser.WITH_ROLLUP_SYM, "WITH ROLLUP");
-		setToken(MyParser.NOT2_SYM, "!");
-		setToken(MyParser.OR2_SYM, "|");
-		setToken(MyParser.PARAM_MARKER, "?");
-		setToken(MyParser.SET_VAR, ":=");
-		setToken(MyParser.UNDERSCORE_CHARSET, "(_charset)");
-		setToken(MyParser.END_OF_INPUT, "");
+		setToken(MyParser56.WITH_CUBE_SYM, "WITH CUBE");
+		setToken(MyParser56.WITH_ROLLUP_SYM, "WITH ROLLUP");
+		setToken(MyParser56.NOT2_SYM, "!");
+		setToken(MyParser56.OR2_SYM, "|");
+		setToken(MyParser56.PARAM_MARKER, "?");
+		setToken(MyParser56.SET_VAR, ":=");
+		setToken(MyParser56.UNDERSCORE_CHARSET, "(_charset)");
+		setToken(MyParser56.END_OF_INPUT, "");
 
 		/*
 		 * Values. These tokens are all normalized later, so this strings will
 		 * never be displayed.
 		 */
-		setToken(MyParser.BIN_NUM, "(bin)");
-		setToken(MyParser.DECIMAL_NUM, "(decimal)");
-		setToken(MyParser.FLOAT_NUM, "(float)");
-		setToken(MyParser.HEX_NUM, "(hex)");
-		setToken(MyParser.LEX_HOSTNAME, "(hostname)");
-		setToken(MyParser.LONG_NUM, "(long)");
-		setToken(MyParser.NUM, "(num)");
-		setToken(MyParser.TEXT_STRING, "(text)");
-		setToken(MyParser.NCHAR_STRING, "(nchar)");
-		setToken(MyParser.ULONGLONG_NUM, "(ulonglong)");
+		setToken(MyParser56.BIN_NUM, "(bin)");
+		setToken(MyParser56.DECIMAL_NUM, "(decimal)");
+		setToken(MyParser56.FLOAT_NUM, "(float)");
+		setToken(MyParser56.HEX_NUM, "(hex)");
+		setToken(MyParser56.LEX_HOSTNAME, "(hostname)");
+		setToken(MyParser56.LONG_NUM, "(long)");
+		setToken(MyParser56.NUM, "(num)");
+		setToken(MyParser56.TEXT_STRING, "(text)");
+		setToken(MyParser56.NCHAR_STRING, "(nchar)");
+		setToken(MyParser56.ULONGLONG_NUM, "(ulonglong)");
 
 		/*
 		 * Identifiers.
 		 */
-		setToken(MyParser.IDENT, "(id)");
-		setToken(MyParser.IDENT_QUOTED, "(id_quoted)");
+		setToken(MyParser56.IDENT, "(id)");
+		setToken(MyParser56.IDENT_QUOTED, "(id_quoted)");
 
 		/*
 		 * Unused tokens
 		 */
-		setToken(MyParser.LOCATOR_SYM, "LOCATOR");
-		setToken(MyParser.SERVER_OPTIONS, "SERVER_OPTIONS");
-		setToken(MyParser.UDF_RETURNS_SYM, "UDF_RETURNS");
+		setToken(MyParser56.LOCATOR_SYM, "LOCATOR");
+		setToken(MyParser56.SERVER_OPTIONS, "SERVER_OPTIONS");
+		setToken(MyParser56.UDF_RETURNS_SYM, "UDF_RETURNS");
 
 		/*
 		 * See symbols[] in sql/lex.h
@@ -597,42 +597,42 @@ public class LexInputStreamProcessor {
 		 */
 		setStartExprToken('(');
 		setStartExprToken(',');
-		setStartExprToken(MyParser.EVERY_SYM);
-		setStartExprToken(MyParser.AT_SYM);
-		setStartExprToken(MyParser.STARTS_SYM);
-		setStartExprToken(MyParser.ENDS_SYM);
-		setStartExprToken(MyParser.DEFAULT);
-		setStartExprToken(MyParser.RETURN_SYM);
-		setStartExprToken(MyParser.IF);
-		setStartExprToken(MyParser.ELSEIF_SYM);
-		setStartExprToken(MyParser.CASE_SYM);
-		setStartExprToken(MyParser.WHEN_SYM);
-		setStartExprToken(MyParser.WHILE_SYM);
-		setStartExprToken(MyParser.UNTIL_SYM);
-		setStartExprToken(MyParser.SELECT_SYM);
+		setStartExprToken(MyParser56.EVERY_SYM);
+		setStartExprToken(MyParser56.AT_SYM);
+		setStartExprToken(MyParser56.STARTS_SYM);
+		setStartExprToken(MyParser56.ENDS_SYM);
+		setStartExprToken(MyParser56.DEFAULT);
+		setStartExprToken(MyParser56.RETURN_SYM);
+		setStartExprToken(MyParser56.IF);
+		setStartExprToken(MyParser56.ELSEIF_SYM);
+		setStartExprToken(MyParser56.CASE_SYM);
+		setStartExprToken(MyParser56.WHEN_SYM);
+		setStartExprToken(MyParser56.WHILE_SYM);
+		setStartExprToken(MyParser56.UNTIL_SYM);
+		setStartExprToken(MyParser56.SELECT_SYM);
 
-		setStartExprToken(MyParser.OR_SYM);
-		setStartExprToken(MyParser.OR2_SYM);
-		setStartExprToken(MyParser.XOR);
-		setStartExprToken(MyParser.AND_SYM);
-		setStartExprToken(MyParser.AND_AND_SYM);
-		setStartExprToken(MyParser.NOT_SYM);
-		setStartExprToken(MyParser.BETWEEN_SYM);
-		setStartExprToken(MyParser.LIKE);
-		setStartExprToken(MyParser.REGEXP);
+		setStartExprToken(MyParser56.OR_SYM);
+		setStartExprToken(MyParser56.OR2_SYM);
+		setStartExprToken(MyParser56.XOR);
+		setStartExprToken(MyParser56.AND_SYM);
+		setStartExprToken(MyParser56.AND_AND_SYM);
+		setStartExprToken(MyParser56.NOT_SYM);
+		setStartExprToken(MyParser56.BETWEEN_SYM);
+		setStartExprToken(MyParser56.LIKE);
+		setStartExprToken(MyParser56.REGEXP);
 
 		setStartExprToken('|');
 		setStartExprToken('&');
-		setStartExprToken(MyParser.SHIFT_LEFT);
-		setStartExprToken(MyParser.SHIFT_RIGHT);
+		setStartExprToken(MyParser56.SHIFT_LEFT);
+		setStartExprToken(MyParser56.SHIFT_RIGHT);
 		setStartExprToken('+');
 		setStartExprToken('-');
-		setStartExprToken(MyParser.INTERVAL_SYM);
+		setStartExprToken(MyParser56.INTERVAL_SYM);
 		setStartExprToken('*');
 		setStartExprToken('/');
 		setStartExprToken('%');
-		setStartExprToken(MyParser.DIV_SYM);
-		setStartExprToken(MyParser.MOD_SYM);
+		setStartExprToken(MyParser56.DIV_SYM);
+		setStartExprToken(MyParser56.MOD_SYM);
 		setStartExprToken('^');
 	}
 

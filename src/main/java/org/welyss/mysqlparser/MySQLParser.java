@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MySQLParser {
-	private MyParser myParser;
+	private MyParser56 myParser;
 
 	public MySQLParser() throws IOException {
 		this(50644);
@@ -15,7 +15,7 @@ public class MySQLParser {
 		try {
 			MyLexer lexer = new MyLexer();
 			lexer.mysqlVersionId = version;
-			myParser = new MyParser(lexer);
+			myParser = new MyParser56(lexer);
 		} catch (IOException e) {
 			throw new IOException("Action table file read faild.", e);
 		}
