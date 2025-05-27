@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class AlterInfo {
-	Set<AlterFlag> flags;
-	List<AlterColumnInfo> columns;
+	public Set<AlterFlag> flags;
+	public List<AlterColumnInfo> columns;
 
 	public AlterInfo() {
 		this.flags = new TreeSet<AlterFlag>();

@@ -3,6 +3,8 @@ package org.welyss.mysqlparser;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.welyss.mysqlparser.v56.MyParser56;
+
 public class LexConstants {
 	public static final String ANY_DB = "*any*";
 	public static final Map<String, Integer> symbols = new HashMap<String, Integer>();

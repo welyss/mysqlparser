@@ -46,6 +46,6 @@ public class CreateInfo {
 	 * given at all.
 	 */
 	public static final long HA_CREATE_USED_STATS_SAMPLE_PAGES = (1L << 24);
-	String comment;
-	long usedFields = 0;
+	public String comment;
+	public long usedFields = 0;
 }

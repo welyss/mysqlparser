@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.welyss.mysqlparser.v56.MyLexStates56;
+import org.welyss.mysqlparser.v56.MyLexer56;
+import org.welyss.mysqlparser.v56.MyParser56;
+import org.welyss.mysqlparser.v56.SQLThread56;
+
 public class MySQLParser {
 	private MyParser56 myParser;
 
@@ -13,7 +18,7 @@ public class MySQLParser {
 
 	public MySQLParser(long version) throws IOException {
 		try {
-			MyLexer lexer = new MyLexer();
+			MyLexer56 lexer = new MyLexer56();
 			lexer.mysqlVersionId = version;
 			myParser = new MyParser56(lexer);
 		} catch (IOException e) {
@@ -28,12 +33,12 @@ public class MySQLParser {
 	 */
 	public List<ParseResult> parse(String sql) {
 		List<ParseResult> result = new ArrayList<>();
-		SQLThread sqlThread = new SQLThread(sql);
+		SQLThread56 sqlThread = new SQLThread56(sql);
 		sqlThread.success = myParser.parse(sqlThread);
 		result.add(sqlThread.getSQLResultAndReset(0));
 		while(sqlThread.success && sqlThread.foundSemicolon > 0 && !myParser.myLexer.lip.eof(sqlThread)) {
 			int lastPos = sqlThread.mPtr;
-			sqlThread.nextState = MyLexStates.MY_LEX_START;
+			sqlThread.nextState = MyLexStates56.MY_LEX_START;
 			sqlThread.success = myParser.parse(sqlThread);
 			result.add(sqlThread.getSQLResultAndReset(lastPos));
 		}
@@ -45,7 +50,7 @@ public class MySQLParser {
 	 * @param value
 	 */
 	public void setStmtPrepareMode(boolean value) {
-		((MyLexer)myParser.myLexer).lip.stmtPrepareMode = value;
+		((MyLexer56)myParser.myLexer).lip.stmtPrepareMode = value;
 	}
 
 	/**
@@ -53,7 +58,7 @@ public class MySQLParser {
 	 * @return
 	 */
 	public boolean isStmtPrepareMode() {
-		return ((MyLexer)myParser.myLexer).lip.stmtPrepareMode;
+		return ((MyLexer56)myParser.myLexer).lip.stmtPrepareMode;
 	}
 
 	/**

@@ -1,30 +1,35 @@
-package org.welyss.mysqlparser;
+package org.welyss.mysqlparser.v56;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.welyss.mysqlparser.AlterColumnInfo;
+import org.welyss.mysqlparser.AlterFlag;
+import org.welyss.mysqlparser.Lex;
+import org.welyss.mysqlparser.ParseResult;
+import org.welyss.mysqlparser.SQLInfo;
 import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.TableIdent;
 
-public class SQLThread {
-	protected Boolean success;
+public class SQLThread56 {
+	public Boolean success;
+	public MyLexStates56 nextState = MyLexStates56.MY_LEX_START;
+	public int foundSemicolon;
 	protected StringBuilder sql;
 	protected List<SQLInfo> parsedSqls = new ArrayList<SQLInfo>();
-	protected int foundSemicolon;
 	protected boolean inWhere;
 	protected String msg;
 	protected Lex lex;
 	protected Item yylval;
 	/** Current state of the lexical analyser. */
-	protected MyLexStates nextState = MyLexStates.MY_LEX_START;
 	protected int mTokStartPrev;
 	/** Starting position of the last token parsed, in the raw buffer. */
 	protected int mTokStart;
 	/** Ending position of the previous token parsed, in the raw buffer. */
 	protected int mTokEnd;
 	/** Pointer to the current position in the raw input stream. */
-	protected int mPtr;
+	public int mPtr;
 	/** Current line number. */
 	protected int lineno = 1;
 	/**
@@ -67,18 +72,18 @@ public class SQLThread {
 	/**
 	 * Current statement digest instrumentation.
 	 */
-	protected SQLDigestState mDigest;
+	protected SQLDigestState56 mDigest;
 	protected int yyerrstatus_ = 0;
 
-	public SQLThread(String sql) {
+	public SQLThread56(String sql) {
 		this.sql = new StringBuilder(sql);
 		this.inComment = EnumCommentState.NO_COMMENT;
 		mTokEnd = this.sql.length();
 		lex = new Lex();
-		mDigest = new SQLDigestState();
+		mDigest = new SQLDigestState56();
 	}
 
-	protected ParseResult getSQLResultAndReset(int lastPos) {
+	public ParseResult getSQLResultAndReset(int lastPos) {
 		String parsedSQL;
 		String alterCommand;
 		if (success) {

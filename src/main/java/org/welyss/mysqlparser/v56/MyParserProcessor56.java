@@ -1,9 +1,14 @@
-package org.welyss.mysqlparser;
+package org.welyss.mysqlparser.v56;
 
+import org.welyss.mysqlparser.AlterColumnInfo;
+import org.welyss.mysqlparser.AlterFlag;
+import org.welyss.mysqlparser.Lex;
+import org.welyss.mysqlparser.SchemaTables;
+import org.welyss.mysqlparser.SelectLex;
 import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.TableIdent;
 
-public class MyParserProcessor {
+public class MyParserProcessor56 {
 
 	public static void mysqlInitSelect(Lex lex) {
 		lex.selectLex = new SelectLex();
@@ -11,7 +16,7 @@ public class MyParserProcessor {
 		lex.allSelectsList.add(lex.selectLex);
 	}
 
-	public static boolean addTableToList(SQLThread thd, TableIdent table, Item alias, Item partitionNames) {
+	public static boolean addTableToList(SQLThread56 thd, TableIdent table, Item alias, Item partitionNames) {
 		boolean success = false;
 		if (table != null) {
 			thd.lex.tables.add(table);
@@ -36,7 +41,7 @@ public class MyParserProcessor {
 		return result;
 	}
 
-	public static boolean prepareSchemaTable(SQLThread thd, TableIdent table, SchemaTables schemaTableIdx) {
+	public static boolean prepareSchemaTable(SQLThread56 thd, TableIdent table, SchemaTables schemaTableIdx) {
 		boolean success = false;
 		switch (schemaTableIdx) {
 		case SCH_SCHEMATA:
@@ -81,11 +86,11 @@ public class MyParserProcessor {
 		return success;
 	}
 
-	public static boolean addFieldToList(SQLThread thd, String column, String type, AlterFlag af) {
+	public static boolean addFieldToList(SQLThread56 thd, String column, String type, AlterFlag af) {
 		return addFieldToList(thd, column, null, type, af);
 	}
 
-	public static boolean addFieldToList(SQLThread thd, String columnName, String changedName, String type, AlterFlag af) {
+	public static boolean addFieldToList(SQLThread56 thd, String columnName, String changedName, String type, AlterFlag af) {
 		boolean result = false;
 		if (columnName != null) {
 			AlterColumnInfo curCol = new AlterColumnInfo();

@@ -1,12 +1,13 @@
-package org.welyss.mysqlparser;
+package org.welyss.mysqlparser.v56;
 
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import org.welyss.mysqlparser.LexConstants;
 import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.Token;
 
-public class LexInputStreamProcessor {
+public class LexInputStreamProcessor56 {
 	public static int TOK_GENERIC_VALUE;
 	public static int TOK_GENERIC_VALUE_LIST;
 	public static int TOK_UNUSED;
@@ -60,7 +61,7 @@ public class LexInputStreamProcessor {
 		computeTokens();
 	}
 
-	public LexInputStreamProcessor() {
+	public LexInputStreamProcessor56() {
 	}
 
 	public static boolean myIsCntrl(char c) {
@@ -80,7 +81,7 @@ public class LexInputStreamProcessor {
 	}
 
 	/** Mark the stream position as the start of a new token. */
-	public void startToken(SQLThread thd) {
+	public void startToken(SQLThread56 thd) {
 		thd.mTokStartPrev = thd.mTokStart;
 		thd.mTokStart = thd.mPtr;
 		thd.mTokEnd = thd.mPtr;
@@ -89,7 +90,7 @@ public class LexInputStreamProcessor {
 	/**
 	 * Look at the next character to parse, but do not accept it.
 	 */
-	public char yyPeek(SQLThread thd) {
+	public char yyPeek(SQLThread56 thd) {
 		return yyPeekn(thd, 0);
 	}
 
@@ -99,14 +100,14 @@ public class LexInputStreamProcessor {
 	 * @param n
 	 *            offset of the character to look up
 	 */
-	public char yyPeekn(SQLThread thd, int n) {
+	public char yyPeekn(SQLThread56 thd, int n) {
 		return thd.mPtr + n < thd.sql.length() ? thd.sql.charAt(thd.mPtr + n) : MyParser56.EOF;
 	}
 
 	/**
 	 * Accept a character, by advancing the input stream.
 	 */
-	public void yySkip(SQLThread thd) {
+	public void yySkip(SQLThread56 thd) {
 		thd.mPtr++;
 	}
 
@@ -116,7 +117,7 @@ public class LexInputStreamProcessor {
 	 * @param n
 	 *            the number of characters to accept.
 	 */
-	public void yySkipn(SQLThread thd, int n) {
+	public void yySkipn(SQLThread56 thd, int n) {
 		thd.mPtr += n;
 	}
 
@@ -124,7 +125,7 @@ public class LexInputStreamProcessor {
 	 * Adjust the starting position of the current token. This is used to
 	 * compensate for starting whitespace.
 	 */
-	public void restartToken(SQLThread thd) {
+	public void restartToken(SQLThread56 thd) {
 		thd.mTokStart = thd.mPtr;
 	}
 
@@ -133,7 +134,7 @@ public class LexInputStreamProcessor {
 	 * 
 	 * @return the next character to parse.
 	 */
-	public char yyGet(SQLThread thd) {
+	public char yyGet(SQLThread56 thd) {
 		char c;
 		if (thd.mPtr < thd.sql.length())
 			c = thd.sql.charAt(thd.mPtr);
@@ -148,7 +149,7 @@ public class LexInputStreamProcessor {
 	 * 
 	 * @return the last character accepted.
 	 */
-	public char yyGetLast(SQLThread thd) {
+	public char yyGetLast(SQLThread56 thd) {
 		return thd.sql.charAt(thd.mPtr - 1);
 	}
 
@@ -157,41 +158,41 @@ public class LexInputStreamProcessor {
 	 * mode should not change between calls to yyGet / yySkip and yyUnget. The
 	 * caller is responsible for ensuring that.
 	 */
-	public void yyUnget(SQLThread thd) {
+	public void yyUnget(SQLThread56 thd) {
 		thd.mPtr--;
 	}
 
 	/** Get the token start position, in the raw buffer. */
-	public int getTokStart(SQLThread thd) {
+	public int getTokStart(SQLThread56 thd) {
 		return thd.mTokStart;
 	}
 
 	/** Get the current stream pointer, in the raw buffer. */
-	public int getPtr(SQLThread thd) {
+	public int getPtr(SQLThread56 thd) {
 		return thd.mPtr;
 	}
 
 	/** Get the token start position, in the pre-processed buffer. */
-	public int getCppTokStart(SQLThread thd) {
+	public int getCppTokStart(SQLThread56 thd) {
 		return thd.mCppTokStart;
 	}
 
 	/** Get the token end position, in the raw buffer. */
-	public int getTokEnd(SQLThread thd) {
+	public int getTokEnd(SQLThread56 thd) {
 		return thd.mTokEnd;
 	}
 
 	/** Get the current stream pointer, in the pre-processed buffer. */
-	public int getCppPtr(SQLThread thd) {
+	public int getCppPtr(SQLThread56 thd) {
 		return thd.mCppPtr;
 	}
 
 	/** Get the length of the current token, in the raw buffer. */
-	public int yyLength(SQLThread thd) {
+	public int yyLength(SQLThread56 thd) {
 		return ((thd.mPtr - thd.mTokStart) - 1);
 	}
 
-	public void saveInCommentState(SQLThread thd) {
+	public void saveInCommentState(SQLThread56 thd) {
 		thd.inCommentSaved = thd.inComment;
 	}
 
@@ -200,12 +201,12 @@ public class LexInputStreamProcessor {
 	 * yyGet() or yySkip(). Note that the echo mode should not change between
 	 * calls to unput, get, or skip from the stream.
 	 */
-	public char yyUnput(SQLThread thd, char ch) {
+	public char yyUnput(SQLThread56 thd, char ch) {
 		thd.sql.setCharAt(--thd.mPtr, ch);
 		return thd.sql.charAt(thd.mPtr);
 	}
 
-	public void restoreInCommentState(SQLThread thd) {
+	public void restoreInCommentState(SQLThread56 thd) {
 		thd.inComment = thd.inCommentSaved;
 	}
 
@@ -214,7 +215,7 @@ public class LexInputStreamProcessor {
 	 * 
 	 * @return true if there are no more characters to parse
 	 */
-	public boolean eof(SQLThread thd) {
+	public boolean eof(SQLThread56 thd) {
 		return (thd.mPtr >= thd.sql.length());
 	}
 
@@ -224,8 +225,8 @@ public class LexInputStreamProcessor {
 //		}
 //	}
 
-	public SQLDigestState digestAddToken(SQLDigestState state, int token, Item yylval) {
-		SQLDigestStorage digestStorage = null;
+	public SQLDigestState56 digestAddToken(SQLDigestState56 state, int token, Item yylval) {
+		SQLDigestStorage56 digestStorage = null;
 		digestStorage = state.mDigestStorage;
 
 		/*
@@ -410,14 +411,14 @@ public class LexInputStreamProcessor {
 	/**
 	 * Store an identifier in token array.
 	 */
-	public void storeTokenIdentifier(SQLDigestStorage digestStorage, int token, String idName) {
+	public void storeTokenIdentifier(SQLDigestStorage56 digestStorage, int token, String idName) {
 		digestStorage.mTokenArray.add(new SqlDigestInfo(token, idName));
 	}
 
 	/**
 	 * Store a single token in token array.
 	 */
-	public void storeToken(SQLDigestStorage digestStorage, int token) {
+	public void storeToken(SQLDigestStorage56 digestStorage, int token) {
 		storeTokenIdentifier(digestStorage, token, null);
 	}
 
@@ -425,7 +426,7 @@ public class LexInputStreamProcessor {
 	 * Function to read last two tokens from token array. If an identifier is
 	 * found, do not look for token before that.
 	 */
-	public void peekLastTwoTokens(SQLDigestStorage digestStorage, int last_id_index, int[] tokenLastTwo) {
+	public void peekLastTwoTokens(SQLDigestStorage56 digestStorage, int last_id_index, int[] tokenLastTwo) {
 		if (digestStorage.mTokenArray.size() > 0) {
 			/* Take last token. */
 			int lastTokenIndex = digestStorage.mTokenArray.size() - 1;
@@ -443,7 +444,7 @@ public class LexInputStreamProcessor {
 		}
 	}
 
-	public int peekToken(SQLDigestStorage digest, int index) {
+	public int peekToken(SQLDigestStorage56 digest, int index) {
 		int token = digest.mTokenArray.get(index).token;
 		return token;
 	}
