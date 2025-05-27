@@ -1329,21 +1329,21 @@ class MyParser56 {
 	public MyParser56(MyLexer myLexer) throws IOException {
 		this.myLexer = myLexer;
 		// Initial
-		yypact_ = MySQLParserUtils.initArrayForInt("yypact");
-		yydefact_ = MySQLParserUtils.initArrayForShort("yydefact");
-		yypgoto_ = MySQLParserUtils.initArrayForShort("yypgoto");
-		yydefgoto_ = MySQLParserUtils.initArrayForShort("yydefgoto");
-		yytable_ = MySQLParserUtils.initArrayForShort("yytable");
-		yycheck_ = MySQLParserUtils.initArrayForShort("yycheck");
-		yystos_ = MySQLParserUtils.initArrayForShort("yystos");
-		yytoken_number_ = MySQLParserUtils.initArrayForShort("yytoken_number");
-		yyr1_ = MySQLParserUtils.initArrayForShort("yyr1");
-		yyr2_ = MySQLParserUtils.initArrayForByte("yyr2");
-		yytname_ = MySQLParserUtils.initArrayForString("yytname");
-		yyrhs_ = MySQLParserUtils.initArrayForShort("yyrhs");
-		yyprhs_ = MySQLParserUtils.initArrayForShort("yyprhs");
-		yyrline_ = MySQLParserUtils.initArrayForShort("yyrline");
-		yytranslate_table_ = MySQLParserUtils.initArrayForShort("yytranslate_table");
+		yypact_ = MySQLParserUtils.initArrayForInt("56/yypact");
+		yydefact_ = MySQLParserUtils.initArrayForShort("56/yydefact");
+		yypgoto_ = MySQLParserUtils.initArrayForShort("56/yypgoto");
+		yydefgoto_ = MySQLParserUtils.initArrayForShort("56/yydefgoto");
+		yytable_ = MySQLParserUtils.initArrayForShort("56/yytable");
+		yycheck_ = MySQLParserUtils.initArrayForShort("56/yycheck");
+		yystos_ = MySQLParserUtils.initArrayForShort("56/yystos");
+		yytoken_number_ = MySQLParserUtils.initArrayForShort("56/yytoken_number");
+		yyr1_ = MySQLParserUtils.initArrayForShort("56/yyr1");
+		yyr2_ = MySQLParserUtils.initArrayForByte("56/yyr2");
+		yytname_ = MySQLParserUtils.initArrayForString("56/yytname");
+		yyrhs_ = MySQLParserUtils.initArrayForShort("56/yyrhs");
+		yyprhs_ = MySQLParserUtils.initArrayForShort("56/yyprhs");
+		yyrline_ = MySQLParserUtils.initArrayForShort("56/yyrline");
+		yytranslate_table_ = MySQLParserUtils.initArrayForShort("56/yytranslate_table");
 	}
 
 	private java.io.PrintStream yyDebugStream = System.err;
