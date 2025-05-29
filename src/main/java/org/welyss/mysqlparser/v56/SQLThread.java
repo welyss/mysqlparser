@@ -12,9 +12,9 @@ import org.welyss.mysqlparser.SQLInfo;
 import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.TableIdent;
 
-public class SQLThread56 {
+public class SQLThread {
 	public Boolean success;
-	public MyLexStates56 nextState = MyLexStates56.MY_LEX_START;
+	public MyLexStates nextState = MyLexStates.MY_LEX_START;
 	public int foundSemicolon;
 	protected StringBuilder sql;
 	protected List<SQLInfo> parsedSqls = new ArrayList<SQLInfo>();
@@ -72,15 +72,15 @@ public class SQLThread56 {
 	/**
 	 * Current statement digest instrumentation.
 	 */
-	protected SQLDigestState56 mDigest;
+	protected SQLDigestState mDigest;
 	protected int yyerrstatus_ = 0;
 
-	public SQLThread56(String sql) {
+	public SQLThread(String sql) {
 		this.sql = new StringBuilder(sql);
 		this.inComment = EnumCommentState.NO_COMMENT;
 		mTokEnd = this.sql.length();
 		lex = new Lex();
-		mDigest = new SQLDigestState56();
+		mDigest = new SQLDigestState();
 	}
 
 	public ParseResult getSQLResultAndReset(int lastPos) {

@@ -3,7 +3,7 @@ package org.welyss.mysqlparser.v56;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLDigestStorage56 {
+public class SQLDigestStorage {
 	public static final int MD5_HASH_SIZE = 16;
 	public boolean mFull;
 	int mByteCount;
@@ -26,7 +26,7 @@ public class SQLDigestStorage56 {
 	 */
 	int mTokenArrayLength;
 
-	SQLDigestStorage56() {
+	SQLDigestStorage() {
 		reset(0);
 	}
 
@@ -38,7 +38,7 @@ public class SQLDigestStorage56 {
 	public void reset() {
 		mTokenArray = new ArrayList<SqlDigestInfo>();
 		mTokenArrayLength = mTokenArray.size();
-		mMd5 = new char[SQLDigestStorage56.MD5_HASH_SIZE];
+		mMd5 = new char[SQLDigestStorage.MD5_HASH_SIZE];
 		mFull = false;
 		mByteCount = 0;
 		mCharsetNumber = 0;
@@ -48,7 +48,7 @@ public class SQLDigestStorage56 {
 		return (mByteCount == 0);
 	}
 
-	void copy(SQLDigestStorage56 from) {
+	void copy(SQLDigestStorage from) {
 		/*
 		 * Keep in mind this is a dirty copy of something that may change, as
 		 * the thread producing the digest is executing concurrently, without

@@ -4,14 +4,14 @@ import java.io.IOException;
 
 import org.welyss.mysqlparser.items.Position;
 import org.welyss.mysqlparser.utils.MySQLParserUtils;
-import org.welyss.mysqlparser.v56.SQLThread56;
+import org.welyss.mysqlparser.v56.SQLThread;
 
 /**
  * A Bison parser, automatically generated from <tt>sql_yacc.y</tt>.
  *
  * @author LALR (1) parser skeleton written by Paolo Bonzini.
  */
-class MyParser84
+class MyParser
 {
   /** Version number for the Bison executable that generated this parser.  */
   public static final String bisonVersion = "3.8.1";
@@ -3788,7 +3788,11 @@ class MyParser84
     }
 
     public final int getCode() {
-      return this.yycode_;
+        return this.yycode_;
+    }
+
+    public final char getChar() {
+    	return (char)this.yycode_;
     }
 
     /* Return YYSTR after stripping away unnecessary quotes and
@@ -5495,7 +5499,7 @@ class MyParser84
      * and beginning/ending positions of the token.
      * @return the token identifier corresponding to the next token.
      */
-    int yylex() throws java.io.IOException;
+    int yylex(SQLThread thd) throws java.io.IOException;
 
     /**
      * Emit an error referring to the given locationin a user-defined way.
@@ -5524,12 +5528,12 @@ class MyParser84
 
 	/**
 	 * Instantiates the Bison-generated parser.
-	 * 
+	 *
 	 * @param yylexer The scanner that will supply tokens to the parser.
 	 * @throws IOException
 	 */
 //  public MyParser84(Lexer yylexer, THD YYTHD,class Parse_tree_root parse_tree)
-	public MyParser84(Lexer yylexer) throws IOException {
+	public MyParser(Lexer yylexer) throws IOException {
 		this.yylexer = yylexer;
 //this.YYTHD = YYTHD;
 //          this.parse_tree = parse_tree;
@@ -5559,7 +5563,7 @@ class MyParser84
    * Use a <code>null</code> location.
    * @param msg The error message.
    */
-  public final void yyerror(String msg, SQLThread56 thd) {
+  public final void yyerror(String msg, SQLThread thd) {
 //      yylexer.yyerror((Location)null, msg);
 	  yylexer.mysqlError(msg, thd);
   }
@@ -29769,14 +29773,14 @@ class MyParser84
    * a syntax error diagnostic.
    */
   public static final class Context {
-    Context(MyParser84 parser, YYStack stack, SymbolKind token, Location loc) {
+    Context(MyParser parser, YYStack stack, SymbolKind token, Location loc) {
       yyparser = parser;
       yystack = stack;
       yytoken = token;
       yylocation = loc;
     }
 
-    private MyParser84 yyparser;
+    private MyParser yyparser;
     private YYStack yystack;
 
 
@@ -29797,7 +29801,7 @@ class MyParser84
     }
 
     private Location yylocation;
-    static final int NTOKENS = MyParser84.YYNTOKENS_;
+    static final int NTOKENS = MyParser.YYNTOKENS_;
 
     /**
      * Put in YYARG at most YYARGN of the expected tokens given the

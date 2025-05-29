@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.welyss.mysqlparser.v56.MyLexStates56;
-import org.welyss.mysqlparser.v56.MyLexer56;
-import org.welyss.mysqlparser.v56.MyParser56;
-import org.welyss.mysqlparser.v56.SQLThread56;
+import org.welyss.mysqlparser.v56.MyLexStates;
+import org.welyss.mysqlparser.v56.MyLexer;
+import org.welyss.mysqlparser.v56.MyParser;
+import org.welyss.mysqlparser.v56.SQLThread;
 
 public class MySQLParser {
-	private MyParser56 myParser;
+	private MyParser myParser;
 
 	public MySQLParser() throws IOException {
 		this(50644);
@@ -18,9 +18,9 @@ public class MySQLParser {
 
 	public MySQLParser(long version) throws IOException {
 		try {
-			MyLexer56 lexer = new MyLexer56();
+			MyLexer lexer = new MyLexer();
 			lexer.mysqlVersionId = version;
-			myParser = new MyParser56(lexer);
+			myParser = new MyParser(lexer);
 		} catch (IOException e) {
 			throw new IOException("Action table file read faild.", e);
 		}
@@ -33,12 +33,12 @@ public class MySQLParser {
 	 */
 	public List<ParseResult> parse(String sql) {
 		List<ParseResult> result = new ArrayList<>();
-		SQLThread56 sqlThread = new SQLThread56(sql);
+		SQLThread sqlThread = new SQLThread(sql);
 		sqlThread.success = myParser.parse(sqlThread);
 		result.add(sqlThread.getSQLResultAndReset(0));
 		while(sqlThread.success && sqlThread.foundSemicolon > 0 && !myParser.myLexer.lip.eof(sqlThread)) {
 			int lastPos = sqlThread.mPtr;
-			sqlThread.nextState = MyLexStates56.MY_LEX_START;
+			sqlThread.nextState = MyLexStates.MY_LEX_START;
 			sqlThread.success = myParser.parse(sqlThread);
 			result.add(sqlThread.getSQLResultAndReset(lastPos));
 		}
@@ -50,7 +50,7 @@ public class MySQLParser {
 	 * @param value
 	 */
 	public void setStmtPrepareMode(boolean value) {
-		((MyLexer56)myParser.myLexer).lip.stmtPrepareMode = value;
+		((MyLexer)myParser.myLexer).lip.stmtPrepareMode = value;
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class MySQLParser {
 	 * @return
 	 */
 	public boolean isStmtPrepareMode() {
-		return ((MyLexer56)myParser.myLexer).lip.stmtPrepareMode;
+		return ((MyLexer)myParser.myLexer).lip.stmtPrepareMode;
 	}
 
 	/**

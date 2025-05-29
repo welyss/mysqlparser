@@ -5,7 +5,7 @@ package org.welyss.mysqlparser.v56;
  * extends the @c sql_digest_storage structure with temporary state used only
  * during parsing.
  */
-public class SQLDigestState56 {
+public class SQLDigestState {
 	/**
 	 * Index, in the digest token array, of the last identifier seen. Reduce
 	 * rules used in the digest computation can not apply to tokens seen before
@@ -14,10 +14,10 @@ public class SQLDigestState56 {
 	 * @sa digest_add_token
 	 */
 	int mLastIdIndex;
-	SQLDigestStorage56 mDigestStorage;
+	SQLDigestStorage mDigestStorage;
 
-	public SQLDigestState56() {
-		mDigestStorage = new SQLDigestStorage56();
+	public SQLDigestState() {
+		mDigestStorage = new SQLDigestStorage();
 	}
 
 	void reset(char[] token_array, int length) {
