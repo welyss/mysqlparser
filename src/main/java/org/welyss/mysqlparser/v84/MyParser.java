@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.welyss.mysqlparser.items.Position;
 import org.welyss.mysqlparser.utils.MySQLParserUtils;
-import org.welyss.mysqlparser.v56.SQLThread;
 
 /**
  * A Bison parser, automatically generated from <tt>sql_yacc.y</tt>.
@@ -5491,7 +5490,7 @@ class MyParser
      * Method to retrieve the semantic value of the last scanned token.
      * @return the semantic value of the last scanned token.
      */
-    Object getLVal();
+    Object getLVal(SQLThread thd);
 
     /**
      * Entry point for the scanner.  Returns the token identifier corresponding
@@ -5565,7 +5564,7 @@ class MyParser
    */
   public final void yyerror(String msg, SQLThread thd) {
 //      yylexer.yyerror((Location)null, msg);
-	  yylexer.mysqlError(msg, thd);
+	  yylexer.yyerror(new Location(null), msg);
   }
 
   /**
@@ -29517,7 +29516,7 @@ class MyParser
    * @return <tt>true</tt> if the parsing succeeds.  Note that this does not
    *          imply that there were no syntax errors.
    */
-  public boolean parse() throws java.io.IOException
+  public boolean parse(SQLThread thd) throws java.io.IOException
   {
     /* @$.  */
     Location yyloc;
@@ -29578,8 +29577,8 @@ class MyParser
         if (yychar == YYEMPTY_)
           {
 
-            yychar = yylexer.yylex();
-            yylval = yylexer.getLVal();
+            yychar = yylexer.yylex(thd);
+            yylval = yylexer.getLVal(thd);
             yylloc = new Location(yylexer.getStartPos(),
                                           yylexer.getEndPos());
 

@@ -3,7 +3,7 @@ package org.welyss.mysqlparser.v84;
 import org.welyss.mysqlparser.items.Item;
 
 /**
- * Convert from sql_lex.h
+ * Convert from sql_lex.h,sql_lex.cc
  */
 public class LexInputStream {
 	StringBuilder sqlBuilder;
@@ -198,8 +198,9 @@ public class LexInputStream {
 	 * N-chars by 1-char here).
 	 */
 	char cppInject(char ch) {
-		mCppPtr = ch;
-		return ++mCppPtr;
+//		mCppPtr = ch;
+		sqlBuilder.replace(mCppPtr, mCppPtr + 1, String.valueOf(ch));
+		return sqlBuilder.charAt(++mCppPtr);
 	}
 
 	/**
@@ -223,17 +224,17 @@ public class LexInputStream {
 
 	/** Get the raw query buffer. */
 	char getBuf() {
-		return mBuf;
+		return sqlBuilder.charAt(mBuf);
 	}
 
 	/** Get the pre-processed query buffer. */
 	char getCppBuf() {
-		return mCppBuf;
+		return sqlBuilder.charAt(mCppBuf);
 	}
 
 	/** Get the end of the raw query buffer. */
 	char getEndOfQuery() {
-		return mEndOfQuery;
+		return sqlBuilder.charAt(mEndOfQuery);
 	}
 
 	/** Mark the stream position as the start of a new token. */
@@ -256,32 +257,32 @@ public class LexInputStream {
 
 	/** Get the token start position, in the raw buffer. */
 	char getTokStart() {
-		return mTokStart;
+		return sqlBuilder.charAt(mTokStart);
 	}
 
 	/** Get the token start position, in the pre-processed buffer. */
 	char getCppTokStart() {
-		return mCppTokStart;
+		return sqlBuilder.charAt(mCppTokStart);
 	}
 
 	/** Get the token end position, in the raw buffer. */
 	char getTokEnd() {
-		return mTokEnd;
+		return sqlBuilder.charAt(mTokEnd);
 	}
 
 	/** Get the token end position, in the pre-processed buffer. */
 	char getCppTokEnd() {
-		return mCppTokEnd;
+		return sqlBuilder.charAt(mCppTokEnd);
 	}
 
 	/** Get the current stream pointer, in the raw buffer. */
 	char getPtr() {
-		return mPtr;
+		return sqlBuilder.charAt(mPtr);
 	}
 
 	/** Get the current stream pointer, in the pre-processed buffer. */
 	char getCppPtr() {
-		return mCppPtr;
+		return sqlBuilder.charAt(mCppPtr);
 	}
 
 	/** Get the length of the current token, in the raw buffer. */
@@ -290,21 +291,21 @@ public class LexInputStream {
 		 * The assumption is that the lexical analyser is always 1 character ahead,
 		 * which the -1 account for.
 		 */
-		assert (mPtr > mTokStart);
-//  return (int)((mPtr - mTokStart) - 1);
+//		assert (mPtr > mTokStart);
+		return (mPtr - mTokStart) - 1;
 	}
 
 	/** Get the utf8-body string. */
 	char getBodyUtf8Str() {
-//		return m_body_utf8;
+		return mBodyUtf8;
 	}
 
 	/** Get the utf8-body length. */
 	int getBodyUtf8Length() {
-//		return (int) (m_body_utf8_ptr - m_body_utf8);
+		return mBodyUtf8Ptr - mBodyUtf8;
 	}
 
-	void bodyUtf8Start(SQLThread thd, char begin_ptr) {
+	void bodyUtf8Start(SQLThread thd, char beginPtr) {
 
 	}
 
@@ -320,8 +321,8 @@ public class LexInputStream {
 
 	}
 
-	int getLineno(char raw_ptr) {
-
+	Integer getLineno(char rawPtr) {
+		return null;
 	}
 
 	/** Current thread. */
@@ -367,11 +368,17 @@ public class LexInputStream {
 	boolean skipDigest;
 
 	void addDigestToken(int token, Item yylval) {
-
+		if (mDigest != null) {
+			// TODO digest process
+//			mDigest = digestAddToken(mDigest, token, yylval);
+		}
 	}
 
 	void reduceDigestToken(int tokenLeft, int tokenRight) {
-
+		if (mDigest != null) {
+			// TODO digest process
+//			mDigest = digestReduceToken(mDigest, tokenLeft, tokenRight);
+		}
 	}
 
 	/**
@@ -407,7 +414,7 @@ public class LexInputStream {
 		}
 	}
 
-	static final CharsetInfo queryCharset;
+	static final CharsetInfo queryCharset = new CharsetInfo();
 
 // private
 	/** Pointer to the current position in the raw input stream. */
@@ -514,10 +521,7 @@ public class LexInputStream {
 	/**
 	 * Current statement digest instrumentation.
 	 */
-	SQLDigestState mDigest() {
-//		nullptr
-		return null;
-	}
+	SQLDigestState mDigest;
 
 	/**
 	 * The synthetic 1st token to prepend token stream with.

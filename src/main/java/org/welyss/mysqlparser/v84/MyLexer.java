@@ -7,9 +7,11 @@ import org.welyss.mysqlparser.items.Position;
 import org.welyss.mysqlparser.v84.MyParser.Lexer;
 import org.welyss.mysqlparser.v84.MyParser.Location;
 
+/**
+ * Convert from sql_lex.cc, include my_sql_parser_lex,lex_one_token... function.
+ */
 public class MyLexer implements Lexer {
 	public MyLexer() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -19,9 +21,8 @@ public class MyLexer implements Lexer {
 	}
 
 	@Override
-	public Object getLVal() {
-		// TODO Auto-generated method stub
-		return null;
+	public Object getLVal(SQLThread thd) {
+		return thd.yylval;
 	}
 
 	@Override
@@ -38,72 +39,73 @@ public class MyLexer implements Lexer {
 
 	@Override
 	public int yylex(SQLThread thd) throws IOException {
-		Item yylval = thd.yylval;
-		LexInputStream lip = thd.lip;
-		int token;
+		  Item yylval = thd.yylval;
+		  // POS in mysql-8.4.5/src/sql/parse_location.h
+		  Location yylloc = thd.yylloc;
+		  LexInputStream lip = thd.lip;
+		  int token;
 
-		  if (thd->is_error()) {
-		    if (thd->get_parser_da()->has_sql_condition(ER_CAPACITY_EXCEEDED))
-		      return ABORT_SYM;
-		  }
+//		  if (thd.is_error()) {
+//		    if (thd.get_parser_da().has_sql_condition(ER_CAPACITY_EXCEEDED))
+//		      return ABORT_SYM;
+//		  }
 
-		  if (lip->lookahead_token >= 0) {
+		  if (lip.lookaheadToken >= 0) {
 		    /*
 		      The next token was already parsed in advance,
 		      return it.
 		    */
-		    token = lip->lookahead_token;
-		    lip->lookahead_token = -1;
-		    *yylval = *(lip->lookahead_yylval);
-		    yylloc->cpp.start = lip->get_cpp_tok_start();
-		    yylloc->cpp.end = lip->get_cpp_ptr();
-		    yylloc->raw.start = lip->get_tok_start();
-		    yylloc->raw.end = lip->get_ptr();
-		    lip->lookahead_yylval = nullptr;
-		    lip->add_digest_token(token, yylval);
+		    token = lip.lookaheadToken;
+		    lip.lookaheadToken = -1;
+		    yylval = lip.lookaheadYylval;
+//		    yylloc.cpp.start = lip.getCppTokStart();
+//		    yylloc.cpp.end = lip.getCppPtr();
+//		    yylloc.raw.start = lip.getTokStart();
+//		    yylloc.raw.end = lip.getPtr();
+		    lip.lookaheadYylval = null;
+		    lip.addDigestToken(token, yylval);
 		    return token;
 		  }
 
-		  token = lex_one_token(yylval, thd);
-		  yylloc->cpp.start = lip->get_cpp_tok_start();
-		  yylloc->raw.start = lip->get_tok_start();
+		  token = lexOneToken(yylval, thd);
+//		  yylloc.cpp.start = lip.getCppTokStart();
+//		  yylloc.raw.start = lip.getTokStart();
 
 		  switch (token) {
 		    case WITH:
 		      /*
 		        Parsing 'WITH' 'ROLLUP' requires 2 look ups,
 		        which makes the grammar LALR(2).
-		        Replace by a single 'WITH_ROLLUP' token,
+		        Replace by a single 'WithRollup' token,
 		        to transform the grammar into a LALR(1) grammar,
-		        which sql_yacc.yy can process.
+		        which sqlYacc.yy can process.
 		      */
-		      token = lex_one_token(yylval, thd);
+		      token = lexOneToken(yylval, thd);
 		      switch (token) {
-		        case ROLLUP_SYM:
-		          yylloc->cpp.end = lip->get_cpp_ptr();
-		          yylloc->raw.end = lip->get_ptr();
-		          lip->add_digest_token(WITH_ROLLUP_SYM, yylval);
-		          return WITH_ROLLUP_SYM;
+		        case RollupSym:
+//		          yylloc.cpp.end = lip.getCppPtr();
+//		          yylloc.raw.end = lip.getPtr();
+		          lip.addDigestToken(WithRollupSym, yylval);
+		          return WithRollupSym;
 		        default:
 		          /*
 		            Save the token following 'WITH'
 		          */
-		          lip->lookahead_yylval = lip->yylval;
-		          lip->yylval = nullptr;
-		          lip->lookahead_token = token;
-		          yylloc->cpp.end = lip->get_cpp_ptr();
-		          yylloc->raw.end = lip->get_ptr();
-		          lip->add_digest_token(WITH, yylval);
+		          lip.lookaheadYylval = lip.yylval;
+		          lip.yylval = nullptr;
+		          lip.lookaheadToken = token;
+//		          yylloc.cpp.end = lip.getCppPtr();
+//		          yylloc.raw.end = lip.getPtr();
+		          lip.addDigestToken(With, yylval);
 		          return WITH;
 		      }
 		      break;
 		  }
 
-		  yylloc->cpp.end = lip->get_cpp_ptr();
-		  yylloc->raw.end = lip->get_ptr();
-		  if (!lip->skip_digest) lip->add_digest_token(token, yylval);
-		  lip->skip_digest = false;
+//		  yylloc.cpp.end = lip.getCppPtr();
+//		  yylloc.raw.end = lip.getPtr();
+		  if (!lip.skipDigest) lip.addDigestToken(token, yylval);
+		  lip.skipDigest = false;
 		  return token;
-		}
 	}
 }
