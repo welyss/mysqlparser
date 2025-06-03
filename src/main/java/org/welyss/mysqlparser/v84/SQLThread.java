@@ -7,7 +7,16 @@ import org.welyss.mysqlparser.v84.MyParser.Location;
  * Convert from class THD in sql_class.h
  */
 public class SQLThread {
-	public LexInputStream lip;
 	public Item yylval;
 	public Location yylloc;
+	public ParserState mParserState;
+
+	public SQLThread(String sql) {
+		mParserState = new ParserState(sql);
+	}
+
+	public CharsetInfo charset() {
+//		return variables.character_set_client;
+		return new CharsetInfo();
+	}
 }

@@ -1,5 +1,8 @@
 package org.welyss.mysqlparser.v84;
 
+/**
+ * Convert from struct CHARSET_INFO in m_ctype.h
+ */
 public class CharsetInfo {
 	int number;
 	int primaryNumber;
@@ -18,7 +21,7 @@ public class CharsetInfo {
 	public static long tabToUni;
 //	public static final MY_UNI_IDX tabFromUni;
 //	public static final MY_UNICASE_INFO caseinfo;
-//	public static final LexStateMapsSt stateMaps; /* parser internal data */
+	public static final LexStateMapsSt stateMaps; /* parser internal data */
 	public static int identMap; /* parser internal data */
 	int strxfrmMultiply;
 	int caseupMultiply;
@@ -39,7 +42,7 @@ public class CharsetInfo {
 	 * If this collation is PAD_SPACE, it collates as if all inputs were padded with
 	 * a given number of spaces at the end (see the "num_codepoints" flag to
 	 * strnxfrm). NO_PAD simply compares unextended strings.
-	 * 
+	 *
 	 * Note that this is fundamentally about the behavior of coll->strnxfrm.
 	 */
 //	PadAttribute padAttribute;
