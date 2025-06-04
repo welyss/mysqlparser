@@ -317,9 +317,9 @@ public class LexInputStream {
 
 	}
 
-	void bodyUtf8AppendLiteral(SQLThread thd, String txt, CharsetInfo txt_cs, char end_ptr) {
-
-	}
+//	void bodyUtf8AppendLiteral(SQLThread thd, String txt, CharsetInfo txt_cs, char end_ptr) {
+//
+//	}
 
 	Integer getLineno(char rawPtr) {
 		return null;
@@ -397,24 +397,24 @@ public class LexInputStream {
 	 * @param [in] cs The character set/collation to check for a deprecation.
 	 * @param [in] alias The name/alias of @p cs.
 	 */
-	void warnOnDeprecatedCharset(CharsetInfo cs, char alias) {
-		if (!isPartialParser()) {
-//    ::warn_on_deprecated_charset(m_thd, cs, alias);
-		}
-	}
+//	void warnOnDeprecatedCharset(CharsetInfo cs, char alias) {
+//		if (!isPartialParser()) {
+////    ::warn_on_deprecated_charset(m_thd, cs, alias);
+//		}
+//	}
 
 	/**
 	 * Outputs warnings on deprecated collations in complete SQL statements
 	 *
 	 * @param [in] collation The collation to check for a deprecation.
 	 */
-	void warnOnDeprecatedCollation(CharsetInfo collation) {
-		if (!isPartialParser()) {
-//    ::warn_on_deprecated_collation(m_thd, collation);
-		}
-	}
+//	void warnOnDeprecatedCollation(CharsetInfo collation) {
+//		if (!isPartialParser()) {
+////    ::warn_on_deprecated_collation(m_thd, collation);
+//		}
+//	}
 
-	static final CharsetInfo queryCharset = new CharsetInfo();
+//	static final CharsetInfo queryCharset = new CharsetInfo();
 
 // private
 	/** Pointer to the current position in the raw input stream. */
@@ -516,7 +516,7 @@ public class LexInputStream {
 	 *
 	 * NOTE: this member must be used within MYSQLlex() function only.
 	 */
-	public static final CharsetInfo mUnderscoreCs = new CharsetInfo();
+//	public static final CharsetInfo mUnderscoreCs = new CharsetInfo();
 
 	/**
 	 * Current statement digest instrumentation.

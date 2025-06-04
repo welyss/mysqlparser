@@ -15,8 +15,4 @@ public class SQLThread {
 		mParserState = new ParserState(sql);
 	}
 
-	public CharsetInfo charset() {
-//		return variables.character_set_client;
-		return new CharsetInfo();
-	}
 }

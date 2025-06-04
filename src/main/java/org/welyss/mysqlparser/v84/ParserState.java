@@ -1,14 +1,14 @@
 package org.welyss.mysqlparser.v84;
 
 public class ParserState {
-	public LexInputStream lip;
+	public LexInputStream mLip;
 	/**
 	 * True if current query contains comments
 	 */
 	private boolean mComment;
 
 	public ParserState(String sql) {
-		lip = new LexInputStream(sql);
+		mLip = new LexInputStream(sql);
 	}
 
 	public void add_comment() {

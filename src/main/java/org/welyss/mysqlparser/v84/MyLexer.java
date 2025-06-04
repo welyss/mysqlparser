@@ -11,7 +11,10 @@ import org.welyss.mysqlparser.v84.MyParser.Location;
  * Convert from sql_lex.cc, include my_sql_parser_lex,lex_one_token... function.
  */
 public class MyLexer implements Lexer {
+	LexStateMapsSt stateMaps;
+
 	public MyLexer() {
+		stateMaps = new LexStateMapsSt();
 	}
 
 	@Override
@@ -39,74 +42,72 @@ public class MyLexer implements Lexer {
 
 	@Override
 	public int yylex(SQLThread thd) throws IOException {
-		  Item yylval = thd.yylval;
-		  // POS in mysql-8.4.5/src/sql/parse_location.h
-		  Location yylloc = thd.yylloc;
-		  LexInputStream lip = thd.lip;
-		  int token;
+		Item yylval = thd.yylval;
+		// POS in mysql-8.4.5/src/sql/parse_location.h
+		Location yylloc = thd.yylloc;
+		LexInputStream lip = thd.mParserState.mLip;
+		int token;
 
 //		  if (thd.is_error()) {
 //		    if (thd.get_parser_da().has_sql_condition(ER_CAPACITY_EXCEEDED))
 //		      return ABORT_SYM;
 //		  }
 
-		  if (lip.lookaheadToken >= 0) {
-		    /*
-		      The next token was already parsed in advance,
-		      return it.
-		    */
-		    token = lip.lookaheadToken;
-		    lip.lookaheadToken = -1;
-		    yylval = lip.lookaheadYylval;
+		if (lip.lookaheadToken >= 0) {
+			/*
+			 * The next token was already parsed in advance, return it.
+			 */
+			token = lip.lookaheadToken;
+			lip.lookaheadToken = -1;
+			yylval = lip.lookaheadYylval;
 //		    yylloc.cpp.start = lip.getCppTokStart();
 //		    yylloc.cpp.end = lip.getCppPtr();
 //		    yylloc.raw.start = lip.getTokStart();
 //		    yylloc.raw.end = lip.getPtr();
-		    lip.lookaheadYylval = null;
-		    lip.addDigestToken(token, yylval);
-		    return token;
-		  }
+			lip.lookaheadYylval = null;
+			lip.addDigestToken(token, yylval);
+			return token;
+		}
 
-		  token = lexOneToken(yylval, thd);
+		token = lexOneToken(yylval, thd);
 //		  yylloc.cpp.start = lip.getCppTokStart();
 //		  yylloc.raw.start = lip.getTokStart();
 
-		  switch (token) {
-		    case WITH:
-		      /*
-		        Parsing 'WITH' 'ROLLUP' requires 2 look ups,
-		        which makes the grammar LALR(2).
-		        Replace by a single 'WithRollup' token,
-		        to transform the grammar into a LALR(1) grammar,
-		        which sqlYacc.yy can process.
-		      */
-		      token = lexOneToken(yylval, thd);
-		      switch (token) {
-		        case ROLLUP_SYM:
+		switch (token) {
+		case WITH:
+			/*
+			 * Parsing 'WITH' 'ROLLUP' requires 2 look ups, which makes the grammar LALR(2).
+			 * Replace by a single 'WithRollup' token, to transform the grammar into a
+			 * LALR(1) grammar, which sqlYacc.yy can process.
+			 */
+			token = lexOneToken(yylval, thd);
+			switch (token) {
+			case ROLLUP_SYM:
 //		          yylloc.cpp.end = lip.getCppPtr();
 //		          yylloc.raw.end = lip.getPtr();
-		          lip.addDigestToken(WITH_ROLLUP_SYM, yylval);
-		          return WITH_ROLLUP_SYM;
-		        default:
-		          /*
-		            Save the token following 'WITH'
-		          */
-		          lip.lookaheadYylval = lip.yylval;
-		          lip.yylval = null;
-		          lip.lookaheadToken = token;
+				lip.addDigestToken(WITH_ROLLUP_SYM, yylval);
+				return WITH_ROLLUP_SYM;
+			default:
+				/*
+				 * Save the token following 'WITH'
+				 */
+				lip.lookaheadYylval = lip.yylval;
+				lip.yylval = null;
+				lip.lookaheadToken = token;
 //		          yylloc.cpp.end = lip.getCppPtr();
 //		          yylloc.raw.end = lip.getPtr();
-		          lip.addDigestToken(WITH, yylval);
-		          return WITH;
-		      }
+				lip.addDigestToken(WITH, yylval);
+				return WITH;
+			}
 //		      break;
-		  }
+		}
 
 //		  yylloc.cpp.end = lip.getCppPtr();
 //		  yylloc.raw.end = lip.getPtr();
-		  if (!lip.skipDigest) lip.addDigestToken(token, yylval);
-		  lip.skipDigest = false;
-		  return token;
+		if (!lip.skipDigest)
+			lip.addDigestToken(token, yylval);
+		lip.skipDigest = false;
+		return token;
 	}
 
 	private int lexOneToken(Item yylval, SQLThread thd) {
@@ -116,18 +117,17 @@ public class MyLexer implements Lexer {
 		  int length;
 		  MyLexStates state;
 		  LexInputStream lip = thd.mParserState.mLip;
-		  CharsetInfo cs = thd.charset();
-		  MyLexStates stateMap = cs.stateMaps.mainMap;
-		  char identMap = cs.identMap;
+		  MyLexStates[] stateMap = stateMaps.mainMap;
+		  boolean[] identMap = stateMaps.identMap;
 
 		  lip.yylval = yylval;  // The global state
 
 		  lip.startToken();
 		  state = lip.nextState;
-		  lip.nextState = MyLexStart;
+		  lip.nextState = MyLexStates.MY_LEX_START;
 		  for (;;) {
 		    switch (state) {
-		      case MyLexStart:  // Start of token
+		      case MY_LEX_START:  // Start of token
 		        // Skip starting whitespace
 		        while (stateMap[c = lip.yypeek()] == MyLexSkip) {
 		          if (c == '\n') lip.yylineno++;
@@ -145,7 +145,7 @@ public class MyLexer implements Lexer {
 		        if (c == '-' && lip.yy_peek() == '-' &&
 		            (myIsspace(cs, lip.yypeekn(1)) ||
 		             myIscntrl(cs, lip.yypeekn(1)))) {
-		          state = MyLexComment;
+		          state = MY_LEX_COMMENT;
 		          break;
 		        }
 
@@ -834,6 +834,5 @@ public class MyLexer implements Lexer {
 		    }
 		  }
 		}
-
 
 }
