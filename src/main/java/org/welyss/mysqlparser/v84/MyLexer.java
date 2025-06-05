@@ -8,7 +8,8 @@ import org.welyss.mysqlparser.v84.MyParser.Lexer;
 import org.welyss.mysqlparser.v84.MyParser.Location;
 
 /**
- * Convert from sql_lex.cc, include my_sql_parser_lex,lex_one_token... function.
+ * Convert from sql_lex.cc, include my_sql_parser_lex,lex_one_token... function.<br>
+ * <b>CHARSET_INFO</b> is from include/mysql/strings/m_ctype.h and utf8mb3/utf8mb4 instance in strings/ctype-utf8.cc.
  */
 public class MyLexer implements Lexer {
 	LexStateMapsSt stateMaps;
@@ -129,22 +130,22 @@ public class MyLexer implements Lexer {
 		    switch (state) {
 		      case MY_LEX_START:  // Start of token
 		        // Skip starting whitespace
-		        while (stateMap[c = lip.yypeek()] == MyLexSkip) {
+		        while (stateMap[c = lip.yyPeek()] == MyLexStates.MY_LEX_SKIP) {
 		          if (c == '\n') lip.yylineno++;
 
-		          lip.yy_skip();
+		          lip.yySkip();
 		        }
 
 		        /* Start of real token */
 		        lip.restartToken();
-		        c = lip.yy_get();
+		        c = lip.yyGet();
 		        state = stateMap[c];
 		        break;
-		      case MyLexChar:  // Unknown or single char token
-		      case MyLexSkip:  // This should not happen
-		        if (c == '-' && lip.yy_peek() == '-' &&
-		            (myIsspace(cs, lip.yypeekn(1)) ||
-		             myIscntrl(cs, lip.yypeekn(1)))) {
+		      case MY_LEX_CHAR:  // Unknown or single char token
+		      case MY_LEX_SKIP:  // This should not happen
+		        if (c == '-' && lip.yyPeek() == '-' &&
+		            (Character.isWhitespace(lip.yyPeekn(1)) ||
+		             myIscntrl(cs, lip.yyPeekn(1)))) {
 		          state = MY_LEX_COMMENT;
 		          break;
 		        }

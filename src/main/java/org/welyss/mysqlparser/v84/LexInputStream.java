@@ -6,10 +6,18 @@ import org.welyss.mysqlparser.items.Item;
  * Convert from sql_lex.h,sql_lex.cc
  */
 public class LexInputStream {
-	StringBuilder sqlBuilder;
+	public static short MY_CHAR_U   =   01; /* Upper case */
+	public static short MY_CHAR_L   =   02; /* Lower case */
+	public static short MY_CHAR_NMR =   04; /* Numeral (digit) */
+	public static short MY_CHAR_SPC =  010; /* Spacing character */
+	public static short MY_CHAR_PNT =  020; /* Punctuation */
+	public static short MY_CHAR_CTR =  040; /* Control character */
+	public static short MY_CHAR_B   = 0100; /* Blank */
+	public static short MY_CHAR_X   = 0200; /* heXadecimal digit */
+	public StringBuilder sqlBuf;
 
 	public LexInputStream(String sql) {
-		sqlBuilder = new StringBuilder(sql);
+		sqlBuf = new StringBuilder(sql);
 		reset(0, 0);
 	}
 
@@ -110,7 +118,7 @@ public class LexInputStream {
 	 * @return the next character to parse.
 	 */
 	char yyGet() {
-		char c = sqlBuilder.charAt(mPtr++);
+		char c = sqlBuf.charAt(mPtr++);
 		if (mEcho)
 			mCppPtr = mPtr;
 		return c;
@@ -122,7 +130,7 @@ public class LexInputStream {
 	 * @return the last character accepted.
 	 */
 	char yyGetLast() {
-		return sqlBuilder.charAt(mPtr - 1);
+		return sqlBuf.charAt(mPtr - 1);
 	}
 
 	/**
@@ -139,7 +147,7 @@ public class LexInputStream {
 	 */
 	char yyPeekn(int n) {
 		int offset = mPtr + n;
-		return offset < sqlBuilder.length() ? sqlBuilder.charAt(offset) : MyParser.SymbolKind.S_YYEOF.getChar();
+		return offset < sqlBuf.length() ? sqlBuf.charAt(offset) : MyParser.SymbolKind.S_YYEOF.getChar();
 	}
 
 	/**
@@ -184,10 +192,10 @@ public class LexInputStream {
 	 * to unput, get, or skip from the stream.
 	 */
 	char yyUnput(char ch) {
-		sqlBuilder.setCharAt(--mPtr, ch);
+		sqlBuf.setCharAt(--mPtr, ch);
 		if (mEcho)
 			mCppPtr--;
-		return sqlBuilder.charAt(mPtr);
+		return sqlBuf.charAt(mPtr);
 	}
 
 	/**
@@ -199,8 +207,8 @@ public class LexInputStream {
 	 */
 	char cppInject(char ch) {
 //		mCppPtr = ch;
-		sqlBuilder.replace(mCppPtr, mCppPtr + 1, String.valueOf(ch));
-		return sqlBuilder.charAt(++mCppPtr);
+		sqlBuf.replace(mCppPtr, mCppPtr + 1, String.valueOf(ch));
+		return sqlBuf.charAt(++mCppPtr);
 	}
 
 	/**
@@ -224,17 +232,17 @@ public class LexInputStream {
 
 	/** Get the raw query buffer. */
 	char getBuf() {
-		return sqlBuilder.charAt(mBuf);
+		return sqlBuf.charAt(mBuf);
 	}
 
 	/** Get the pre-processed query buffer. */
 	char getCppBuf() {
-		return sqlBuilder.charAt(mCppBuf);
+		return sqlBuf.charAt(mCppBuf);
 	}
 
 	/** Get the end of the raw query buffer. */
 	char getEndOfQuery() {
-		return sqlBuilder.charAt(mEndOfQuery);
+		return sqlBuf.charAt(mEndOfQuery);
 	}
 
 	/** Mark the stream position as the start of a new token. */
@@ -257,32 +265,32 @@ public class LexInputStream {
 
 	/** Get the token start position, in the raw buffer. */
 	char getTokStart() {
-		return sqlBuilder.charAt(mTokStart);
+		return sqlBuf.charAt(mTokStart);
 	}
 
 	/** Get the token start position, in the pre-processed buffer. */
 	char getCppTokStart() {
-		return sqlBuilder.charAt(mCppTokStart);
+		return sqlBuf.charAt(mCppTokStart);
 	}
 
 	/** Get the token end position, in the raw buffer. */
 	char getTokEnd() {
-		return sqlBuilder.charAt(mTokEnd);
+		return sqlBuf.charAt(mTokEnd);
 	}
 
 	/** Get the token end position, in the pre-processed buffer. */
 	char getCppTokEnd() {
-		return sqlBuilder.charAt(mCppTokEnd);
+		return sqlBuf.charAt(mCppTokEnd);
 	}
 
 	/** Get the current stream pointer, in the raw buffer. */
 	char getPtr() {
-		return sqlBuilder.charAt(mPtr);
+		return sqlBuf.charAt(mPtr);
 	}
 
 	/** Get the current stream pointer, in the pre-processed buffer. */
 	char getCppPtr() {
-		return sqlBuilder.charAt(mCppPtr);
+		return sqlBuf.charAt(mCppPtr);
 	}
 
 	/** Get the length of the current token, in the raw buffer. */
@@ -545,4 +553,11 @@ public class LexInputStream {
 		return !((tokBitmap & 0x80) > 0);
 	}
 
+	public boolean myIscntrl(char ch) {
+		return ((cs -> ctype + 1)[static_cast < uint8_t > (ch)] & MY_CHAR_CTR) != 0;
+	}
+
+	public boolean myIsspace(char ch) {
+		  return ((cs->ctype + 1)[static_cast<uint8_t>(ch)] & MY_CHAR_SPC) != 0;
+		}
 }

@@ -33,7 +33,7 @@ public class LexStateMapsSt {
 	private void hintLexInitMaps() {
 		hintMap = new HintLexCharClasses[256];
 		for (short i = 0; i < 256; i++) {
-			if (myIsmb1st(i))
+			if (myIsmb1st((char)i))
 				hintMap[i] = HintLexCharClasses.HINT_CHR_MB;
 			else if (Character.isAlphabetic(i))
 				hintMap[i] = HintLexCharClasses.HINT_CHR_IDENT;
@@ -73,7 +73,7 @@ public class LexStateMapsSt {
 				stateMap[i] = MyLexStates.MY_LEX_IDENT;
 			else if (Character.isDigit(i))
 				stateMap[i] = MyLexStates.MY_LEX_NUMBER_IDENT;
-			else if (myIsmb1st(i))
+			else if (myIsmb1st((char)i))
 				/* To get whether it's a possible leading byte for a charset. */
 				stateMap[i] = MyLexStates.MY_LEX_IDENT;
 			else if (Character.isWhitespace(i))
@@ -124,22 +124,28 @@ public class LexStateMapsSt {
 	 * @param[in] leading_byte possible leading byte
 	 * @return true if it is, otherwise false
 	 */
-	private boolean myIsmb1st(int leadingByte) {
+	private boolean myIsmb1st(char leadingByte) {
 //		return myMbcharlen(leadingByte) > 1 || (myMbmaxlenlen() == 2 && myMbcharlen(leadingByte) == 0);
-		// myMbmaxlenlen always 1 in utf8
+		// myMbmaxlenlen always 1 in utf8mb4
 		return myMbcharlen(leadingByte) > 1;
 	}
 
-	private int myMbcharlen(int firstByte) {
-		// only utf8mb3 for now
-		if (firstByte < 0x80)
+	/**
+	 * always utf8mb4
+	 * @param c character
+	 * @return
+	 */
+	private int myMbcharlen(char c) {
+		if (c < 0x80)
 			return 1;
-		else if (firstByte < 0xc2)
+		if (c < 0xc2)
 			return 0; /* Illegal mb head */
-		else if (firstByte < 0xe0)
+		if (c < 0xe0)
 			return 2;
-		else if (firstByte < 0xf0)
+		if (c < 0xf0)
 			return 3;
+		if (c < 0xf8)
+			return 4;
 		return 0; /* Illegal mb head */
 	}
 }
