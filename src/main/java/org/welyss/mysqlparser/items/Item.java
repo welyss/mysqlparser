@@ -1,6 +1,8 @@
 package org.welyss.mysqlparser.items;
 
-public class Item {
+public abstract class Item {
+	public LexStr lexStr;
 	public Item() {
+		lexStr = null;
 	}
 }

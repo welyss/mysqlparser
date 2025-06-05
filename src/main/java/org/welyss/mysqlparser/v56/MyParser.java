@@ -19,19 +19,19 @@ import org.welyss.mysqlparser.utils.MySQLParserUtils;
 /* A Bison parser, made by GNU Bison 2.7.  */
 
 /* Skeleton implementation for Bison LALR(1) parsers in Java
-   
+
       Copyright (C) 2007-2012 Free Software Foundation, Inc.
-   
+
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-   
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
@@ -1299,7 +1299,7 @@ public class MyParser {
 
 		/**
 		 * Method to retrieve the semantic value of the last scanned token.
-		 * 
+		 *
 		 * @return the semantic value of the last scanned token.
 		 */
 		Object getLVal(SQLThread thd);
@@ -1308,7 +1308,7 @@ public class MyParser {
 		 * Entry point for the scanner. Returns the token identifier
 		 * corresponding to the next token and prepares to return the semantic
 		 * value of the token.
-		 * 
+		 *
 		 * @return the token identifier corresponding to the next token.
 		 */
 		int mysqlLex(SQLThread thd);
@@ -1317,7 +1317,7 @@ public class MyParser {
 		 * Entry point for error reporting. Emits an error in a user-defined
 		 * way.
 		 *
-		 * 
+		 *
 		 * @param s
 		 *            The string for the error message.
 		 */
@@ -1329,7 +1329,7 @@ public class MyParser {
 
 	/**
 	 * Instantiates the Bison-generated parser.
-	 * 
+	 *
 	 * @param myLexer
 	 *            The scanner that will supply tokens to the parser.
 	 * @throws IOException
@@ -1365,7 +1365,7 @@ public class MyParser {
 
 	/**
 	 * Set the <tt>PrintStream</tt> on which the debug output is printed.
-	 * 
+	 *
 	 * @param s
 	 *            The stream that is used for debugging output.
 	 */
@@ -1386,7 +1386,7 @@ public class MyParser {
 	/**
 	 * Set the verbosity of the debugging output; 0 means that all kinds of
 	 * output from the parser are suppressed.
-	 * 
+	 *
 	 * @param level
 	 *            The verbosity level for debugging output.
 	 */
@@ -1505,7 +1505,7 @@ public class MyParser {
 
 	/**
 	 * Based on Ver. MySQL-5.6.35
-	 * 
+	 *
 	 * @param yyn
 	 * @param yystack
 	 * @param yylen
@@ -1518,7 +1518,7 @@ public class MyParser {
 		/*
 		 * If YYLEN is nonzero, implement the default value of the action: `$$ =
 		 * $1'. Otherwise, use the top of the stack.
-		 * 
+		 *
 		 * Otherwise, the following line sets YYVAL to garbage. This behavior is
 		 * undocumented and Bison users should not rely upon it.
 		 */
@@ -1548,8 +1548,8 @@ public class MyParser {
 			}
 			;
 			break;
-		
-		
+
+
 		case 3:
 		if (yyn == 3)
 		/* Line 350 of lalr1.java */
@@ -7271,7 +7271,7 @@ public class MyParser {
 //		 Lex->create_info.comment=((lex_str)(yystack.valueAt (3-(3))));
 //		 Lex->create_info.used_fields|= HA_CREATE_USED_COMMENT;
 			 Object commentObj = yystack.valueAt (3-(3));
-			 thd.lex.createInfo.comment = commentObj == null ? "":((Token)commentObj).lexStr;
+			 thd.lex.createInfo.comment = commentObj == null ? "":((Token)commentObj).lexStr.str;
 			 thd.lex.createInfo.usedFields |= CreateInfo.HA_CREATE_USED_COMMENT;
 		 };
 		 break;
@@ -7992,10 +7992,10 @@ public class MyParser {
 					String columnName = null;
 					String columnType = null;
 					if (columnNameObj != null) {
-						columnName = ((Token) columnNameObj).lexStr;
+						columnName = ((Token) columnNameObj).lexStr.str;
 					}
 					if (columnTypeObj != null) {
-						columnType = ((Token) columnTypeObj).lexStr;
+						columnType = ((Token) columnTypeObj).lexStr.str;
 					}
 					if (AlterFlag.ALTER_ADD_COLUMN.equals(curFlag)) {
 						MyParserProcessor.addFieldToList(thd, columnName, columnType, curFlag);
@@ -8975,7 +8975,7 @@ public class MyParser {
 		// { Lex->comment= ((lex_str)(yystack.valueAt (2-(2)))); };
 		 {
 			Object commentObj = yystack.valueAt (2-(2));
-			 thd.lex.comment = commentObj == null ? "":((Token)commentObj).lexStr;
+			 thd.lex.comment = commentObj == null ? "":((Token)commentObj).lexStr.str;
 		 }
 		 break;
 		//
@@ -10889,7 +10889,7 @@ public class MyParser {
 			Object columnNameObj = yystack.valueAt (3-(3));
 			String columnName = null;
 			if (columnNameObj != null) {
-				columnName = ((Token)columnNameObj).lexStr;
+				columnName = ((Token)columnNameObj).lexStr.str;
 			}
 			MyParserProcessor.addFieldToList(thd, columnName, "", null, AlterFlag.ALTER_CHANGE_COLUMN);
 		};
@@ -10920,12 +10920,12 @@ public class MyParser {
 			Object columnNameObj = yystack.valueAt (3-(3));
 			String columnName = null;
 			if (columnNameObj != null) {
-				columnName = ((Token) columnNameObj).lexStr;
+				columnName = ((Token) columnNameObj).lexStr.str;
 			}
 			MyParserProcessor.addFieldToList(thd, columnName, null, AlterFlag.ALTER_CHANGE_COLUMN);
 		};
 		break;
-		
+
 		 case 977:
 		 if (yyn == 977)
 		 /* Line 350 of lalr1.java */
@@ -10947,7 +10947,7 @@ public class MyParser {
 				if (AlterFlag.ALTER_CHANGE_COLUMN.equals(curAlterColumnInfo.alterFlag)) {
 					Object type = yystack.valueAt(6 - (5));
 					if (type != null) {
-						curAlterColumnInfo.typeName = ((Token) type).lexStr;
+						curAlterColumnInfo.typeName = ((Token) type).lexStr.str;
 					}
 				}
 			}
@@ -10979,7 +10979,7 @@ public class MyParser {
 			Object columnNameObj = yystack.valueAt(4-(3));
 			String columnName = null;
 			if (columnNameObj != null) {
-				columnName = ((Token)columnNameObj).lexStr;
+				columnName = ((Token)columnNameObj).lexStr.str;
 			}
 			MyParserProcessor.addFieldToList(thd, columnName, null, AlterFlag.ALTER_DROP_COLUMN);
 		};
@@ -21376,8 +21376,8 @@ public class MyParser {
 			 // field_ident
 		 };
 		 break;
-		
-		
+
+
 		 case 1963:
 		 if (yyn == 1963)
 		 /* Line 350 of lalr1.java */
@@ -28538,7 +28538,7 @@ public class MyParser {
 
 	/**
 	 * Whether the given <code>yypact_</code> value indicates a defaulted state.
-	 * 
+	 *
 	 * @param yyvalue
 	 *            the value to check
 	 */
@@ -28548,7 +28548,7 @@ public class MyParser {
 
 	/**
 	 * Whether the given <code>yytable_</code> value indicates a syntax error.
-	 * 
+	 *
 	 * @param yyvalue
 	 *            the value to check
 	 */

@@ -14,11 +14,11 @@ public class TableIdent extends Item {
 	}
 
 	public String getDb() {
-		return dbArg == null ? null : dbArg.lexStr;
+		return dbArg == null ? null : dbArg.lexStr.str;
 	}
 
 	public String getTable() {
-		return tableArg.lexStr;
+		return tableArg.lexStr.str;
 	}
 
 	public Integer getDbStartPos() {

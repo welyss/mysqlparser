@@ -96,7 +96,7 @@ public class LexInputStreamProcessor {
 
 	/**
 	 * Look ahead at some character to parse.
-	 * 
+	 *
 	 * @param n
 	 *            offset of the character to look up
 	 */
@@ -113,7 +113,7 @@ public class LexInputStreamProcessor {
 
 	/**
 	 * Accept multiple characters at once.
-	 * 
+	 *
 	 * @param n
 	 *            the number of characters to accept.
 	 */
@@ -131,7 +131,7 @@ public class LexInputStreamProcessor {
 
 	/**
 	 * Get a character, and advance in the stream.
-	 * 
+	 *
 	 * @return the next character to parse.
 	 */
 	public char yyGet(SQLThread thd) {
@@ -146,7 +146,7 @@ public class LexInputStreamProcessor {
 
 	/**
 	 * Get the last character accepted.
-	 * 
+	 *
 	 * @return the last character accepted.
 	 */
 	public char yyGetLast(SQLThread thd) {
@@ -212,7 +212,7 @@ public class LexInputStreamProcessor {
 
 	/**
 	 * End of file indicator for the query text to parse.
-	 * 
+	 *
 	 * @return true if there are no more characters to parse
 	 */
 	public boolean eof(SQLThread thd) {
@@ -262,15 +262,15 @@ public class LexInputStreamProcessor {
 					 * <unary plus> operator from - a <binary minus> operator -
 					 * a <binary plus> operator to only reduce "a = -1" to
 					 * "a = ?", and not change "b - 1" to "b ?"
-					 * 
+					 *
 					 * Binary operators are found inside an expression, while
 					 * unary operators are found at the beginning of an
 					 * expression, or after operators.
-					 * 
+					 *
 					 * To achieve this, every token that is followed by an
 					 * <expr> expression in the SQL grammar is flagged. See
 					 * sql/sql_yacc.yy See sql/gen_lex_token.cc
-					 * 
+					 *
 					 * For example, "(-1)" is parsed as "(", "-", NUM, ")", and
 					 * lexTokenArray["("].mStartExpr is true, so reduction of
 					 * the "-" NUM is done, the result is "(?)". "(a-1)" is
@@ -282,7 +282,7 @@ public class LexInputStreamProcessor {
 						/*
 						 * REDUCE: TOK_GENERIC_VALUE := (UNARY_PLUS |
 						 * UNARY_MINUS) (NUM | LOG_NUM | ... | FLOAT_NUM)
-						 * 
+						 *
 						 * REDUCE: TOK_GENERIC_VALUE := (UNARY_PLUS |
 						 * UNARY_MINUS) TOK_GENERIC_VALUE
 						 */
@@ -310,7 +310,7 @@ public class LexInputStreamProcessor {
 				/*
 				 * REDUCE: TOK_GENERIC_VALUE_LIST := TOK_GENERIC_VALUE ','
 				 * TOK_GENERIC_VALUE
-				 * 
+				 *
 				 * REDUCE: TOK_GENERIC_VALUE_LIST := TOK_GENERIC_VALUE_LIST ','
 				 * TOK_GENERIC_VALUE
 				 */
@@ -341,7 +341,7 @@ public class LexInputStreamProcessor {
 					/*
 					 * REDUCE: TOK_ROW_SINGLE_VALUE_LIST := TOK_ROW_SINGLE_VALUE
 					 * ',' TOK_ROW_SINGLE_VALUE
-					 * 
+					 *
 					 * REDUCE: TOK_ROW_SINGLE_VALUE_LIST :=
 					 * TOK_ROW_SINGLE_VALUE_LIST ',' TOK_ROW_SINGLE_VALUE
 					 */
@@ -364,7 +364,7 @@ public class LexInputStreamProcessor {
 					/*
 					 * REDUCE: TOK_ROW_MULTIPLE_VALUE_LIST :=
 					 * TOK_ROW_MULTIPLE_VALUE ',' TOK_ROW_MULTIPLE_VALUE
-					 * 
+					 *
 					 * REDUCE: TOK_ROW_MULTIPLE_VALUE_LIST :=
 					 * TOK_ROW_MULTIPLE_VALUE_LIST ',' TOK_ROW_MULTIPLE_VALUE
 					 */
@@ -381,7 +381,7 @@ public class LexInputStreamProcessor {
 		case MyParser.IDENT:
 		case MyParser.IDENT_QUOTED: {
 			Token lexToken = (Token)yylval;
-			String yytext = lexToken.lexStr;
+			String yytext = lexToken.lexStr.str;
 			// int yylen = lexToken.lexStr.length;
 
 			/*
@@ -579,18 +579,18 @@ public class LexInputStreamProcessor {
 		/*
 		 * The lexer parses "@@variable" as '@', '@', 'variable', returning a
 		 * token for '@' alone.
-		 * 
+		 *
 		 * This is incorrect, '@' is not really a token, because the syntax
 		 * "@ @ variable" (with spaces) is not accepted: The lexer keeps some
 		 * internal state after the '@' fake token.
-		 * 
+		 *
 		 * To work around this, digest text are printed as "@@variable".
 		 */
 		lexTokenArray[(int) '@'].mAppendSpace = false;
 
 		/*
 		 * Define additional properties for tokens.
-		 * 
+		 *
 		 * List all the token that are followed by an expression. This is needed
 		 * to differentiate unary from binary '+' and '-' operators, because we
 		 * want to: - reduce <unary +> <NUM> to <?>, - preserve <...> <binary +>

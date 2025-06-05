@@ -6,14 +6,21 @@ import org.welyss.mysqlparser.items.Item;
  * Convert from sql_lex.h,sql_lex.cc
  */
 public class LexInputStream {
-	public static short MY_CHAR_U   =   01; /* Upper case */
-	public static short MY_CHAR_L   =   02; /* Lower case */
-	public static short MY_CHAR_NMR =   04; /* Numeral (digit) */
-	public static short MY_CHAR_SPC =  010; /* Spacing character */
-	public static short MY_CHAR_PNT =  020; /* Punctuation */
-	public static short MY_CHAR_CTR =  040; /* Control character */
-	public static short MY_CHAR_B   = 0100; /* Blank */
-	public static short MY_CHAR_X   = 0200; /* heXadecimal digit */
+	public static short MY_CHAR_U = 01; /* Upper case */
+	public static short MY_CHAR_L = 02; /* Lower case */
+	public static short MY_CHAR_NMR = 04; /* Numeral (digit) */
+	public static short MY_CHAR_SPC = 010; /* Spacing character */
+	public static short MY_CHAR_PNT = 020; /* Punctuation */
+	public static short MY_CHAR_CTR = 040; /* Control character */
+	public static short MY_CHAR_B = 0100; /* Blank */
+	public static short MY_CHAR_X = 0200; /* heXadecimal digit */
+	public static short[] ctypeUtf8mb4 = { 0, 32, 32, 32, 32, 32, 32, 32, 32, 32, 40, 40, 40, 40, 40, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 72,
+			16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 132, 132, 132, 132, 132, 132, 132, 132, 132, 132, 16, 16, 16, 16, 16, 16, 16, 129, 129, 129, 129, 129, 129,
+			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 16, 16, 16, 16, 16, 16, 130, 130, 130, 130, 130, 130, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+			2, 2, 16, 16, 16, 16, 32, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+			3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+			3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0 };
+
 	public StringBuilder sqlBuf;
 
 	public LexInputStream(String sql) {
@@ -486,7 +493,7 @@ public class LexInputStream {
 	Integer foundSemicolon;
 
 	/** Token character bitmaps, to detect 7bit strings. */
-	Character tokBitmap;
+	char tokBitmap;
 
 	/** SQL_MODE = IGNORE_SPACE. */
 	boolean ignoreSpace;
@@ -554,10 +561,10 @@ public class LexInputStream {
 	}
 
 	public boolean myIscntrl(char ch) {
-		return ((cs -> ctype + 1)[static_cast < uint8_t > (ch)] & MY_CHAR_CTR) != 0;
+		return ch < ctypeUtf8mb4.length && (ctypeUtf8mb4[ch] & MY_CHAR_CTR) == MY_CHAR_CTR;
 	}
 
 	public boolean myIsspace(char ch) {
-		  return ((cs->ctype + 1)[static_cast<uint8_t>(ch)] & MY_CHAR_SPC) != 0;
-		}
+		return ch < ctypeUtf8mb4.length && (ctypeUtf8mb4[ch] & MY_CHAR_SPC) == MY_CHAR_SPC;
+	}
 }
