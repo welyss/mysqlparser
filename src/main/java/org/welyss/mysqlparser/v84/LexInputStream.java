@@ -3,7 +3,7 @@ package org.welyss.mysqlparser.v84;
 import org.welyss.mysqlparser.items.Item;
 
 /**
- * Convert from sql_lex.h,sql_lex.cc
+ * Convert from sql_lex.h,sql_lex.cc, the [yylval] is Lexer_yystype from sql_lex.h, lexer_yystype.h, lex_symbol.h .
  */
 public class LexInputStream {
 	public static short MY_CHAR_U = 01; /* Upper case */
@@ -22,10 +22,12 @@ public class LexInputStream {
 			3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0 };
 
 	public StringBuilder sqlBuf;
+	public SQLThread mThd;
 
-	public LexInputStream(String sql) {
+	public LexInputStream(String sql, SQLThread thd) {
 		sqlBuf = new StringBuilder(sql);
-		reset(0, 0);
+		mThd = thd;
+		init(0, sqlBuf.length());
 	}
 
 	/**
@@ -35,11 +37,6 @@ public class LexInputStream {
 	 * @retval true Error
 	 */
 	boolean init(Integer buff, int length) {
-//queryCharset = thd.charset();
-//m_cpp_buf = (char)thd->alloc(length + 1);
-		if (mCppBuf == null)
-			return true;
-//		mThd = thd;
 		reset(buff, length);
 		return false;
 	}
@@ -271,32 +268,32 @@ public class LexInputStream {
 	}
 
 	/** Get the token start position, in the raw buffer. */
-	char getTokStart() {
+	int getTokStart() {
 		return sqlBuf.charAt(mTokStart);
 	}
 
 	/** Get the token start position, in the pre-processed buffer. */
-	char getCppTokStart() {
+	int getCppTokStart() {
 		return sqlBuf.charAt(mCppTokStart);
 	}
 
 	/** Get the token end position, in the raw buffer. */
-	char getTokEnd() {
+	int getTokEnd() {
 		return sqlBuf.charAt(mTokEnd);
 	}
 
 	/** Get the token end position, in the pre-processed buffer. */
-	char getCppTokEnd() {
+	int getCppTokEnd() {
 		return sqlBuf.charAt(mCppTokEnd);
 	}
 
 	/** Get the current stream pointer, in the raw buffer. */
-	char getPtr() {
+	int getPtr() {
 		return sqlBuf.charAt(mPtr);
 	}
 
 	/** Get the current stream pointer, in the pre-processed buffer. */
-	char getCppPtr() {
+	int getCppPtr() {
 		return sqlBuf.charAt(mCppPtr);
 	}
 

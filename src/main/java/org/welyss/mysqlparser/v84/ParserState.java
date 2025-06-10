@@ -7,8 +7,8 @@ public class ParserState {
 	 */
 	private boolean mComment;
 
-	public ParserState(String sql) {
-		mLip = new LexInputStream(sql);
+	public ParserState(String sql, SQLThread thd) {
+		mLip = new LexInputStream(sql, thd);
 	}
 
 	public void add_comment() {

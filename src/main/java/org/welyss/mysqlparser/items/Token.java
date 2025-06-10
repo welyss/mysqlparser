@@ -12,12 +12,12 @@ public class Token extends Item {
 	}
 
 	public Token(int token, String lexStr) {
-		this.lexStr = new LexStr(lexStr);
+		this.lexStr = new LexString(lexStr);
 		this.token = token;
 	}
 
 	public Token(String lexStr, int token, int pos) {
-		this.lexStr = new LexStr(lexStr);
+		this.lexStr = new LexString(lexStr);
 		this.token = token;
 		this.pos = pos;
 	}
