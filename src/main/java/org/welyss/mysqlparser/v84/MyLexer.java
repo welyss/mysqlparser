@@ -2,6 +2,7 @@ package org.welyss.mysqlparser.v84;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.welyss.mysqlparser.items.Item;
@@ -1731,6 +1732,7 @@ public class MyLexer implements Lexer {
 
 	/**
 	 * Convert from /sql/sql_lex_hash.cc, /sql/lex_symbol.h, /sql/gen_lex_hash.cc..., Function add_digest_token from /sql/sql_digest.cc
+	 *
 	 * @param lip
 	 * @param len
 	 * @param function whether include function keywords
@@ -1738,34 +1740,78 @@ public class MyLexer implements Lexer {
 	 */
 	private int findKeyword(LexInputStream lip, int len, boolean function) {
 //		  int tok = lip.getTokStart();
-		  String tok = lip.sqlBuf.substring(lip.getTokStart(), lip.getTokStart() + len);
-		  Symbol symbol = getHashSymbol(tok, function);
+		String tok = lip.sqlBuf.substring(lip.getTokStart(), lip.getTokStart() + len);
+		Symbol symbol = getHashSymbol(tok, function);
 //		  Integer symbol = (symbolInstance == null ? null : symbolInstance.tok);
 
-		  if (symbol != null) {
-		    lip.yylval.keyword.symbol = symbol.tok;
-		    lip.yylval.keyword.str = tok;
-		    lip.yylval.keyword.length = len;
+		if (symbol != null) {
+			lip.yylval.keyword.symbol = symbol.tok;
+			lip.yylval.keyword.str = tok;
+			lip.yylval.keyword.length = len;
 
-		    if ((symbol.tok == NOT_SYM) &&
-		        (lip.mThd.variables.sqlMode & SystemVariables.MODE_HIGH_NOT_PRECEDENCE) == SystemVariables.MODE_HIGH_NOT_PRECEDENCE)
-		      return NOT2_SYM;
-		    if ((symbol.tok == OR_OR_SYM) &&
-		        !((lip.mThd.variables.sqlMode & SystemVariables.MODE_PIPES_AS_CONCAT) == SystemVariables.MODE_PIPES_AS_CONCAT)) {
+			if ((symbol.tok == NOT_SYM) && (lip.mThd.variables.sqlMode & SystemVariables.MODE_HIGH_NOT_PRECEDENCE) == SystemVariables.MODE_HIGH_NOT_PRECEDENCE)
+				return NOT2_SYM;
+			if ((symbol.tok == OR_OR_SYM) && !((lip.mThd.variables.sqlMode & SystemVariables.MODE_PIPES_AS_CONCAT) == SystemVariables.MODE_PIPES_AS_CONCAT)) {
 //		      push_deprecated_warn(lip.mThd, "|| as a synonym for OR", "OR");
-		      return OR2_SYM;
-		    }
+				return OR2_SYM;
+			}
 
-		    lip.yylval.optimizer_hints = nullptr;
-		    if (symbol.group & SG_HINTABLE_KEYWORDS) {
-		      lip.add_digest_token(symbol.tok, lip.yylval);
-		      if (consume_optimizer_hints(lip)) return ABORT_SYM;
-		      lip.skip_digest = true;
-		    }
+			lip.yylval.optimizerHints = null;
+			if ((symbol.group & Symbol.SG_HINTABLE_KEYWORDS) == Symbol.SG_HINTABLE_KEYWORDS) {
+				lip.addDigestToken(symbol.tok, lip.yylval);
+				if (consumeOptimizerHints(lip))
+					return ABORT_SYM;
+				lip.skipDigest = true;
+			}
 
-		    return symbol.tok;
+			return symbol.tok;
+		}
+		return 0;
+	}
+
+	/**
+	 * function my_hint_parser_parse = yyparse from /src/sql/sql_hints.yy.cc
+	 * @param lip
+	 * @return
+	 */
+	private boolean consumeOptimizerHints(LexInputStream lip) {
+		  MyLexStates[] stateMap = stateMaps.mainMap;
+		  int whitespace = 0;
+		  char c = lip.yyPeek();
+		  int newlines = 0;
+
+		  for (; stateMap[c] == MyLexStates.MY_LEX_SKIP;
+		       whitespace++, c = lip.yyPeekn(whitespace)) {
+		    if (c == '\n') newlines++;
 		  }
-		  return 0;
+
+		  if (lip.yyPeekn(whitespace) == '/' && lip.yyPeekn(whitespace + 1) == '*' &&
+		      lip.yyPeekn(whitespace + 2) == '+') {
+		    lip.yylineno += newlines;
+		    lip.yySkipn(whitespace);  // skip whitespace
+
+		    HintScanner hintScanner = new HintScanner(lip.mThd, lip.yylineno, lip.getPtr(),
+		                              lip.getEndOfQuery() - lip.getPtr(),
+		                              lip.mDigest);
+		    List<Integer> hintList = null;
+		    int rc = my_hint_parser_parse(lip.mThd, hintScanner, hintList);
+		    if (rc == 2) return true;  // Bison's internal OOM error
+		    if (rc == 1) {
+		      /*
+		        This branch is for 2 cases:
+		        1. YYABORT in the hint parser grammar (we use it to process OOM errors),
+		        2. open commentary error.
+		      */
+		      lip.start_token();  // adjust error message text pointer to "/*+"
+		      return true;
+		    }
+		    lip.yylineno = hint_scanner.get_lineno();
+		    lip.yySkipn(hint_scanner.get_ptr() - lip.get_ptr());
+		    lip.yylval.optimizer_hints = hint_list;   // NULL in case of syntax error
+		    lip.m_digest = hint_scanner.get_digest();  // NULL is digest buf. is full.
+		    return false;
+		  } else
+		    return false;
 		}
 
 	private Symbol getHashSymbol(String token, boolean function) {
@@ -1780,8 +1826,7 @@ public class MyLexer implements Lexer {
 				}
 			} else {
 				// "sql_keywords": SG_KEYWORDS | SG_HINTABLE_KEYWORDS
-				if (((Symbol.SG_KEYWORDS & symbol.group) == symbol.group)
-						|| ((Symbol.SG_HINTABLE_KEYWORDS & symbol.group) == symbol.group)) {
+				if (((Symbol.SG_KEYWORDS & symbol.group) == symbol.group) || ((Symbol.SG_HINTABLE_KEYWORDS & symbol.group) == symbol.group)) {
 					result = symbol;
 				}
 			}
