@@ -1056,7 +1056,7 @@ public class MyLexer implements Lexer {
 		            below by checking start != lex.ptr.
 		          */
 		          for (; stateMap[c] == MyLexStates.MY_LEX_SKIP; c = lip.yyGet()) {
-		            if (c == '\n') lip.yylineno++;
+		          	if (c == '\n') lip.yylineno++;
 		          }
 		        }
 		        if (start == lip.getPtr() && c == '.' && identMap[lip.yyPeek()])
@@ -1771,48 +1771,46 @@ public class MyLexer implements Lexer {
 
 	/**
 	 * function my_hint_parser_parse = yyparse from /src/sql/sql_hints.yy.cc
+	 *
 	 * @param lip
 	 * @return
 	 */
 	private boolean consumeOptimizerHints(LexInputStream lip) {
-		  MyLexStates[] stateMap = stateMaps.mainMap;
-		  int whitespace = 0;
-		  char c = lip.yyPeek();
-		  int newlines = 0;
+		MyLexStates[] stateMap = stateMaps.mainMap;
+		int whitespace = 0;
+		char c = lip.yyPeek();
+		int newlines = 0;
 
-		  for (; stateMap[c] == MyLexStates.MY_LEX_SKIP;
-		       whitespace++, c = lip.yyPeekn(whitespace)) {
-		    if (c == '\n') newlines++;
-		  }
-
-		  if (lip.yyPeekn(whitespace) == '/' && lip.yyPeekn(whitespace + 1) == '*' &&
-		      lip.yyPeekn(whitespace + 2) == '+') {
-		    lip.yylineno += newlines;
-		    lip.yySkipn(whitespace);  // skip whitespace
-
-		    HintScanner hintScanner = new HintScanner(lip.mThd, lip.yylineno, lip.getPtr(),
-		                              lip.getEndOfQuery() - lip.getPtr(),
-		                              lip.mDigest);
-		    List<Integer> hintList = null;
-		    int rc = my_hint_parser_parse(lip.mThd, hintScanner, hintList);
-		    if (rc == 2) return true;  // Bison's internal OOM error
-		    if (rc == 1) {
-		      /*
-		        This branch is for 2 cases:
-		        1. YYABORT in the hint parser grammar (we use it to process OOM errors),
-		        2. open commentary error.
-		      */
-		      lip.start_token();  // adjust error message text pointer to "/*+"
-		      return true;
-		    }
-		    lip.yylineno = hint_scanner.get_lineno();
-		    lip.yySkipn(hint_scanner.get_ptr() - lip.get_ptr());
-		    lip.yylval.optimizer_hints = hint_list;   // NULL in case of syntax error
-		    lip.m_digest = hint_scanner.get_digest();  // NULL is digest buf. is full.
-		    return false;
-		  } else
-		    return false;
+		for (; stateMap[c] == MyLexStates.MY_LEX_SKIP; whitespace++, c = lip.yyPeekn(whitespace)) {
+			if (c == '\n')
+				newlines++;
 		}
+
+		if (lip.yyPeekn(whitespace) == '/' && lip.yyPeekn(whitespace + 1) == '*' && lip.yyPeekn(whitespace + 2) == '+') {
+			lip.yylineno += newlines;
+			lip.yySkipn(whitespace); // skip whitespace
+
+			HintScanner hintScanner = new HintScanner(lip.mThd, lip.yylineno, lip.getPtr(), lip.getEndOfQuery() - lip.getPtr(), lip.mDigest);
+			List<Integer> hintList = null;
+			SQLHintsParser shParser = new SQLHintsParser(this, lip.mThd, hintScanner, hintList);
+			int rc = my_hint_parser_parse(lip.mThd, hintScanner, hintList);
+			if (rc == 2)
+				return true; // Bison's internal OOM error
+			if (rc == 1) {
+				/*
+				 * This branch is for 2 cases: 1. YYABORT in the hint parser grammar (we use it to process OOM errors), 2. open commentary error.
+				 */
+				lip.start_token(); // adjust error message text pointer to "/*+"
+				return true;
+			}
+			lip.yylineno = hintScanner.getLineno();
+			lip.yyskipn(hintScanner.getPtr() - lip.getPtr());
+			lip.yylval.optimizerHints = hintList; // Null in case of syntax error
+			lip.mDigest = hintScanner.getDigest(); // Null is digest buf. is full.
+			return false;
+		} else
+			return false;
+	}
 
 	private Symbol getHashSymbol(String token, boolean function) {
 		Symbol result = null;

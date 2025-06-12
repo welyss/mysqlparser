@@ -459,7 +459,6 @@ public class SQLHintsParser {
 		// Print the state stack on the debug stream.
 		public void print(java.io.PrintStream out) {
 			out.print("Stack now");
-
 			for (int i = 0; i <= height; i++) {
 				out.print(' ');
 				out.print(stateStack[i]);
@@ -1301,9 +1300,7 @@ public class SQLHintsParser {
 	 *
 	 * @return <tt>true</tt> if the parsing succeeds. Note that this does not imply that there were no syntax errors.
 	 */
-	public boolean parse() throws java.io.IOException
-
-	{
+	public boolean parse() throws java.io.IOException {
 
 		/* Lookahead token kind. */
 		int yychar = YYEMPTY_;
@@ -1346,10 +1343,8 @@ public class SQLHintsParser {
 
 				/* Read a lookahead token. */
 				if (yychar == YYEMPTY_) {
-
 					yychar = yylexer.yylex();
 					yylval = yylexer.getLVal();
-
 				}
 
 				/* Convert token to internal form. */

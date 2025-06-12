@@ -115,7 +115,7 @@ public class LexInputStreamProcessor {
 	 * Accept multiple characters at once.
 	 *
 	 * @param n
-	 *            the number of characters to accept.
+	 *        the number of characters to accept.
 	 */
 	public void yySkipn(SQLThread thd, int n) {
 		thd.mPtr += n;
