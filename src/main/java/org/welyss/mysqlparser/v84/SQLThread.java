@@ -10,11 +10,13 @@ public class SQLThread {
 	public Item yylval;
 	public Location yylloc;
 	public ParserState mParserState;
-	public SystemVariables variables;
+//	public SystemVariables variables;
+	public boolean charsetIsSystemCharset;
 
 	public SQLThread(String sql) {
 		mParserState = new ParserState(sql, this);
-		variables = new SystemVariables();
+//		variables = new SystemVariables();
+		charsetIsSystemCharset = true;
 	}
 
 }

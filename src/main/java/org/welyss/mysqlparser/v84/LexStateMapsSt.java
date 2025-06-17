@@ -5,62 +5,15 @@ package org.welyss.mysqlparser.v84;
  * strings/sql_chars.h,strings/sql_chars.cc
  */
 public class LexStateMapsSt {
-	public MyLexStates[] mainMap;
-	public boolean[] identMap;
-	private HintLexCharClasses[] hintMap;
+	public static MyLexStates[] mainMap;
+	public static boolean[] identMap;
+	public static HintLexCharClasses[] hintMap;
 
-	public LexStateMapsSt() {
-		initStateMaps();
-	}
+	static {
 
-	enum HintLexCharClasses {
-		HINT_CHR_ASTERISK, // [*]
-		HINT_CHR_AT, // [@]
-		HINT_CHR_BACKQUOTE, // [`]
-		HINT_CHR_CHAR, // default state
-		HINT_CHR_DIGIT, // [[:digit:]]
-		HINT_CHR_DOT, // '.'
-		HINT_CHR_DOUBLEQUOTE, // ["]
-		HINT_CHR_EOF, // pseudo-class
-		HINT_CHR_IDENT, // [_$[:alpha:]]
-		HINT_CHR_MB, // multibyte character
-		HINT_CHR_NL, // \n
-		HINT_CHR_QUOTE, // [']
-		HINT_CHR_SLASH, // [/]
-		HINT_CHR_SPACE // [[:space:]] excluding \n
-	}
-
-	private void hintLexInitMaps() {
-		hintMap = new HintLexCharClasses[256];
-		for (short i = 0; i < 256; i++) {
-			if (myIsmb1st((char)i))
-				hintMap[i] = HintLexCharClasses.HINT_CHR_MB;
-			else if (Character.isAlphabetic(i))
-				hintMap[i] = HintLexCharClasses.HINT_CHR_IDENT;
-			else if (Character.isDigit(i))
-				hintMap[i] = HintLexCharClasses.HINT_CHR_DIGIT;
-			else if (Character.isWhitespace(i)) {
-				hintMap[i] = HintLexCharClasses.HINT_CHR_SPACE;
-			} else {
-				hintMap[i] = HintLexCharClasses.HINT_CHR_CHAR;
-			}
-		}
-		hintMap['*'] = HintLexCharClasses.HINT_CHR_ASTERISK;
-		hintMap['@'] = HintLexCharClasses.HINT_CHR_AT;
-		hintMap['`'] = HintLexCharClasses.HINT_CHR_BACKQUOTE;
-		hintMap['.'] = HintLexCharClasses.HINT_CHR_DOT;
-		hintMap['"'] = HintLexCharClasses.HINT_CHR_DOUBLEQUOTE;
-		hintMap['$'] = HintLexCharClasses.HINT_CHR_IDENT;
-		hintMap['_'] = HintLexCharClasses.HINT_CHR_IDENT;
-		hintMap['\n'] = HintLexCharClasses.HINT_CHR_NL;
-		hintMap['\''] = HintLexCharClasses.HINT_CHR_QUOTE;
-		hintMap['/'] = HintLexCharClasses.HINT_CHR_SLASH;
-	}
-
-	private boolean initStateMaps() {
 		// This character set has already been initialized.
-		if (mainMap != null && identMap != null)
-			return false;
+//		if (mainMap != null && identMap != null)
+//			return false;
 
 		MyLexStates[] stateMap = mainMap = new MyLexStates[256];
 		identMap = new boolean[256];
@@ -111,8 +64,50 @@ public class LexStateMapsSt {
 
 		/* Special handling of '$' for dollar quoted strings */
 		stateMap['$'] = MyLexStates.MY_LEX_IDENT_OR_DOLLAR_QUOTED_TEXT;
+	}
 
-		return false;
+	enum HintLexCharClasses {
+		HINT_CHR_ASTERISK, // [*]
+		HINT_CHR_AT, // [@]
+		HINT_CHR_BACKQUOTE, // [`]
+		HINT_CHR_CHAR, // default state
+		HINT_CHR_DIGIT, // [[:digit:]]
+		HINT_CHR_DOT, // '.'
+		HINT_CHR_DOUBLEQUOTE, // ["]
+		HINT_CHR_EOF, // pseudo-class
+		HINT_CHR_IDENT, // [_$[:alpha:]]
+		HINT_CHR_MB, // multibyte character
+		HINT_CHR_NL, // \n
+		HINT_CHR_QUOTE, // [']
+		HINT_CHR_SLASH, // [/]
+		HINT_CHR_SPACE // [[:space:]] excluding \n
+	}
+
+	private static void hintLexInitMaps() {
+		hintMap = new HintLexCharClasses[256];
+		for (short i = 0; i < 256; i++) {
+			if (myIsmb1st((char)i))
+				hintMap[i] = HintLexCharClasses.HINT_CHR_MB;
+			else if (Character.isAlphabetic(i))
+				hintMap[i] = HintLexCharClasses.HINT_CHR_IDENT;
+			else if (Character.isDigit(i))
+				hintMap[i] = HintLexCharClasses.HINT_CHR_DIGIT;
+			else if (Character.isWhitespace(i)) {
+				hintMap[i] = HintLexCharClasses.HINT_CHR_SPACE;
+			} else {
+				hintMap[i] = HintLexCharClasses.HINT_CHR_CHAR;
+			}
+		}
+		hintMap['*'] = HintLexCharClasses.HINT_CHR_ASTERISK;
+		hintMap['@'] = HintLexCharClasses.HINT_CHR_AT;
+		hintMap['`'] = HintLexCharClasses.HINT_CHR_BACKQUOTE;
+		hintMap['.'] = HintLexCharClasses.HINT_CHR_DOT;
+		hintMap['"'] = HintLexCharClasses.HINT_CHR_DOUBLEQUOTE;
+		hintMap['$'] = HintLexCharClasses.HINT_CHR_IDENT;
+		hintMap['_'] = HintLexCharClasses.HINT_CHR_IDENT;
+		hintMap['\n'] = HintLexCharClasses.HINT_CHR_NL;
+		hintMap['\''] = HintLexCharClasses.HINT_CHR_QUOTE;
+		hintMap['/'] = HintLexCharClasses.HINT_CHR_SLASH;
 	}
 
 	/**
@@ -124,7 +119,7 @@ public class LexStateMapsSt {
 	 * @param[in] leading_byte possible leading byte
 	 * @return true if it is, otherwise false
 	 */
-	private boolean myIsmb1st(char leadingByte) {
+	private static boolean myIsmb1st(char leadingByte) {
 //		return myMbcharlen(leadingByte) > 1 || (myMbmaxlenlen() == 2 && myMbcharlen(leadingByte) == 0);
 		// myMbmaxlenlen always 1 in utf8mb4
 		return myMbcharlen(leadingByte) > 1;
@@ -135,7 +130,7 @@ public class LexStateMapsSt {
 	 * @param c character
 	 * @return
 	 */
-	private int myMbcharlen(char c) {
+	private static int myMbcharlen(char c) {
 		if (c < 0x80)
 			return 1;
 		if (c < 0xc2)

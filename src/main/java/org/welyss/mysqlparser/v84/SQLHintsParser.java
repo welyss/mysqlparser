@@ -386,11 +386,11 @@ public class SQLHintsParser {
 	 *
 	 * @param yylexer The scanner that will supply tokens to the parser.
 	 */
-	public SQLHintsParser(Lexer yylexer, SQLThread thd, HintScanner scanner, List<Integer> ret) {
-		this.yylexer = yylexer;
+	public SQLHintsParser(SQLThread thd, HintScanner scanner, List<Integer> ret) {
 		this.thd = thd;
 		this.scanner = scanner;
 		this.ret = ret;
+		this.yylexer = new SQLHintsLexer();
 	}
 
 	private int yynerrs = 0;

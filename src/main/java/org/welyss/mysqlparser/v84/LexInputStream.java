@@ -242,7 +242,6 @@ public class LexInputStream {
 	void startToken() {
 		mTokStart = mPtr;
 		mTokEnd = mPtr;
-
 		mCppTokStart = mCppPtr;
 		mCppTokEnd = mCppPtr;
 	}

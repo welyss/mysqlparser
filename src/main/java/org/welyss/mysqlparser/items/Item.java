@@ -5,6 +5,7 @@ import java.util.List;
 public abstract class Item {
 	public LexString lexStr;
 	public LexSymbol keyword;
+	public LexString hintString;
 	public List<Integer> optimizerHints;
 
 	public Item() {
