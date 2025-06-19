@@ -2,11 +2,12 @@ package org.welyss.mysqlparser.v84;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.welyss.mysqlparser.items.Item;
+import org.welyss.mysqlparser.items.LexString;
 import org.welyss.mysqlparser.items.Position;
 import org.welyss.mysqlparser.v84.MyParser.Lexer;
 import org.welyss.mysqlparser.v84.MyParser.Location;
@@ -17,6 +18,56 @@ import org.welyss.mysqlparser.v84.MyParser.Location;
  */
 public class MyLexer implements Lexer {
 	LexStateMapsSt stateMaps;
+	/**
+	 * show character set;
+	 */
+	private static Set<String> characters;
+
+	static {
+		characters = new HashSet<String>();
+		characters.add("armscii8");
+		characters.add("ascii");
+		characters.add("big5");
+		characters.add("binary");
+		characters.add("cp1250");
+		characters.add("cp1251");
+		characters.add("cp1256");
+		characters.add("cp1257");
+		characters.add("cp850");
+		characters.add("cp852");
+		characters.add("cp866");
+		characters.add("cp932");
+		characters.add("dec8");
+		characters.add("eucjpms");
+		characters.add("euckr");
+		characters.add("gb18030");
+		characters.add("gb2312");
+		characters.add("gbk");
+		characters.add("geostd8");
+		characters.add("greek");
+		characters.add("hebrew");
+		characters.add("hp8");
+		characters.add("keybcs2");
+		characters.add("koi8r");
+		characters.add("koi8u");
+		characters.add("latin1");
+		characters.add("latin2");
+		characters.add("latin5");
+		characters.add("latin7");
+		characters.add("macce");
+		characters.add("macroman");
+		characters.add("sjis");
+		characters.add("swe7");
+		characters.add("tis620");
+		characters.add("ucs2");
+		characters.add("ujis");
+		characters.add("utf16");
+		characters.add("utf16le");
+		characters.add("utf32");
+		characters.add("utf8");
+		characters.add("utf8mb3");
+		characters.add("utf8mb4");
+	}
 
 	public MyLexer() {
 		stateMaps = new LexStateMapsSt();
@@ -121,8 +172,8 @@ public class MyLexer implements Lexer {
 		  int length;
 		  MyLexStates state;
 		  LexInputStream lip = thd.mParserState.mLip;
-		  MyLexStates[] stateMap = stateMaps.mainMap;
-		  boolean[] identMap = stateMaps.identMap;
+		  MyLexStates[] stateMap = LexStateMapsSt.mainMap;
+		  boolean[] identMap = LexStateMapsSt.identMap;
 
 		  lip.yylval = yylval;  // The global state
 
@@ -237,27 +288,28 @@ public class MyLexer implements Lexer {
 		           So we don't want to produce any warning in findPrimary.
 		        */
 
-		        if (yylval.lexStr.str[0] == '_') {
-		          auto charsetName = yylval.lexStr.str + 1;
-		          const CharsetInfo *underscoreCs =
-		              mysql::collation::findPrimary(charsetName);
-		          if (underscoreCs) {
-		            lip.warnOnDeprecatedCharset(underscoreCs, charsetName);
-		            if (underscoreCs == &myCharsetUtf8mb40900AiCi) {
-		              /*
-		                If underscoreCs is utf8mb4, and the collation of underscoreCs
-		                is the default collation of utf8mb4, then update underscoreCs
-		                with a value of the defaultCollationForUtf8mb4 system
-		                variable:
-		              */
-		              underscoreCs = thd.variables.defaultCollationForUtf8mb4;
-		            }
-		            yylval.charset = underscoreCs;
-		            lip.mUnderscoreCs = underscoreCs;
+		        if (yylval.lexStr.str.charAt(0) == '_') {
+		          String charsetName = yylval.lexStr.str.substring(1);
+//		          const CharsetInfo *underscoreCs =
+//		              mysql::collation::findPrimary(charsetName);
+//		          if (underscoreCs) {
+//		            lip.warnOnDeprecatedCharset(underscoreCs, charsetName);
+//		            if (underscoreCs == &myCharsetUtf8mb40900AiCi) {
+//		              /*
+//		                If underscoreCs is utf8mb4, and the collation of underscoreCs
+//		                is the default collation of utf8mb4, then update underscoreCs
+//		                with a value of the defaultCollationForUtf8mb4 system
+//		                variable:
+//		              */
+//		              underscoreCs = thd.variables.defaultCollationForUtf8mb4;
+//		            }
+		           if (characters.contains(charsetName)) {
 
-		            lip.bodyUtf8Append(lip.mCppTextStart,
-		                                  lip.getCppTokStart() + length);
-		            return (UnderscoreCharset);
+		           }
+//		            yylval.charset = charsetName;
+//		            lip.mUnderscoreCs = underscoreCs;
+		            lip.bodyUtf8Append(lip.mCppTextStart, lip.getCppTokStart() + length);
+		            return (UNDERSCORE_CHARSET);
 		          }
 		        }
 
@@ -803,7 +855,8 @@ public class MyLexer implements Lexer {
 		      }
 		    }
 		  }
-		}
+
+	}
 
 	private String getText(LexInputStream lip, int preSkip, int postSkip) {
 		char c, sep;
@@ -816,7 +869,7 @@ public class MyLexer implements Lexer {
 			c = lip.yyGet();
 			lip.tokBitmap |= c;
 			if (c == '\\' && !((SystemVariables.sqlMode & SystemVariables.MODE_NO_BACKSLASH_ESCAPES) == SystemVariables.MODE_NO_BACKSLASH_ESCAPES)) { // Escaped
-																																							// character
+																																						// character
 				foundEscape = true;
 				if (lip.eof())
 					return null;
@@ -974,5 +1027,24 @@ public class MyLexer implements Lexer {
 			}
 		} else
 			return false;
+	}
+
+	/**
+	 * make a copy of token before ptr and set yytoklen
+	 *
+	 * @param lip
+	 * @param skip
+	 * @param length
+	 * @return
+	 */
+	private LexString getToken(LexInputStream lip, int skip, int length) {
+		LexString tmp = new LexString();
+		lip.yyUnget(); // ptr points now after last token char
+		tmp.length = lip.yytoklen = length;
+//		tmp.str = lip.mThd.strmake(lip.getTokStart() + skip, tmp.length);
+		tmp.str = lip.sqlBuf.substring(lip.getTokStart() + skip, lip.getTokStart() + skip + length);
+		lip.mCppTextStart = lip.getCppTokStart() + skip;
+		lip.mCppTextEnd = lip.mCppTextStart + tmp.length;
+		return tmp;
 	}
 }

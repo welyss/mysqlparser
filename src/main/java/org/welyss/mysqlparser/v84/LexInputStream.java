@@ -311,8 +311,20 @@ public class LexInputStream {
 
 	}
 
-	void bodyUtf8Append(char ptr, char end_ptr) {
-
+	public void bodyUtf8Append(int ptr, int endPtr) {
+		if (mCppBuf <= ptr && ptr <= mCppBuf + mBufLength) {
+			if (mCppBuf <= endPtr && endPtr <= mCppBuf + mBufLength) {
+				if (mBodyUtf8 == null)
+					return;
+				if (mCppUtf8ProcessedPtr >= ptr)
+					return;
+				int bytesToCopy = ptr - mCppUtf8ProcessedPtr;
+//				memcpy(mBodyUtf8Ptr, mCppUtf8ProcessedPtr, bytesToCopy);
+				mBodyUtf8Ptr += bytesToCopy;
+//				mBodyUtf8Ptr = 0;
+				mCppUtf8ProcessedPtr = endPtr;
+			}
+		}
 	}
 
 //	void bodyUtf8AppendLiteral(SQLThread thd, String txt, CharsetInfo txt_cs, char end_ptr) {
@@ -444,7 +456,7 @@ public class LexInputStream {
 	Integer mCppTokEnd;
 
 	/** UTF8-body buffer created during parsing. */
-	Character mBodyUtf8;
+	String mBodyUtf8;
 
 	/** Pointer to the current position in the UTF8-body buffer. */
 	Integer mBodyUtf8Ptr;
