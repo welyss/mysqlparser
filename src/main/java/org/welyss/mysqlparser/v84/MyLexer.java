@@ -303,95 +303,88 @@ public class MyLexer implements Lexer {
 //		              */
 //		              underscoreCs = thd.variables.defaultCollationForUtf8mb4;
 //		            }
-		           if (characters.contains(charsetName)) {
-
-		           }
+//		           if (characters.contains(charsetName)) {}
 //		            yylval.charset = charsetName;
 //		            lip.mUnderscoreCs = underscoreCs;
 		            lip.bodyUtf8Append(lip.mCppTextStart, lip.getCppTokStart() + length);
 		            return (UNDERSCORE_CHARSET);
-		          }
+//		          }
 		        }
-
 		        lip.bodyUtf8Append(lip.mCppTextStart);
-
-		        lip.bodyUtf8AppendLiteral(thd, &yylval.lexStr, cs,
-		                                      lip.mCppTextEnd);
-
+		        lip.bodyUtf8AppendLiteral(thd, yylval.lexStr, lip.mCppTextEnd);
 		        return (resultState);  // Ident or IdentQuoted
 
-		      case MyLexIdentSep:  // Found ident and now '.'
-		        yylval.lexStr.str = constCast<char *>(lip.getPtr());
+		      case MY_LEX_IDENT_SEP:  // Found ident and now '.'
+//		        yylval.lexStr.str = constCast<char *>(lip.getPtr());
+		        yylval.lexStr.str = String.valueOf(lip.getPtr());
 		        yylval.lexStr.length = 1;
-		        c = lip.yy_get();  // should be '.'
-		        if (const uchar nextC = lip.yypeek(); identMap[nextC]) {
-		          lip.nextState =
-		              MyLexIdentStart;  // Next is an ident (not a keyword)
+		        c = lip.yyGet();  // should be '.'
+		        char nextC = lip.yyPeek();
+		        if (identMap[nextC]) {
+		          lip.nextState = MyLexStates.MY_LEX_IDENT_START;  // Next is an ident (not a keyword)
 		          if (nextC == '$')       // We got .$ident
-		            pushDeprecatedWarnNoReplacement(
-		                lip.mThd,
-		                "$ as the first character of an unquoted identifier");
+		            pushDeprecatedWarnNoReplacement(lip.mThd, "$ as the first character of an unquoted identifier");
 		        } else  // Probably ` or "
-		          lip.nextState = MyLexStart;
+		          lip.nextState = MyLexStates.MY_LEX_START;
 
 		        return ((int)c);
 
-		      case MyLexNumberIdent:  // number or ident which num-start
-		        if (lip.yy_get_last() == '0') {
-		          c = lip.yy_get();
+		      case MY_LEX_NUMBER_IDENT:  // number or ident which num-start
+		        if (lip.yyGetLast() == '0') {
+		          c = lip.yyGet();
 		          if (c == 'x') {
-		            while (myIsxdigit(cs, (c = lip.yyget())))
+		            while (myIsxdigit(cs, (c = lip.yyGet())))
 		              ;
-		            if ((lip.yylength() >= 3) && !identMap[c]) {
+		            if ((lip.yyLength() >= 3) && !identMap[c]) {
 		              /* skip '0x' */
-		              yylval.lexStr = getToken(lip, 2, lip.yylength() - 2);
-		              return (HexNum);
+		              yylval.lexStr = getToken(lip, 2, lip.yyLength() - 2);
+		              return (HEX_NUM);
 		            }
-		            lip.yy_unget();
-		            state = MyLexIdentStart;
+		            lip.yyUnget();
+		            state = MyLexStates.MY_LEX_IDENT_START;
 		            break;
 		          } else if (c == 'b') {
-		            while ((c = lip.yy_get()) == '0' || c == '1')
+		            while ((c = lip.yyGet()) == '0' || c == '1')
 		              ;
-		            if ((lip.yylength() >= 3) && !identMap[c]) {
+		            if ((lip.yyLength() >= 3) && !identMap[c]) {
 		              /* Skip '0b' */
-		              yylval.lexStr = getToken(lip, 2, lip.yylength() - 2);
-		              return (BinNum);
+		              yylval.lexStr = getToken(lip, 2, lip.yyLength() - 2);
+		              return (BIN_NUM);
 		            }
-		            lip.yy_unget();
-		            state = MyLexIdentStart;
+		            lip.yyUnget();
+		            state = MyLexStates.MY_LEX_IDENT_START;
 		            break;
 		          }
-		          lip.yy_unget();
+		          lip.yyUnget();
 		        }
 
-		        while (myIsdigit(cs, (c = lip.yyget())))
+		        while (myIsdigit(cs, (c = lip.yyGet())))
 		          ;
 		        if (!identMap[c]) {  // Can't be identifier
-		          state = MyLexIntOrReal;
+		          state = MyLexStates.MY_LEX_INT_OR_REAL;
 		          break;
 		        }
 		        if (c == 'e' || c == 'E') {
 		          // The following test is written this way to allow numbers of type 1e1
-		          if (myIsdigit(cs, lip.yypeek()) || (c = (lip.yyget())) == '+' ||
+		          if (myIsdigit(cs, lip.yyPeek()) || (c = (lip.yyGet())) == '+' ||
 		              c == '-') {  // Allow 1E+10
 		            if (myIsdigit(cs,
 		                           lip.yyPeek()))  // Number must have digit after sign
 		            {
-		              lip.yy_skip();
-		              while (myIsdigit(cs, lip.yyget()))
+		              lip.yySkip();
+		              while (myIsdigit(cs, lip.yyGet()))
 		                ;
-		              yylval.lexStr = getToken(lip, 0, lip.yylength());
-		              return (FloatNum);
+		              yylval.lexStr = getToken(lip, 0, lip.yyLength());
+		              return (FLOAT_NUM);
 		            }
 		          }
-		          lip.yy_unget();
+		          lip.yyUnget();
 		        }
-		        [[fallthrough]];
-		      case MyLexIdentStart:  // We come here after '.'
-		        resultState = Ident;
+//		        [[fallthrough]];
+		      case MY_LEX_IDENT_START:  // We come here after '.'
+		        resultState = IDENT;
 		        if (useMb(cs)) {
-		          resultState = IdentQuoted;
+		          resultState = IDENT_QUOTED;
 		          while (identMap[c = lip.yyget()]) {
 		            switch (myMbcharlen(cs, c)) {
 		              case 1:
@@ -425,10 +418,10 @@ public class MyLexer implements Lexer {
 
 		        return (resultState);
 
-		      case MyLexUserVariableDelimiter:  // Found quote char
+		      case MY_LEX_USER_VARIABLE_DELIMITER:  // Found quote char
 		      {
-		        uint doubleQuotes = 0;
-		        const char quoteChar = c;  // Used char
+		        int doubleQuotes = 0;
+		        char quoteChar = c;  // Used char
 		        for (;;) {
 		          c = lip.yy_get();
 		          if (c == 0) {
@@ -465,13 +458,13 @@ public class MyLexer implements Lexer {
 
 		        return (IdentQuoted);
 		      }
-		      case MyLexIntOrReal:  // Complete int or incomplete real
+		      case MY_LEX_INT_OR_REAL:  // Complete int or incomplete real
 		        if (c != '.') {         // Found complete integer number.
 		          yylval.lexStr = getToken(lip, 0, lip.yylength());
 		          return intToken(yylval.lexStr.str, (uint)yylval.lexStr.length);
 		        }
-		        [[fallthrough]];
-		      case MyLexReal:  // Incomplete real number
+//		        [[fallthrough]];
+		      case MY_LEX_REAL:  // Incomplete real number
 		        while (myIsdigit(cs, c = lip.yyget()))
 		          ;
 
@@ -490,7 +483,7 @@ public class MyLexer implements Lexer {
 		        yylval.lexStr = getToken(lip, 0, lip.yylength());
 		        return (DecimalNum);
 
-		      case MyLexHexNumber:  // Found x'hexstring'
+		      case MY_LEX_HEX_NUMBER:  // Found x'hexstring'
 		        lip.yy_skip();         // Accept opening '
 		        while (myIsxdigit(cs, (c = lip.yyget())))
 		          ;
@@ -503,7 +496,7 @@ public class MyLexer implements Lexer {
 		                                    length - 3);  // don't count x' and last '
 		        return (HexNum);
 
-		      case MyLexBinNumber:  // Found b'bin-string'
+		      case MY_LEX_BIN_NUMBER:  // Found b'bin-string'
 		        lip.yy_skip();         // Accept opening '
 		        while ((c = lip.yy_get()) == '0' || c == '1')
 		          ;
@@ -515,7 +508,7 @@ public class MyLexer implements Lexer {
 		                                    length - 3);  // don't count b' and last '
 		        return (BinNum);
 
-		      case MyLexCmpOp:  // Incomplete comparison operator
+		      case MY_LEX_CMP_OP:  // Incomplete comparison operator
 		        if (stateMap[lip.yypeek()] == MyLexCmpOp ||
 		            stateMap[lip.yypeek()] == MyLexLongCmpOp)
 		          lip.yy_skip();
@@ -526,7 +519,7 @@ public class MyLexer implements Lexer {
 		        state = MyLexChar;  // Something fishy found
 		        break;
 
-		      case MyLexLongCmpOp:  // Incomplete comparison operator
+		      case MY_LEX_LONG_CMP_OP:  // Incomplete comparison operator
 		        if (stateMap[lip.yypeek()] == MyLexCmpOp ||
 		            stateMap[lip.yypeek()] == MyLexLongCmpOp) {
 		          lip.yy_skip();
@@ -539,7 +532,7 @@ public class MyLexer implements Lexer {
 		        state = MyLexChar;  // Something fishy found
 		        break;
 
-		      case MyLexBool:
+		      case MY_LEX_BOOL:
 		        if (c != lip.yyPeek()) {
 		          state = MyLexChar;
 		          break;
@@ -549,14 +542,14 @@ public class MyLexer implements Lexer {
 		        lip.nextState = MyLexStart;        // Allow signed numbers
 		        return (tokval);
 
-		      case MyLexStringOrDelimiter:
+		      case MY_LEX_STRING_OR_DELIMITER:
 		        if (thd.variables.sqlMode & ModeAnsiQuotes) {
 		          state = MyLexUserVariableDelimiter;
 		          break;
 		        }
 		        /* " used for strings */
-		        [[fallthrough]];
-		      case MyLexString:  // Incomplete text string
+//		        [[fallthrough]];
+		      case MY_LEX_STRING:  // Incomplete text string
 		        if (!(yylval.lexStr.str = getText(lip, 1, 1))) {
 		          state = MyLexChar;  // Read char by char
 		          break;
@@ -596,9 +589,9 @@ public class MyLexer implements Lexer {
 		          lip.inComment = DiscardComment;
 		          /* Accept '/' '*' '!', but do not keep this marker. */
 		          lip.setEcho(false);
-		          lip.yy_skip();
-		          lip.yy_skip();
-		          lip.yy_skip();
+		          lip.yySkip();
+		          lip.yySkip();
+		          lip.yySkip();
 
 		          /*
 		            The special comment format is very strict:
@@ -618,16 +611,18 @@ public class MyLexer implements Lexer {
 		            50032 . 5.0.32
 		            50114 . 5.1.14
 		          */
-		          char versionStr[7] = {0};
-		          if (myIsdigit(cs, (versionStr[0] = lip.yypeekn(0))) &&
-		              myIsdigit(cs, (versionStr[1] = lip.yypeekn(1))) &&
-		              myIsdigit(cs, (versionStr[2] = lip.yypeekn(2))) &&
-		              myIsdigit(cs, (versionStr[3] = lip.yypeekn(3))) &&
-		              myIsdigit(cs, (versionStr[4] = lip.yypeekn(4)))) {
-		            if (myIsdigit(cs, lip.yypeekn(5)) &&
-		                myIsspace(cs, lip.yypeekn(6))) {
+//		          char versionStr[7] = {0};
+		          char[] versionStr = new char[8];
+		          versionStr[7] = 0;
+		          if (Character.isDigit(versionStr[0] = lip.yypeekn(0)) &&
+		        		  Character.isDigit(versionStr[1] = lip.yypeekn(1)) &&
+		        		  Character.isDigit(versionStr[2] = lip.yypeekn(2)) &&
+		        		  Character.isDigit(versionStr[3] = lip.yypeekn(3)) &&
+		        		  Character.isDigit(versionStr[4] = lip.yypeekn(4))) {
+		            if (Character.isDigit(lip.yypeekn(5)) &&
+		            		Character.isWhitespace(lip.yypeekn(6))) {
 		              versionStr[5] = lip.yypeekn(5);
-		            } else if (!myIsspace(cs, lip.yypeekn(5))) {
+		            } else if (!Character.isWhitespace(lip.yypeekn(5))) {
 		              pushWarning(thd, SqlCondition::SlWarning,
 		                           ErWarnNoSpaceVersionComment,
 		                           ErThd(thd, ErWarnNoSpaceVersionComment));
@@ -646,10 +641,10 @@ public class MyLexer implements Lexer {
 		                Patch and skip the conditional comment to avoid it
 		                being propagated infinitely (eg. to a slave).
 		              */
-		              char *pcom = lip.yy_unput(' ');
+		              char pcom = lip.yyUnput(' ');
 		              commentClosed = !consumeComment(lip, 1);
 		              if (!commentClosed) {
-		                *pcom = '!';
+		                pcom = '!';
 		              }
 		              /* version allowed to have one level of comment inside. */
 		            }
@@ -693,7 +688,7 @@ public class MyLexer implements Lexer {
 		        state = MyLexStart;  // Try again
 		        lip.restoreInCommentState();
 		        break;
-		      case MyLexEndLongComment:
+		      case MY_LEX_END_LONG_COMMENT:
 		        if ((lip.inComment != NoComment) && lip.yypeek() == '/') {
 		          /* Reject '*' '/' */
 		          lip.yy_unget();
@@ -722,17 +717,17 @@ public class MyLexer implements Lexer {
 		        } else
 		          state = MyLexChar;  // Return '*'
 		        break;
-		      case MyLexSetVar:  // Check if ':='
+		      case MY_LEX_SET_VAR:  // Check if ':='
 		        if (lip.yyPeek() != '=') {
 		          state = MyLexChar;  // Return ':'
 		          break;
 		        }
 		        lip.yy_skip();
 		        return (SetVar);
-		      case MyLexSemicolon:  // optional line terminator
+		      case MY_LEX_SEMICOLON:  // optional line terminator
 		        state = MyLexChar;  // Return ';'
 		        break;
-		      case MyLexEol:
+		      case MY_LEX_EOL:
 		        if (lip.eof()) {
 		          lip.yy_unget();  // Reject the last '\0'
 		          lip.setEcho(false);
@@ -743,14 +738,14 @@ public class MyLexer implements Lexer {
 		          lip.nextState = MyLexEnd;  // Mark for next loop
 		          return (EndOfInput);
 		        }
-		        state = MyLexChar;
+		        state = MY_LEX_CHAR;
 		        break;
-		      case MyLexEnd:
+		      case MY_LEX_END:
 		        lip.nextState = MyLexEnd;
 		        return (0);  // We found end of input last time
 
 		        /* Actually real shouldn't start with . but allow them anyhow */
-		      case MyLexRealOrPoint:
+		      case MY_LEX_REAL_OR_POINT:
 		        if (myIsdigit(cs, lip.yypeek()))
 		          state = MyLexReal;  // Real
 		        else {
@@ -758,39 +753,39 @@ public class MyLexer implements Lexer {
 		          lip.yy_unget();            // Put back '.'
 		        }
 		        break;
-		      case MyLexUserEnd:  // end '@' of user@hostname
-		        switch (stateMap[lip.yypeek()]) {
-		          case MyLexString:
-		          case MyLexUserVariableDelimiter:
-		          case MyLexStringOrDelimiter:
+		      case MY_LEX_USER_END:  // end '@' of user@hostname
+		        switch (stateMap[lip.yyPeek()]) {
+		          case MY_LEX_STRING:
+		          case MY_LEX_USER_VARIABLE_DELIMITER:
+		          case MY_LEX_STRING_OR_DELIMITER:
 		            break;
-		          case MyLexUserEnd:
+		          case MY_LEX_USER_END:
 		            lip.nextState = MyLexSystemVar;
 		            break;
 		          default:
 		            lip.nextState = MyLexHostname;
 		            break;
 		        }
-		        yylval.lexStr.str = constCast<char *>(lip.getPtr());
+		        yylval.lexStr.str = lip.p2c(lip.getPtr());
 		        yylval.lexStr.length = 1;
 		        return ((int)'@');
-		      case MyLexHostname:  // end '@' of user@hostname
+		      case MY_LEX_HOSTNAME:  // end '@' of user@hostname
 		        for (c = lip.yy_get();
 		             myIsalnum(cs, c) || c == '.' || c == '_' || c == '$';
 		             c = lip.yy_get())
 		          ;
 		        yylval.lexStr = getToken(lip, 0, lip.yylength());
 		        return (LexHostname);
-		      case MyLexSystemVar:
-		        yylval.lexStr.str = constCast<char *>(lip.getPtr());
+		      case MY_LEX_SYSTEM_VAR:
+		        yylval.lexStr.str = lip.p2c(lip.getPtr());
 		        yylval.lexStr.length = 1;
 		        lip.yy_skip();  // Skip '@'
 		        lip.nextState =
-		            (stateMap[lip.yypeek()] == MyLexUserVariableDelimiter
+		            (stateMap[lip.yyPeek()] == MyLexUserVariableDelimiter
 		                 ? MyLexStart
 		                 : MyLexIdentOrKeyword);
 		        return ((int)'@');
-		      case MyLexIdentOrKeyword:
+		      case MY_LEX_IDENT_OR_KEYWORD:
 		        /*
 		          We come here when we have found two '@' in a row.
 		          We should now be able to handle:
@@ -813,12 +808,12 @@ public class MyLexer implements Lexer {
 
 		        lip.bodyUtf8Append(lip.mCppTextStart);
 
-		        lip.bodyUtf8AppendLiteral(thd, &yylval.lexStr, cs,
+		        lip.bodyUtf8AppendLiteral(thd, yylval.lexStr, cs,
 		                                      lip.mCppTextEnd);
 
 		        return (resultState);
 
-		      case MyLexIdentOrDollarQuotedText: {
+		      case MY_LEX_IDENT_OR_DOLLAR_QUOTED_TEXT: {
 		        int len = 0;             /* Length of the tag of the dollar quote */
 		        uchar p = lip.yyPeek(); /* Character succeeding first $ */
 		        // Find $ character after the tag
@@ -842,11 +837,12 @@ public class MyLexer implements Lexer {
 		          if (text == NullCstr)
 		            return AbortSym;  // error: unterminated text
 		          else {
-		            yylval.lexStr.str = constCast<char *>(text.str);
+//		            yylval.lexStr.str = constCast<char *>(text.str);
+		            yylval.lexStr.str = text.str;
 		            yylval.lexStr.length = text.length;
 
 		            lip.bodyUtf8Append(text.str);
-		            lip.bodyUtf8AppendLiteral(thd, &yylval.lexStr, cs,
+		            lip.bodyUtf8AppendLiteral(thd, yylval.lexStr, cs,
 		                                          text.str + text.length);
 
 		            return DollarQuotedStringSym;  // $$ ... $$
@@ -855,8 +851,7 @@ public class MyLexer implements Lexer {
 		      }
 		    }
 		  }
-
-	}
+		  }
 
 	private String getText(LexInputStream lip, int preSkip, int postSkip) {
 		char c, sep;

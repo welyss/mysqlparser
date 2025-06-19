@@ -1,6 +1,7 @@
 package org.welyss.mysqlparser.v84;
 
 import org.welyss.mysqlparser.items.Item;
+import org.welyss.mysqlparser.items.LexString;
 
 /**
  * Convert from sql_lex.h,sql_lex.cc, the [yylval] is Lexer_yystype from sql_lex.h, lexer_yystype.h, lex_symbol.h .
@@ -256,32 +257,32 @@ public class LexInputStream {
 
 	/** Get the token start position, in the raw buffer. */
 	int getTokStart() {
-		return sqlBuf.charAt(mTokStart);
+		return mTokStart;
 	}
 
 	/** Get the token start position, in the pre-processed buffer. */
 	int getCppTokStart() {
-		return sqlBuf.charAt(mCppTokStart);
+		return mCppTokStart;
 	}
 
 	/** Get the token end position, in the raw buffer. */
 	int getTokEnd() {
-		return sqlBuf.charAt(mTokEnd);
+		return mTokEnd;
 	}
 
 	/** Get the token end position, in the pre-processed buffer. */
 	int getCppTokEnd() {
-		return sqlBuf.charAt(mCppTokEnd);
+		return mCppTokEnd;
 	}
 
 	/** Get the current stream pointer, in the raw buffer. */
 	int getPtr() {
-		return sqlBuf.charAt(mPtr);
+		return mPtr;
 	}
 
 	/** Get the current stream pointer, in the pre-processed buffer. */
 	int getCppPtr() {
-		return sqlBuf.charAt(mCppPtr);
+		return mCppPtr;
 	}
 
 	/** Get the length of the current token, in the raw buffer. */
@@ -294,23 +295,39 @@ public class LexInputStream {
 	}
 
 	/** Get the utf8-body string. */
-	char getBodyUtf8Str() {
+	String getBodyUtf8Str() {
 		return mBodyUtf8;
 	}
 
 	/** Get the utf8-body length. */
 	int getBodyUtf8Length() {
-		return mBodyUtf8Ptr - mBodyUtf8;
+		return mBodyUtf8 == null ? 0 : mBodyUtf8.length();
 	}
 
 	void bodyUtf8Start(SQLThread thd, char beginPtr) {
 
 	}
 
-	void bodyUtf8Append(char ptr) {
-
+	/**
+	 * The operation appends unprocessed part of the pre-processed buffer till the given pointer (ptr) and sets m_cpp_utf8_processed_ptr to ptr.
+	 *
+	 * @param ptr Pointer in the pre-processed buffer, which specifies the end of the chunk, which should be appended to the utf8 body.
+	 */
+	public void bodyUtf8Append(int ptr) {
+		bodyUtf8Append(ptr, ptr);
 	}
 
+	/**
+	 * @brief The operation appends unprocessed part of pre-processed buffer till the given pointer (ptr) and sets m_cpp_utf8_processed_ptr to end_ptr.
+	 *
+	 *        The idea is that some tokens in the pre-processed buffer (like character set introducers) should be skipped.
+	 *
+	 *        Example: CPP buffer: SELECT 'str1', _latin1 'str2'; m_cpp_utf8_processed_ptr -- points at the "SELECT ..."; In order to skip "_latin1", the following
+	 *        call should be made: body_utf8_append(<pointer to "_latin1 ...">, <pointer to " 'str2'...">)
+	 *
+	 * @param ptr     Pointer in the pre-processed buffer, which specifies the end of the chunk, which should be appended to the utf8 body.
+	 * @param end_ptr Pointer in the pre-processed buffer, to which m_cpp_utf8_processed_ptr will be set in the end of the operation.
+	 */
 	public void bodyUtf8Append(int ptr, int endPtr) {
 		if (mCppBuf <= ptr && ptr <= mCppBuf + mBufLength) {
 			if (mCppBuf <= endPtr && endPtr <= mCppBuf + mBufLength) {
@@ -320,6 +337,7 @@ public class LexInputStream {
 					return;
 				int bytesToCopy = ptr - mCppUtf8ProcessedPtr;
 //				memcpy(mBodyUtf8Ptr, mCppUtf8ProcessedPtr, bytesToCopy);
+				mBodyUtf8 = sqlBuf.substring(mCppUtf8ProcessedPtr, mCppUtf8ProcessedPtr + bytesToCopy);
 				mBodyUtf8Ptr += bytesToCopy;
 //				mBodyUtf8Ptr = 0;
 				mCppUtf8ProcessedPtr = endPtr;
@@ -327,12 +345,44 @@ public class LexInputStream {
 		}
 	}
 
-//	void bodyUtf8AppendLiteral(SQLThread thd, String txt, CharsetInfo txt_cs, char end_ptr) {
-//
-//	}
+	/**
+	 * The operation converts the specified text literal to the utf8 and appends the result to the utf8-body.
+	 *
+	 * @param thd     Thread context.
+	 * @param txt     Text literal.
+	 * @param txt_cs  Character set of the text literal.
+	 * @param end_ptr Pointer in the pre-processed buffer, to which m_cpp_utf8_processed_ptr will be set in the end of the operation.
+	 */
+	public void bodyUtf8AppendLiteral(SQLThread thd, LexString txt, Integer endPtr) {
+		if (mCppUtf8ProcessedPtr == null)
+			return;
+		LexString utfTxt = new LexString(null);
+//		  if (!myCharsetSame(txtCs, &myCharsetUtf8mb4GeneralCi)) {
+//		    thd.convertString(&utfTxt, &myCharsetUtf8mb4GeneralCi, txt.str,
+//		                        txt.length, txtCs);
+//		  } else {
+		utfTxt.str = txt.str;
+		utfTxt.length = txt.length;
+//		  }
+//		  MY_COMPILER_DIAGNOSTIC_PUSH();
+		// GCC 10.2.0 solaris
+//		  MY_COMPILER_GCC_DIAGNOSTIC_IGNORE("-Wmaybe-uninitialized");
+
+		/* NOTE: utf_txt.length is in bytes, not in symbols. */
+//		  memcpy(m_body_utf8_ptr, utf_txt.str, utf_txt.length);
+		mBodyUtf8 = utfTxt.str;
+		mBodyUtf8Ptr += utfTxt.length;
+//		  mBodyUtf8Ptr = 0;
+//		  MY_COMPILER_DIAGNOSTIC_POP();
+		mCppUtf8ProcessedPtr = endPtr;
+	}
 
 	Integer getLineno(char rawPtr) {
 		return null;
+	}
+
+	public char p2c(int point) {
+		return sqlBuf.charAt(point);
 	}
 
 	/** Current thread. */
