@@ -11,11 +11,11 @@ public class ParserState {
 		mLip = new LexInputStream(sql, thd);
 	}
 
-	public void add_comment() {
+	public void addComment() {
 		mComment = true;
 	}
 
-	public boolean has_comment() {
+	public boolean hasComment() {
 		return mComment;
 	}
 }

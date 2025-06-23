@@ -19,6 +19,7 @@ import org.welyss.mysqlparser.v84.MyParser.Location;
  * <b>CHARSET_INFO</b> is from include/mysql/strings/m_ctype.h and utf8mb3/utf8mb4 instance in strings/ctype-utf8.cc.
  */
 public class MyLexer implements Lexer {
+	public static final long MYSQL_VERSION_ID = 80405;
 	public static final String LONG_STR = "2147483647";
 	public static final int LONG_LEN = 10;
 	public static final String SIGNED_LONG_STR = "-2147483648";
@@ -578,7 +579,7 @@ public class MyLexer implements Lexer {
 
 		      case MY_LEX_COMMENT:  //  Comment
 		        thd.mParserState.addComment();
-		        while ((c = lip.yyGet()) != '\n' && c)
+		        while ((c = lip.yyGet()) != '\n' && c != '\0')
 		          ;
 		        lip.yyUnget();        // Safety against eof
 		        state = MyLexStates.MY_LEX_START;  // Try again
@@ -595,7 +596,7 @@ public class MyLexer implements Lexer {
 		        lip.saveInCommentState();
 
 		        if (lip.yyPeekn(2) == '!') {
-		          lip.inComment = DISCARD_COMMENT;
+		          lip.inComment = EnumCommentState.DISCARD_COMMENT;
 		          /* Accept '/' '*' '!', but do not keep this marker. */
 		          lip.setEcho(false);
 		          lip.yySkip();
@@ -628,19 +629,31 @@ public class MyLexer implements Lexer {
 		        		  Character.isDigit(versionStr[2] = lip.yyPeekn(2)) &&
 		        		  Character.isDigit(versionStr[3] = lip.yyPeekn(3)) &&
 		        		  Character.isDigit(versionStr[4] = lip.yyPeekn(4))) {
-		            if (Character.isDigit(lip.yyPeekn(5)) &&
-		            		Character.isWhitespace(lip.yyPeekn(6))) {
+		            if (Character.isDigit(lip.yyPeekn(5)) && Character.isWhitespace(lip.yyPeekn(6))) {
 		              versionStr[5] = lip.yyPeekn(5);
 		            } else if (!Character.isWhitespace(lip.yyPeekn(5))) {
-		              pushWarning(thd, SqlCondition::SlWarning,
-		                           ER_WARN_NO_SPACE_VERSION_COMMENT,
-		                           ErThd(thd, ER_WARN_NO_SPACE_VERSION_COMMENT));
+		            	LOGGER.warn("SL_WARNING: ER_WARN_NO_SPACE_VERSION_COMMENT");
+//		              pushWarning(thd, SqlCondition::SL_WARNING,
+//		                           ER_WARN_NO_SPACE_VERSION_COMMENT,
+//		                           ErThd(thd, ER_WARN_NO_SPACE_VERSION_COMMENT));
 		            }
 
-		            ulong version = strtol(versionStr, null, 10);
+//		            long version = strtol(versionStr, null, 10);
+		            long version;
+		            try {
+		            	version = Long.parseLong(versionStr.toString());
+		            } catch(NumberFormatException e) {
+		            	version = Long.parseLong(versionStr.toString().replaceFirst("^(\\d+).*", "$1"));
+		            }
 		            if (version <= MYSQL_VERSION_ID) {
 		              /* Accept ('M') 'M' 'm' 'm' 'd' 'd' */
-		              lip.yyskipn(strlen(versionStr));
+		            	int skipLen = 0;
+		            	for(int i=6;i >= 0;i--) {
+		            		if (Character.isDigit(versionStr[i])) {
+		            			skipLen = i + 1;
+		            		}
+		            	}
+		              lip.yySkipn(skipLen);
 		              /* Expand the content of the special comment as real code */
 		              lip.setEcho(true);
 		              state = MyLexStates.MY_LEX_START;
@@ -659,12 +672,12 @@ public class MyLexer implements Lexer {
 		            }
 		          } else {
 		            /* Not a version comment. */
-		            state = MY_LEX_START;
+		            state = MyLexStates.MY_LEX_START;
 		            lip.setEcho(true);
 		            break;
 		          }
 		        } else {
-		          if (lip.inComment != NO_COMMENT) {
+		          if (lip.inComment != EnumCommentState.NO_COMMENT) {
 		            pushWarning(
 		                lip.mThd, SqlCondition::SlWarning,
 		                ErWarnDeprecatedSyntaxNoReplacement,
