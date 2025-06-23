@@ -19,6 +19,16 @@ import org.welyss.mysqlparser.v84.MyParser.Location;
  * <b>CHARSET_INFO</b> is from include/mysql/strings/m_ctype.h and utf8mb3/utf8mb4 instance in strings/ctype-utf8.cc.
  */
 public class MyLexer implements Lexer {
+	public static final String LONG_STR = "2147483647";
+	public static final int LONG_LEN = 10;
+	public static final String SIGNED_LONG_STR = "-2147483648";
+	public static final String LONGLONG_STR = "9223372036854775807";
+	public static final int LONGLONG_LEN = 19;
+	public static final String SIGNED_LONGLONG_STR = "-9223372036854775808";
+	public static final int SIGNED_LONGLONG_LEN = 19;
+	public static final String UNSIGNED_LONGLONG_STR = "18446744073709551615";
+	public static final int UNSIGNED_LONGLONG_LEN = 20;
+
 	LexStateMapsSt stateMaps;
 	private static final Logger LOGGER = LogManager.getLogger();
 
@@ -387,28 +397,28 @@ public class MyLexer implements Lexer {
 //		        [[fallthrough]];
 		      case MY_LEX_IDENT_START:  // We come here after '.'
 		        resultState = IDENT;
-		        if (useMb(cs)) {
-		          resultState = IDENT_QUOTED;
-		          while (identMap[c = lip.yyGet()]) {
-		            switch (myMbcharlen(cs, c)) {
-		              case 1:
-		                break;
-		              case 0:
-		                if (myMbmaxlenlen(cs) < 2) break;
-//		                [[fallthrough]];
-		              default:
-		                int l;
-		                if ((l = myIsmbchar(cs, lip.getPtr() - 1, lip.getEndOfQuery())) == 0)
-		                  break;
-		                lip.skipBinary(l - 1);
-		            }
-		          }
-		        } else {
+//		        if (useMb(cs)) {
+//		          resultState = IDENT_QUOTED;
+//		          while (identMap[c = lip.yyGet()]) {
+//		            switch (myMbcharlen(cs, c)) {
+//		              case 1:
+//		                break;
+//		              case 0:
+//		                if (myMbmaxlenlen(cs) < 2) break;
+////		                [[fallthrough]];
+//		              default:
+//		                int l;
+//		                if ((l = myIsmbchar(cs, lip.getPtr() - 1, lip.getEndOfQuery())) == 0)
+//		                  break;
+//		                lip.skipBinary(l - 1);
+//		            }
+//		          }
+//		        } else {
 		          for (resultState = 0; identMap[c = lip.yyGet()]; resultState |= c)
 		            ;
 		          /* If there were non-ASCII characters, mark that we must convert */
 		          resultState = (resultState & 0x80) == 0x80 ? IDENT_QUOTED : IDENT;
-		        }
+//		        }
 		        if (c == '.' && identMap[lip.yyPeek()])
 		          lip.nextState = MyLexStates.MY_LEX_IDENT_SEP;  // Next is '.'
 
@@ -512,7 +522,7 @@ public class MyLexer implements Lexer {
 		        if (stateMap[lip.yyPeek()] == MyLexStates.MY_LEX_CMP_OP ||
 		            stateMap[lip.yyPeek()] == MyLexStates.MY_LEX_LONG_CMP_OP)
 		          lip.yySkip();
-		        if ((tokval = findKeyword(lip, lip.yyLength() + 1, false))) {
+		        if ((tokval = findKeyword(lip, lip.yyLength() + 1, false)) != 0) {
 		          lip.nextState = MyLexStates.MY_LEX_START;  // Allow signed numbers
 		          return (tokval);
 		        }
@@ -525,7 +535,7 @@ public class MyLexer implements Lexer {
 		          lip.yySkip();
 		          if (stateMap[lip.yyPeek()] == MyLexStates.MY_LEX_CMP_OP) lip.yySkip();
 		        }
-		        if ((tokval = findKeyword(lip, lip.yyLength() + 1, false))) {
+		        if ((tokval = findKeyword(lip, lip.yyLength() + 1, false)) != 0) {
 		          lip.nextState = MyLexStates.MY_LEX_START;  // Found long op
 		          return (tokval);
 		        }
@@ -550,7 +560,7 @@ public class MyLexer implements Lexer {
 		        /* " used for strings */
 //		        [[fallthrough]];
 		      case MY_LEX_STRING:  // Incomplete text string
-		        if (!(yylval.lexStr.str = getText(lip, 1, 1))) {
+		        if ((yylval.lexStr.str = getText(lip, 1, 1)) != null) {
 		          state = MyLexStates.MY_LEX_CHAR;  // Read char by char
 		          break;
 		        }
@@ -559,13 +569,12 @@ public class MyLexer implements Lexer {
 		        lip.bodyUtf8Append(lip.mCppTextStart);
 
 		        lip.bodyUtf8AppendLiteral(
-		            thd, &yylval.lexStr,
-		            lip.mUnderscoreCs ? lip.mUnderscoreCs : cs,
+		            thd, yylval.lexStr,
 		            lip.mCppTextEnd);
 
-		        lip.mUnderscoreCs = null;
+//		        lip.mUnderscoreCs = null;
 
-		        return (TextString);
+		        return (TEXT_STRING);
 
 		      case MY_LEX_COMMENT:  //  Comment
 		        thd.mParserState.addComment();
@@ -650,20 +659,20 @@ public class MyLexer implements Lexer {
 		            }
 		          } else {
 		            /* Not a version comment. */
-		            state = MyLexStart;
+		            state = MY_LEX_START;
 		            lip.setEcho(true);
 		            break;
 		          }
 		        } else {
-		          if (lip.inComment != NoComment) {
+		          if (lip.inComment != NO_COMMENT) {
 		            pushWarning(
 		                lip.mThd, SqlCondition::SlWarning,
 		                ErWarnDeprecatedSyntaxNoReplacement,
 		                ErThd(lip.mThd, ErWarnDeprecatedNestedCommentSyntax));
 		          }
-		          lip.inComment = PreserveComment;
-		          lip.yy_skip();  // Accept /
-		          lip.yy_skip();  // Accept *
+		          lip.inComment = PRESERVE_COMMENT;
+		          lip.yySkip();  // Accept /
+		          lip.yySkip();  // Accept *
 		          commentClosed = !consumeComment(lip, 0);
 		          /* regular comments can have zero comments inside. */
 		        }
@@ -684,7 +693,7 @@ public class MyLexer implements Lexer {
 		        */
 
 		        /* Unbalanced comments with a missing '*' '/' are a syntax error */
-		        if (!commentClosed) return (AbortSym);
+		        if (!commentClosed) return (ABORT_SYM);
 		        state = MyLexStates.MY_LEX_START;  // Try again
 		        lip.restoreInCommentState();
 		        break;
@@ -723,7 +732,7 @@ public class MyLexer implements Lexer {
 		          break;
 		        }
 		        lip.yySkip();
-		        return (SetVar);
+		        return (SET_VAR);
 		      case MY_LEX_SEMICOLON:  // optional line terminator
 		        state = MyLexStates.MY_LEX_CHAR;  // Return ';'
 		        break;
@@ -766,7 +775,7 @@ public class MyLexer implements Lexer {
 		            lip.nextState = MyLexStates.MY_LEX_HOSTNAME;
 		            break;
 		        }
-		        yylval.lexStr.str = lip.p2c(lip.getPtr());
+		        yylval.lexStr.str = String.valueOf(lip.p2c(lip.getPtr()));
 		        yylval.lexStr.length = 1;
 		        return ((int)'@');
 		      case MY_LEX_HOSTNAME:  // end '@' of user@hostname
@@ -777,7 +786,7 @@ public class MyLexer implements Lexer {
 		        yylval.lexStr = getToken(lip, 0, lip.yyLength());
 		        return (LEX_HOSTNAME);
 		      case MY_LEX_SYSTEM_VAR:
-		        yylval.lexStr.str = lip.p2c(lip.getPtr());
+		        yylval.lexStr.str = String.valueOf(lip.p2c(lip.getPtr()));
 		        yylval.lexStr.length = 1;
 		        lip.yySkip();  // Skip '@'
 		        lip.nextState =
@@ -832,8 +841,8 @@ public class MyLexer implements Lexer {
 		          state = MyLexStates.MY_LEX_IDENT;
 		          break;
 		        } else {
-		          LexCstring text = getDollarQuotedText(lip, len);
-		          if (text == Null_cstr)
+		          LexString text = getDollarQuotedText(lip, len);
+		          if (text == NULL_CSTR)
 		            return ABORT_SYM;  // error: unterminated text
 		          else {
 //		            yylval.lexStr.str = constCast<char *>(text.str);
@@ -1039,5 +1048,96 @@ public class MyLexer implements Lexer {
 		lip.mCppTextStart = lip.getCppTokStart() + skip;
 		lip.mCppTextEnd = lip.mCppTextStart + tmp.length;
 		return tmp;
+	}
+
+	private LexString getQuotedToken(LexInputStream lip, int skip, int length, char quote) {
+		LexString tmp = new LexString();
+		int from, end;
+		StringBuilder to = new StringBuilder();
+		lip.yyUnget(); // ptr points now after last token char
+		tmp.length = lip.yytoklen = length;
+//		tmp.str = (char *)lip.m_thd.alloc(tmp.length + 1);
+		from = lip.getTokStart() + skip;
+//		to = tmp.str;
+		end = from + length;
+
+		lip.mCppTextStart = lip.getCppTokStart() + skip;
+		lip.mCppTextEnd = lip.mCppTextStart + length;
+
+		for (int i = from; i < end; i++) {
+			char c = lip.sqlBuf.charAt(i);
+			if (c == quote) {
+				lip.mCppTextStart++;
+				continue;
+			} else {
+				to.append(c);
+			}
+		}
+		tmp.str = to.toString();
+//		*to = 0;  // End null for safety
+		return tmp;
+	}
+
+	private int intToken(String str, int length) {
+		if (length < LONG_LEN) // quick normal case
+			return NUM;
+		boolean neg = false;
+		int index = 0;
+		if (str.charAt(index) == '+') // Remove sign and pre-zeros
+		{
+			index++;
+			length--;
+		} else if (str.charAt(index) == '-') {
+			index++;
+			length--;
+			neg = true;
+		}
+		while (str.charAt(index) == '0' && length > 0) {
+			index++;
+			length--;
+		}
+		if (length < LONG_LEN)
+			return NUM;
+
+		int smaller, bigger;
+		String cmp;
+		if (neg) {
+			if (length == LONG_LEN) {
+				cmp = SIGNED_LONG_STR.substring(1);
+				smaller = NUM; // If <= signed_long_str
+				bigger = LONG_NUM; // If >= signed_long_str
+			} else if (length < SIGNED_LONGLONG_LEN)
+				return LONG_NUM;
+			else if (length > SIGNED_LONGLONG_LEN)
+				return DECIMAL_NUM;
+			else {
+				cmp = SIGNED_LONGLONG_STR.substring(1);
+				smaller = LONG_NUM; // If <= signed_longlong_str
+				bigger = DECIMAL_NUM;
+			}
+		} else {
+			if (length == LONG_LEN) {
+				cmp = LONG_STR;
+				smaller = NUM;
+				bigger = LONG_NUM;
+			} else if (length < LONGLONG_LEN)
+				return LONG_NUM;
+			else if (length > LONGLONG_LEN) {
+				if (length > UNSIGNED_LONGLONG_LEN)
+					return DECIMAL_NUM;
+				cmp = UNSIGNED_LONGLONG_STR;
+				smaller = ULONGLONG_NUM;
+				bigger = DECIMAL_NUM;
+			} else {
+				cmp = LONGLONG_STR;
+				smaller = LONG_NUM;
+				bigger = ULONGLONG_NUM;
+			}
+		}
+		int offset = 0;
+		while (cmp.charAt(offset) != '\0' && cmp.charAt(offset) == str.charAt(offset)) {
+			offset++;
+		}
+		return str.charAt(offset) <= cmp.charAt(offset) ? smaller : bigger;
 	}
 }
