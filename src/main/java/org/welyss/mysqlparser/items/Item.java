@@ -10,7 +10,7 @@ public abstract class Item {
 //	public String charset;
 
 	public Item() {
-		lexStr = null;
+		lexStr = new LexString();
 		keyword = null;
 		optimizerHints = null;
 //		charset = null;
