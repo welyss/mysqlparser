@@ -113,4 +113,43 @@ public class MySQLParserUnitTest {
 		List<ParseResult> result = parser.parse(sql);
 		assertTrue(result.get(0).isSuccess());
 	}
+
+	@Test
+	public void case4() throws IOException {
+		String sql = "CREATE TABLE `std_fund_companies` (\r\n"
+				+ "  `id` varchar(40) NOT NULL COMMENT 'ID',\r\n"
+				+ "  `name` varchar(255) NOT NULL COMMENT '基金公司名称',\r\n"
+				+ "  `abbr_name` varchar(255) DEFAULT NULL COMMENT '公司简称',\r\n"
+				+ "  `pinyin_abbr_name` varchar(255) DEFAULT NULL COMMENT '拼音简称',\r\n"
+				+ "  `founding_date` varchar(10) DEFAULT NULL COMMENT '成立日期',\r\n"
+				+ "  `legal_person` varchar(255) DEFAULT NULL COMMENT '法人代表',\r\n"
+				+ "  `telephone_number` varchar(255) DEFAULT NULL COMMENT '电话号码',\r\n"
+				+ "  `contact_address` varchar(255) DEFAULT NULL COMMENT '联系地址',\r\n"
+				+ "  `briefing` varchar(2000) DEFAULT NULL COMMENT '公司简介',\r\n"
+				+ "  `last_modified_dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录时间戳',\r\n"
+				+ "  `gazx_compainies_id` varchar(20) DEFAULT NULL COMMENT '基金公司ID(GaoTime)',\r\n"
+				+ "  PRIMARY KEY (`id`),\r\n"
+				+ "  KEY `last_modified_dt` (`last_modified_dt`),\r\n"
+				+ "  KEY `name` (`name`)\r\n"
+				+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='基金公司信息表'";
+		List<ParseResult> result = parser.parse(sql);
+		assertTrue(result.get(0).isSuccess());
+	}
+
+	@Test
+	public void case5() throws IOException {
+		String sql = "CREATE TABLE `t_json` (\r\n"
+				+ "  `id` int NOT NULL AUTO_INCREMENT,\r\n"
+				+ "  `col1` varchar(200) DEFAULT NULL,\r\n"
+				+ "  `col2` varchar(200) DEFAULT NULL,\r\n"
+				+ "  `key1` int DEFAULT NULL,\r\n"
+				+ "  `key2` int DEFAULT NULL,\r\n"
+				+ "  `jsoncol` json,\r\n"
+				+ "  `dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\r\n"
+				+ "  PRIMARY KEY (`id`),\r\n"
+				+ "  KEY `idx_k12` (`key1`,`key2`)\r\n"
+				+ ") ENGINE=InnoDB AUTO_INCREMENT=1310726 DEFAULT CHARSET=utf8mb4;";
+		List<ParseResult> result = parser.parse(sql);
+		assertTrue(result.get(0).isSuccess());
+	}
 }

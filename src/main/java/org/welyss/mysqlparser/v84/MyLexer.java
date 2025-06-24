@@ -202,7 +202,6 @@ public class MyLexer implements Lexer {
 				while (stateMap[c = lip.yyPeek()] == MyLexStates.MY_LEX_SKIP) {
 					if (c == '\n')
 						lip.yylineno++;
-
 					lip.yySkip();
 				}
 
@@ -302,6 +301,7 @@ public class MyLexer implements Lexer {
 
 				if (yylval.lexStr.str.charAt(0) == '_') {
 					String charsetName = yylval.lexStr.str.substring(1);
+					yylval.charset = charsetName;
 //		          const CharsetInfo *underscoreCs =
 //		              mysql::collation::findPrimary(charsetName);
 //		          if (underscoreCs) {

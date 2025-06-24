@@ -7,12 +7,12 @@ public abstract class Item {
 	public LexSymbol keyword;
 	public LexString hintString;
 	public List<Integer> optimizerHints;
-//	public String charset;
+	public String charset;
 
 	public Item() {
 		lexStr = new LexString();
 		keyword = null;
 		optimizerHints = null;
-//		charset = null;
+		charset = null;
 	}
 }
