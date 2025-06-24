@@ -587,10 +587,18 @@ public class LexInputStream {
 	}
 
 	public boolean myIscntrl(char ch) {
-		return ch < ctypeUtf8mb4.length && (ctypeUtf8mb4[ch] & MY_CHAR_CTR) == MY_CHAR_CTR;
+		int chInt = ch + 1;
+		return chInt < ctypeUtf8mb4.length && (ctypeUtf8mb4[chInt] & MY_CHAR_CTR) == MY_CHAR_CTR;
 	}
 
 	public boolean myIsspace(char ch) {
-		return ch < ctypeUtf8mb4.length && (ctypeUtf8mb4[ch] & MY_CHAR_SPC) == MY_CHAR_SPC;
+		int chInt = ch + 1;
+		return chInt < ctypeUtf8mb4.length && (ctypeUtf8mb4[chInt] & MY_CHAR_SPC) == MY_CHAR_SPC;
+	}
+
+	public boolean myIsalnum(char ch) {
+		int chInt = ch + 1;
+		int alnum = (MY_CHAR_U | MY_CHAR_L | MY_CHAR_NMR);
+		return chInt < ctypeUtf8mb4.length && (ctypeUtf8mb4[chInt] & alnum) == alnum;
 	}
 }
