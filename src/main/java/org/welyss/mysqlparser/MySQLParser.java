@@ -1,13 +1,12 @@
 package org.welyss.mysqlparser;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.welyss.mysqlparser.v56.MyLexStates;
 import org.welyss.mysqlparser.v56.MyLexer;
 import org.welyss.mysqlparser.v56.MyParser;
 import org.welyss.mysqlparser.v56.SQLThread;
+
+
 
 public class MySQLParser {
 	private MyParser myParser;
@@ -31,34 +30,10 @@ public class MySQLParser {
 	 * @param sql
 	 * @return Parsed Info
 	 */
-	public List<ParseResult> parse(String sql) {
-		List<ParseResult> result = new ArrayList<>();
-		SQLThread sqlThread = new SQLThread(sql);
-		sqlThread.success = myParser.parse(sqlThread);
-		result.add(sqlThread.getSQLResultAndReset(0));
-		while(sqlThread.success && sqlThread.foundSemicolon > 0 && !myParser.myLexer.lip.eof(sqlThread)) {
-			int lastPos = sqlThread.mPtr;
-			sqlThread.nextState = MyLexStates.MY_LEX_START;
-			sqlThread.success = myParser.parse(sqlThread);
-			result.add(sqlThread.getSQLResultAndReset(lastPos));
-		}
+	public ParseResult parse(String sql) {
+		MySQLThread sqlThread = new SQLThread(sql);
+		ParseResult result = myParser.parse(sqlThread);
 		return result;
-	}
-
-	/**
-	 * set stmtPrepareMode, default is true.
-	 * @param value
-	 */
-	public void setStmtPrepareMode(boolean value) {
-		((MyLexer)myParser.myLexer).lip.stmtPrepareMode = value;
-	}
-
-	/**
-	 * whether the placeholder '?' can be accepted.
-	 * @return
-	 */
-	public boolean isStmtPrepareMode() {
-		return ((MyLexer)myParser.myLexer).lip.stmtPrepareMode;
 	}
 
 	/**

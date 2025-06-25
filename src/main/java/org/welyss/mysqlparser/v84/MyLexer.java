@@ -8,6 +8,8 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.welyss.mysqlparser.MySQLLexer;
+import org.welyss.mysqlparser.MySQLThread;
 import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.LexString;
 import org.welyss.mysqlparser.items.Position;
@@ -18,8 +20,8 @@ import org.welyss.mysqlparser.v84.MyParser.Location;
  * Convert from sql_lex.cc, include my_sql_parser_lex,lex_one_token... function.<br>
  * <b>CHARSET_INFO</b> is from include/mysql/strings/m_ctype.h and utf8mb3/utf8mb4 instance in strings/ctype-utf8.cc.
  */
-public class MyLexer implements Lexer {
-	public static final long MYSQL_VERSION_ID = 80405;
+public class MyLexer implements Lexer, MySQLLexer {
+	public long mysqlVersionId = 80405;
 	public static final String LONG_STR = "2147483647";
 	public static final int LONG_LEN = 10;
 	public static final String SIGNED_LONG_STR = "-2147483648";
@@ -95,7 +97,7 @@ public class MyLexer implements Lexer {
 	}
 
 	@Override
-	public Object getLVal(SQLThread thd) {
+	public Object getLVal(MySQLThread thd) {
 		return thd.yylval;
 	}
 
@@ -112,7 +114,8 @@ public class MyLexer implements Lexer {
 	}
 
 	@Override
-	public int yylex(SQLThread thd) throws IOException {
+	public int yylex(MySQLThread mthd) throws IOException {
+		SQLThread thd = (SQLThread)mthd;
 		Item yylval = thd.yylval;
 		// POS in mysql-8.4.5/src/sql/parse_location.h
 		Location yylloc = thd.yylloc;
@@ -630,7 +633,7 @@ public class MyLexer implements Lexer {
 						} catch (NumberFormatException e) {
 							version = Long.parseLong(versionStr.toString().replaceFirst("^(\\d+).*", "$1"));
 						}
-						if (version <= MYSQL_VERSION_ID) {
+						if (version <= mysqlVersionId) {
 							/* Accept ('M') 'M' 'm' 'm' 'd' 'd' */
 							int skipLen = 0;
 							for (int i = 6; i >= 0; i--) {
@@ -1240,5 +1243,4 @@ public class MyLexer implements Lexer {
 		}
 		return ret;
 	}
-
 }

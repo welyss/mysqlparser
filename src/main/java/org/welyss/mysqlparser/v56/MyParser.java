@@ -8,6 +8,10 @@ import org.welyss.mysqlparser.AlterFlag;
 import org.welyss.mysqlparser.CreateInfo;
 import org.welyss.mysqlparser.Lex;
 import org.welyss.mysqlparser.LexConstants;
+import org.welyss.mysqlparser.MySQLLexer;
+import org.welyss.mysqlparser.MySQLThread;
+import org.welyss.mysqlparser.ParseResult;
+import org.welyss.mysqlparser.Parser;
 import org.welyss.mysqlparser.SQLCommand;
 import org.welyss.mysqlparser.SQLPrivConstants;
 import org.welyss.mysqlparser.SchemaTables;
@@ -40,7 +44,7 @@ import org.welyss.mysqlparser.utils.MySQLParserUtils;
  *
  * @author LALR (1) parser skeleton written by Paolo Bonzini.
  */
-public class MyParser {
+public class MyParser implements Parser {
 	/** Version number for the Bison executable that generated this parser. */
 	public static final String bisonVersion = "2.7";
 
@@ -1292,8 +1296,7 @@ public class MyParser {
 	public static final int ZEROFILL = 875;
 
 	/**
-	 * Communication interface between the scanner and the Bison-generated
-	 * parser <tt>YYParser</tt>.
+	 * Communication interface between the scanner and the Bison-generated parser <tt>YYParser</tt>.
 	 */
 	public interface Lexer {
 
@@ -1305,21 +1308,17 @@ public class MyParser {
 		Object getLVal(SQLThread thd);
 
 		/**
-		 * Entry point for the scanner. Returns the token identifier
-		 * corresponding to the next token and prepares to return the semantic
-		 * value of the token.
+		 * Entry point for the scanner. Returns the token identifier corresponding to the next token and prepares to return the semantic value of the token.
 		 *
 		 * @return the token identifier corresponding to the next token.
 		 */
 		int mysqlLex(SQLThread thd);
 
 		/**
-		 * Entry point for error reporting. Emits an error in a user-defined
-		 * way.
+		 * Entry point for error reporting. Emits an error in a user-defined way.
 		 *
 		 *
-		 * @param s
-		 *            The string for the error message.
+		 * @param s The string for the error message.
 		 */
 		void mysqlError(String s, SQLThread thd);
 	}
@@ -1327,11 +1326,15 @@ public class MyParser {
 	/** The object doing lexical analysis for us. */
 	public MyLexer myLexer;
 
+	@Override
+	public MySQLLexer lexer() {
+		return myLexer;
+	}
+
 	/**
 	 * Instantiates the Bison-generated parser.
 	 *
-	 * @param myLexer
-	 *            The scanner that will supply tokens to the parser.
+	 * @param myLexer The scanner that will supply tokens to the parser.
 	 * @throws IOException
 	 */
 	public MyParser(MyLexer myLexer) throws IOException {
@@ -1366,8 +1369,7 @@ public class MyParser {
 	/**
 	 * Set the <tt>PrintStream</tt> on which the debug output is printed.
 	 *
-	 * @param s
-	 *            The stream that is used for debugging output.
+	 * @param s The stream that is used for debugging output.
 	 */
 	public final void setDebugStream(java.io.PrintStream s) {
 		yyDebugStream = s;
@@ -1376,20 +1378,19 @@ public class MyParser {
 	private int yydebug = 0;
 
 	/**
-	 * Answer the verbosity of the debugging output; 0 means that all kinds of
-	 * output from the parser are suppressed.
+	 * Answer the verbosity of the debugging output; 0 means that all kinds of output from the parser are suppressed.
 	 */
+	@Override
 	public final int getDebugLevel() {
 		return yydebug;
 	}
 
 	/**
-	 * Set the verbosity of the debugging output; 0 means that all kinds of
-	 * output from the parser are suppressed.
+	 * Set the verbosity of the debugging output; 0 means that all kinds of output from the parser are suppressed.
 	 *
-	 * @param level
-	 *            The verbosity level for debugging output.
+	 * @param level The verbosity level for debugging output.
 	 */
+	@Override
 	public final void setDebugLevel(int level) {
 		yydebug = level;
 	}
@@ -1468,20 +1469,17 @@ public class MyParser {
 	}
 
 	/**
-	 * Returned by a Bison action in order to stop the parsing process and
-	 * return success (<tt>true</tt>).
+	 * Returned by a Bison action in order to stop the parsing process and return success (<tt>true</tt>).
 	 */
 	public static final int YYACCEPT = 0;
 
 	/**
-	 * Returned by a Bison action in order to stop the parsing process and
-	 * return failure (<tt>false</tt>).
+	 * Returned by a Bison action in order to stop the parsing process and return failure (<tt>false</tt>).
 	 */
 	public static final int YYABORT = 1;
 
 	/**
-	 * Returned by a Bison action in order to start error recovery without
-	 * printing an error message.
+	 * Returned by a Bison action in order to start error recovery without printing an error message.
 	 */
 	public static final int YYERROR = 2;
 
@@ -1495,9 +1493,7 @@ public class MyParser {
 	private static final int YYRETURN = 8;
 
 	/**
-	 * Return whether error recovery is being done. In this state, the parser
-	 * reads token until it reaches a known state, and then restarts normal
-	 * operation.
+	 * Return whether error recovery is being done. In this state, the parser reads token until it reaches a known state, and then restarts normal operation.
 	 */
 	public final boolean recovering(SQLThread thd) {
 		return thd.yyerrstatus_ == 0;
@@ -1516,11 +1512,9 @@ public class MyParser {
 		Object yyval;
 
 		/*
-		 * If YYLEN is nonzero, implement the default value of the action: `$$ =
-		 * $1'. Otherwise, use the top of the stack.
+		 * If YYLEN is nonzero, implement the default value of the action: `$$ = $1'. Otherwise, use the top of the stack.
 		 *
-		 * Otherwise, the following line sets YYVAL to garbage. This behavior is
-		 * undocumented and Bison users should not rely upon it.
+		 * Otherwise, the following line sets YYVAL to garbage. This behavior is undocumented and Bison users should not rely upon it.
 		 */
 		if (yylen > 0)
 			yyval = yystack.valueAt(yylen - 1);
@@ -1549,53 +1543,53 @@ public class MyParser {
 			;
 			break;
 
-
 		case 3:
-		if (yyn == 3)
-		/* Line 350 of lalr1.java */
-		/* Line 1982 of "sql_yacc.y" */
-		{
-			if (myLexer.lip.eof(thd)) {
-				thd.addSQL(myLexer.lip.getPtr(thd) - 1);
-			} else {
-				thd.nextState = org.welyss.mysqlparser.v56.MyLexStates.MY_LEX_END;
-				thd.addSQL(myLexer.lip.getPtr(thd) - 1);
+			if (yyn == 3)
+			/* Line 350 of lalr1.java */
+			/* Line 1982 of "sql_yacc.y" */
+			{
+				if (myLexer.lip.eof(thd)) {
+					thd.addSQL(myLexer.lip.getPtr(thd) - 1);
+				} else {
+					thd.nextState = org.welyss.mysqlparser.v56.MyLexStates.MY_LEX_END;
+					thd.addSQL(myLexer.lip.getPtr(thd) - 1);
+				}
+				thd.foundSemicolon = myLexer.lip.getPtr(thd);
+				// Lex_input_stream *lip = YYLIP;
+				//
+				// if ((YYTHD->client_capabilities & CLIENT_MULTI_QUERIES) &&
+				// lip->multi_statements &&
+				// ! lip->eof())
+				// {
+				// /*
+				// We found a well formed query, and multi queries are allowed:
+				// - force the parser to stop after the ';'
+				// - mark the start of the next query for the next invocation
+				// of the parser.
+				// */
+				// lip->next_state= MY_LEX_END;
+				// lip->found_semicolon= lip->get_ptr();
+				// }
+				// else
+				// {
+				// /* Single query, terminated. */
+				// lip->found_semicolon= NULL;
+				// }
 			}
-			thd.foundSemicolon = myLexer.lip.getPtr(thd);
-		// Lex_input_stream *lip = YYLIP;
-		//
-		// if ((YYTHD->client_capabilities & CLIENT_MULTI_QUERIES) &&
-		// lip->multi_statements &&
-		// ! lip->eof())
-		// {
-		// /*
-		// We found a well formed query, and multi queries are allowed:
-		// - force the parser to stop after the ';'
-		// - mark the start of the next query for the next invocation
-		// of the parser.
-		// */
-		// lip->next_state= MY_LEX_END;
-		// lip->found_semicolon= lip->get_ptr();
-		// }
-		// else
-		// {
-		// /* Single query, terminated. */
-		// lip->found_semicolon= NULL;
-		// }
-		};
-		break;
-
+			;
+			break;
 
 		case 5:
-		if (yyn == 5)
-		/* Line 350 of lalr1.java */
-		/* Line 2007 of "sql_yacc.y" */
-		{
-		/* Single query, not terminated. */
+			if (yyn == 5)
+			/* Line 350 of lalr1.java */
+			/* Line 2007 of "sql_yacc.y" */
+			{
+				/* Single query, not terminated. */
 //		YYLIP->found_semicolon= NULL;
-			thd.addSQL(myLexer.lip.getPtr(thd) - 1);
-		};
-		break;
+				thd.addSQL(myLexer.lip.getPtr(thd) - 1);
+			}
+			;
+			break;
 
 		case 62:
 			if (yyn == 62)
@@ -2129,16 +2123,17 @@ public class MyParser {
 		//
 		//
 		case 112:
-		if (yyn == 112)
-		/* Line 350 of lalr1.java */
-		/* Line 2439 of "sql_yacc.y" */
-		{
+			if (yyn == 112)
+			/* Line 350 of lalr1.java */
+			/* Line 2439 of "sql_yacc.y" */
+			{
 //		 if (add_create_index_prepare(Lex, ((table)(yystack.valueAt
 //		 (7-(7))))))
-			if (!addCreateIndexPrepare(thd.lex, (TableIdent)yystack.valueAt(7 - (7))))
-				return YYABORT;
-		};
-		break;
+				if (!addCreateIndexPrepare(thd.lex, (TableIdent) yystack.valueAt(7 - (7))))
+					return YYABORT;
+			}
+			;
+			break;
 		//
 		//
 		// case 113:
@@ -2162,16 +2157,17 @@ public class MyParser {
 		//
 		//
 		case 115:
-		if (yyn == 115)
-		/* Line 350 of lalr1.java */
-		/* Line 2451 of "sql_yacc.y" */
-		{
+			if (yyn == 115)
+			/* Line 350 of lalr1.java */
+			/* Line 2451 of "sql_yacc.y" */
+			{
 //		 if (add_create_index_prepare(Lex, ((table)(yystack.valueAt
 //		 (7-(7))))))
-			if (!addCreateIndexPrepare(thd.lex, (TableIdent)yystack.valueAt(7 - (7))))
-				return YYABORT;
-		};
-		break;
+				if (!addCreateIndexPrepare(thd.lex, (TableIdent) yystack.valueAt(7 - (7))))
+					return YYABORT;
+			}
+			;
+			break;
 		//
 		//
 		// case 116:
@@ -2195,16 +2191,17 @@ public class MyParser {
 		//
 		//
 		case 118:
-		if (yyn == 118)
-		/* Line 350 of lalr1.java */
-		/* Line 2463 of "sql_yacc.y" */
-		{
-		// if (add_create_index_prepare(Lex, ((table)(yystack.valueAt
-		// (7-(7))))))
-			if (!addCreateIndexPrepare(thd.lex, (TableIdent)yystack.valueAt(7 - (7))))
-				return YYABORT;
-		};
-		break;
+			if (yyn == 118)
+			/* Line 350 of lalr1.java */
+			/* Line 2463 of "sql_yacc.y" */
+			{
+				// if (add_create_index_prepare(Lex, ((table)(yystack.valueAt
+				// (7-(7))))))
+				if (!addCreateIndexPrepare(thd.lex, (TableIdent) yystack.valueAt(7 - (7))))
+					return YYABORT;
+			}
+			;
+			break;
 		//
 		//
 		// case 119:
@@ -2434,8 +2431,7 @@ public class MyParser {
 			/* Line 2588 of "sql_yacc.y" */
 			{
 				/*
-				 * sqlCommand is set here because some rules in ev_sql_stmt can
-				 * overwrite it
+				 * sqlCommand is set here because some rules in ev_sql_stmt can overwrite it
 				 */
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_EVENT;
 			}
@@ -5959,23 +5955,23 @@ public class MyParser {
 		// break;
 
 		case 480:
-		if (yyn == 480)
-		/* Line 350 of lalr1.java */
-		/* Line 5245 of "sql_yacc.y" */
-		{
-		// LEX *lex= Lex;
-		// lex->part_info= new partition_info();
-		// if (!lex->part_info)
-		// {
-		// mem_alloc_error(sizeof(partition_info));
-		// return YYABORT;
-		// }
-			if (thd.lex.sqlCommand == SQLCommand.SQLCOM_ALTER_TABLE)
+			if (yyn == 480)
+			/* Line 350 of lalr1.java */
+			/* Line 5245 of "sql_yacc.y" */
 			{
-				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_PARTITION);
+				// LEX *lex= Lex;
+				// lex->part_info= new partition_info();
+				// if (!lex->part_info)
+				// {
+				// mem_alloc_error(sizeof(partition_info));
+				// return YYABORT;
+				// }
+				if (thd.lex.sqlCommand == SQLCommand.SQLCOM_ALTER_TABLE) {
+					thd.lex.alterInfo.flags.add(AlterFlag.ALTER_PARTITION);
+				}
 			}
-		};
-		break;
+			;
+			break;
 		//
 		//
 		// case 482:
@@ -7263,18 +7259,19 @@ public class MyParser {
 		// break;
 		//
 		//
-		 case 592:
-		 if (yyn == 592)
-		 /* Line 350 of lalr1.java */
-		 /* Line 6025 of "sql_yacc.y" */
-		 {
+		case 592:
+			if (yyn == 592)
+			/* Line 350 of lalr1.java */
+			/* Line 6025 of "sql_yacc.y" */
+			{
 //		 Lex->create_info.comment=((lex_str)(yystack.valueAt (3-(3))));
 //		 Lex->create_info.used_fields|= HA_CREATE_USED_COMMENT;
-			 Object commentObj = yystack.valueAt (3-(3));
-			 thd.lex.createInfo.comment = commentObj == null ? "":((Token)commentObj).lexStr.str;
-			 thd.lex.createInfo.usedFields |= CreateInfo.HA_CREATE_USED_COMMENT;
-		 };
-		 break;
+				Object commentObj = yystack.valueAt(3 - (3));
+				thd.lex.createInfo.comment = commentObj == null ? "" : ((Token) commentObj).lexStr.str;
+				thd.lex.createInfo.usedFields |= CreateInfo.HA_CREATE_USED_COMMENT;
+			}
+			;
+			break;
 		//
 		//
 		// case 593:
@@ -7891,32 +7888,33 @@ public class MyParser {
 		// break;
 
 		case 648:
-		if (yyn == 648)
-		/* Line 350 of lalr1.java */
-		/* Line 6358 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// Key *key= new Foreign_key(((lex_str)(yystack.valueAt (8-(4)))).str ?
-		// ((lex_str)(yystack.valueAt (8-(4)))) : ((lex_str)(yystack.valueAt
-		// (8-(1)))), lex->col_list,
-		// ((table)(yystack.valueAt (8-(8))))->db,
-		// ((table)(yystack.valueAt (8-(8))))->table,
-		// lex->ref_list,
-		// lex->fk_delete_opt,
-		// lex->fk_update_opt,
-		// lex->fk_match_option);
-		// if (key == NULL)
-		// return YYABORT;
-		// lex->alter_info.key_list.push_back(key);
-		// if (add_create_index (lex, Key::MULTIPLE, ((lex_str)(yystack.valueAt
-		// (8-(1)))).str ? ((lex_str)(yystack.valueAt (8-(1)))) :
-		// ((lex_str)(yystack.valueAt (8-(4)))),
-		// &default_key_create_info, 1))
-		// return YYABORT;
-		// /* Only used for ALTER TABLE. Ignored otherwise. */
-			thd.lex.alterInfo.flags.add(AlterFlag.ADD_FOREIGN_KEY);
-		};
-		break;
+			if (yyn == 648)
+			/* Line 350 of lalr1.java */
+			/* Line 6358 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// Key *key= new Foreign_key(((lex_str)(yystack.valueAt (8-(4)))).str ?
+				// ((lex_str)(yystack.valueAt (8-(4)))) : ((lex_str)(yystack.valueAt
+				// (8-(1)))), lex->col_list,
+				// ((table)(yystack.valueAt (8-(8))))->db,
+				// ((table)(yystack.valueAt (8-(8))))->table,
+				// lex->ref_list,
+				// lex->fk_delete_opt,
+				// lex->fk_update_opt,
+				// lex->fk_match_option);
+				// if (key == NULL)
+				// return YYABORT;
+				// lex->alter_info.key_list.push_back(key);
+				// if (add_create_index (lex, Key::MULTIPLE, ((lex_str)(yystack.valueAt
+				// (8-(1)))).str ? ((lex_str)(yystack.valueAt (8-(1)))) :
+				// ((lex_str)(yystack.valueAt (8-(4)))),
+				// &default_key_create_info, 1))
+				// return YYABORT;
+				// /* Only used for ALTER TABLE. Ignored otherwise. */
+				thd.lex.alterInfo.flags.add(AlterFlag.ADD_FOREIGN_KEY);
+			}
+			;
+			break;
 		//
 		//
 		// case 649:
@@ -7968,11 +7966,11 @@ public class MyParser {
 		// break;
 		//
 		//
-		 case 657:
-		 if (yyn == 657)
-		 /* Line 350 of lalr1.java */
-		 /* Line 6411 of "sql_yacc.y" */
-		 {
+		case 657:
+			if (yyn == 657)
+			/* Line 350 of lalr1.java */
+			/* Line 6411 of "sql_yacc.y" */
+			{
 //		 LEX *lex=Lex;
 //		 if (add_field_to_list(lex->thd, &((lex_str)(yystack.valueAt
 //		 (4-(1)))), (enum enum_field_types) ((num)(yystack.valueAt (4-(3)))),
@@ -7981,43 +7979,44 @@ public class MyParser {
 //		 &lex->comment,
 //		 lex->change,&lex->interval_list,lex->charset,
 //		 lex->uint_geom_type))
-			int flagSize = thd.lex.alterInfo.flags.size();
-			if (flagSize > 0) {
-				AlterFlag[] af = new AlterFlag[flagSize];
-				thd.lex.alterInfo.flags.toArray(af);
-				AlterFlag curFlag = af[af.length - 1];
-				if (AlterFlag.ALTER_ADD_COLUMN.equals(curFlag) || AlterFlag.ALTER_CHANGE_COLUMN.equals(curFlag)) {
-					Object columnNameObj = yystack.valueAt(4 - (1));
-					Object columnTypeObj = yystack.valueAt(4 - (3));
-					String columnName = null;
-					String columnType = null;
-					if (columnNameObj != null) {
-						columnName = ((Token) columnNameObj).lexStr.str;
-					}
-					if (columnTypeObj != null) {
-						columnType = ((Token) columnTypeObj).lexStr.str;
-					}
-					if (AlterFlag.ALTER_ADD_COLUMN.equals(curFlag)) {
-						MyParserProcessor.addFieldToList(thd, columnName, columnType, curFlag);
-					} else if (AlterFlag.ALTER_CHANGE_COLUMN.equals(curFlag)) {
-						// ALTER CHANGE field_ident [field_ident] [field_spec]
-						List<AlterColumnInfo> alterColumns = thd.lex.alterInfo.columns;
-						if (alterColumns.size() > 0) {
-							AlterColumnInfo curAlterColumnInfo = alterColumns.get(alterColumns.size() - 1);
-							if (curAlterColumnInfo.changedName != null) {
-								Object fieldIdent = yystack.valueAt(1 - (1));
-								if (fieldIdent != null) {
-									curAlterColumnInfo.changedName = columnName;
-									curAlterColumnInfo.typeName = columnType;
+				int flagSize = thd.lex.alterInfo.flags.size();
+				if (flagSize > 0) {
+					AlterFlag[] af = new AlterFlag[flagSize];
+					thd.lex.alterInfo.flags.toArray(af);
+					AlterFlag curFlag = af[af.length - 1];
+					if (AlterFlag.ALTER_ADD_COLUMN.equals(curFlag) || AlterFlag.ALTER_CHANGE_COLUMN.equals(curFlag)) {
+						Object columnNameObj = yystack.valueAt(4 - (1));
+						Object columnTypeObj = yystack.valueAt(4 - (3));
+						String columnName = null;
+						String columnType = null;
+						if (columnNameObj != null) {
+							columnName = ((Token) columnNameObj).lexStr.str;
+						}
+						if (columnTypeObj != null) {
+							columnType = ((Token) columnTypeObj).lexStr.str;
+						}
+						if (AlterFlag.ALTER_ADD_COLUMN.equals(curFlag)) {
+							MyParserProcessor.addFieldToList(thd, columnName, columnType, curFlag);
+						} else if (AlterFlag.ALTER_CHANGE_COLUMN.equals(curFlag)) {
+							// ALTER CHANGE field_ident [field_ident] [field_spec]
+							List<AlterColumnInfo> alterColumns = thd.lex.alterInfo.columns;
+							if (alterColumns.size() > 0) {
+								AlterColumnInfo curAlterColumnInfo = alterColumns.get(alterColumns.size() - 1);
+								if (curAlterColumnInfo.changedName != null) {
+									Object fieldIdent = yystack.valueAt(1 - (1));
+									if (fieldIdent != null) {
+										curAlterColumnInfo.changedName = columnName;
+										curAlterColumnInfo.typeName = columnType;
+									}
 								}
 							}
 						}
 					}
 				}
-			}
 //			 return YYABORT;
-		 };
-		 break;
+			}
+			;
+			break;
 		//
 		//
 		// case 658:
@@ -8924,60 +8923,64 @@ public class MyParser {
 		// break;
 
 		case 758:
-		if (yyn == 758)
-		/* Line 350 of lalr1.java */
-		/* Line 6743 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// lex->type|= AUTO_INCREMENT_FLAG | NOT_NULL_FLAG | UNIQUE_FLAG;
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
-		};
-		break;
+			if (yyn == 758)
+			/* Line 350 of lalr1.java */
+			/* Line 6743 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// lex->type|= AUTO_INCREMENT_FLAG | NOT_NULL_FLAG | UNIQUE_FLAG;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
+			}
+			;
+			break;
 
 		case 759:
-		if (yyn == 759)
-		/* Line 350 of lalr1.java */
-		/* Line 6749 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// lex->type|= PRI_KEY_FLAG | NOT_NULL_FLAG;
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
-		};
-		break;
+			if (yyn == 759)
+			/* Line 350 of lalr1.java */
+			/* Line 6749 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// lex->type|= PRI_KEY_FLAG | NOT_NULL_FLAG;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
+			}
+			;
+			break;
 
 		case 760:
-		if (yyn == 760)
-		/* Line 350 of lalr1.java */
-		/* Line 6755 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// lex->type|= UNIQUE_FLAG;
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
-		};
-		break;
+			if (yyn == 760)
+			/* Line 350 of lalr1.java */
+			/* Line 6755 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// lex->type|= UNIQUE_FLAG;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
+			}
+			;
+			break;
 
 		case 761:
-		if (yyn == 761)
-		/* Line 350 of lalr1.java */
-		/* Line 6761 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// lex->type|= UNIQUE_KEY_FLAG;
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
-		};
-		break;
+			if (yyn == 761)
+			/* Line 350 of lalr1.java */
+			/* Line 6761 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// lex->type|= UNIQUE_KEY_FLAG;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
+			}
+			;
+			break;
 		//
 		//
-		 case 762:
-		 if (yyn == 762)
-		// /* Line 350 of lalr1.java */
-		// /* Line 6766 of "sql_yacc.y" */
-		// { Lex->comment= ((lex_str)(yystack.valueAt (2-(2)))); };
-		 {
-			Object commentObj = yystack.valueAt (2-(2));
-			 thd.lex.comment = commentObj == null ? "":((Token)commentObj).lexStr.str;
-		 }
-		 break;
+		case 762:
+			if (yyn == 762)
+			// /* Line 350 of lalr1.java */
+			// /* Line 6766 of "sql_yacc.y" */
+			// { Lex->comment= ((lex_str)(yystack.valueAt (2-(2)))); };
+			{
+				Object commentObj = yystack.valueAt(2 - (2));
+				thd.lex.comment = commentObj == null ? "" : ((Token) commentObj).lexStr.str;
+			}
+			break;
 		//
 		//
 		// case 763:
@@ -10547,24 +10550,26 @@ public class MyParser {
 		// break;
 
 		case 939:
-		if (yyn == 939)
-		/* Line 350 of lalr1.java */
-		/* Line 7598 of "sql_yacc.y" */
-		{
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_PARTITION);
-		};
-		break;
+			if (yyn == 939)
+			/* Line 350 of lalr1.java */
+			/* Line 7598 of "sql_yacc.y" */
+			{
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_PARTITION);
+			}
+			;
+			break;
 
 		case 940:
-		if (yyn == 940)
-		/* Line 350 of lalr1.java */
-		/* Line 7603 of "sql_yacc.y" */
-		{
-		// LEX *lex= Lex;
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_REBUILD_PARTITION);
-		// lex->no_write_to_binlog= ((num)(yystack.valueAt (4-(3))));
-		};
-		break;
+			if (yyn == 940)
+			/* Line 350 of lalr1.java */
+			/* Line 7603 of "sql_yacc.y" */
+			{
+				// LEX *lex= Lex;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_REBUILD_PARTITION);
+				// lex->no_write_to_binlog= ((num)(yystack.valueAt (4-(3))));
+			}
+			;
+			break;
 		//
 		//
 		// case 941:
@@ -10638,16 +10643,17 @@ public class MyParser {
 		// break;
 
 		case 948:
-		if (yyn == 948)
-		/* Line 350 of lalr1.java */
-		/* Line 7662 of "sql_yacc.y" */
-		{
-		// LEX *lex= Lex;
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_COALESCE_PARTITION);
-		// lex->no_write_to_binlog= ((num)(yystack.valueAt (4-(3))));
-		// lex->alter_info.num_parts= ((ulong_num)(yystack.valueAt (4-(4))));
-		};
-		break;
+			if (yyn == 948)
+			/* Line 350 of lalr1.java */
+			/* Line 7662 of "sql_yacc.y" */
+			{
+				// LEX *lex= Lex;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_COALESCE_PARTITION);
+				// lex->no_write_to_binlog= ((num)(yystack.valueAt (4-(3))));
+				// lex->alter_info.num_parts= ((ulong_num)(yystack.valueAt (4-(4))));
+			}
+			;
+			break;
 		//
 		//
 		// case 949:
@@ -10682,7 +10688,7 @@ public class MyParser {
 				// return YYABORT;
 				// }
 				// lex->name= ((table)(yystack.valueAt (7-(6))))->table;
-					thd.lex.alterInfo.flags.add(AlterFlag.ALTER_EXCHANGE_PARTITION);
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_EXCHANGE_PARTITION);
 				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(7 - (6)), null, null))
 					return YYABORT;
 				// DBUG_ASSERT(!lex->m_sql_cmd);
@@ -10695,39 +10701,42 @@ public class MyParser {
 			break;
 
 		case 952:
-		if (yyn == 952)
-		/* Line 350 of lalr1.java */
-		/* Line 7709 of "sql_yacc.y" */
-		{
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_REMOVE_PARTITIONING);
-		};
-		break;
+			if (yyn == 952)
+			/* Line 350 of lalr1.java */
+			/* Line 7709 of "sql_yacc.y" */
+			{
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_REMOVE_PARTITIONING);
+			}
+			;
+			break;
 
 		case 953:
-		if (yyn == 953)
-		/* Line 350 of lalr1.java */
-		/* Line 7716 of "sql_yacc.y" */
-		{
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ALL_PARTITION);
-		};
-		break;
+			if (yyn == 953)
+			/* Line 350 of lalr1.java */
+			/* Line 7716 of "sql_yacc.y" */
+			{
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ALL_PARTITION);
+			}
+			;
+			break;
 
 		case 955:
-		if (yyn == 955)
-		/* Line 350 of lalr1.java */
-		/* Line 7724 of "sql_yacc.y" */
-		{
-		// LEX *lex= Lex;
-		// lex->part_info= new partition_info();
-		// if (!lex->part_info)
-		// {
-		// mem_alloc_error(sizeof(partition_info));
-		// return YYABORT;
-		// }
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_PARTITION);
-		// lex->no_write_to_binlog= ((num)(yystack.valueAt (3-(3))));
-		};
-		break;
+			if (yyn == 955)
+			/* Line 350 of lalr1.java */
+			/* Line 7724 of "sql_yacc.y" */
+			{
+				// LEX *lex= Lex;
+				// lex->part_info= new partition_info();
+				// if (!lex->part_info)
+				// {
+				// mem_alloc_error(sizeof(partition_info));
+				// return YYABORT;
+				// }
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_PARTITION);
+				// lex->no_write_to_binlog= ((num)(yystack.valueAt (3-(3))));
+			}
+			;
+			break;
 		//
 		//
 		// case 956:
@@ -10776,22 +10785,24 @@ public class MyParser {
 		// break;
 
 		case 962:
-		if (yyn == 962)
-		/* Line 350 of lalr1.java */
-		/* Line 7769 of "sql_yacc.y" */
-		{
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_TABLE_REORG);
-		};
-		break;
+			if (yyn == 962)
+			/* Line 350 of lalr1.java */
+			/* Line 7769 of "sql_yacc.y" */
+			{
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_TABLE_REORG);
+			}
+			;
+			break;
 
 		case 963:
-		if (yyn == 963)
-		/* Line 350 of lalr1.java */
-		/* Line 7773 of "sql_yacc.y" */
-		{
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_REORGANIZE_PARTITION);
-		};
-		break;
+			if (yyn == 963)
+			/* Line 350 of lalr1.java */
+			/* Line 7773 of "sql_yacc.y" */
+			{
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_REORGANIZE_PARTITION);
+			}
+			;
+			break;
 		//
 		//
 		// case 964:
@@ -10837,15 +10848,16 @@ public class MyParser {
 		// break;
 
 		case 970:
-		if (yyn == 970)
-		/* Line 350 of lalr1.java */
-		/* Line 7810 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// lex->change=0;
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_COLUMN);
-		};
-		break;
+			if (yyn == 970)
+			/* Line 350 of lalr1.java */
+			/* Line 7810 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// lex->change=0;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_COLUMN);
+			}
+			;
+			break;
 		//
 		//
 		// case 971:
@@ -10858,42 +10870,45 @@ public class MyParser {
 		// break;
 
 		case 972:
-		if (yyn == 972)
-		/* Line 350 of lalr1.java */
-		/* Line 7823 of "sql_yacc.y" */
-		{
-		// Lex->create_last_non_select_table= Lex->last_table();
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
-		};
-		break;
+			if (yyn == 972)
+			/* Line 350 of lalr1.java */
+			/* Line 7823 of "sql_yacc.y" */
+			{
+				// Lex->create_last_non_select_table= Lex->last_table();
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
+			}
+			;
+			break;
 
 		case 973:
-		if (yyn == 973)
-		/* Line 350 of lalr1.java */
-		/* Line 7828 of "sql_yacc.y" */
-		{
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_COLUMN);
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
-		};
-		break;
+			if (yyn == 973)
+			/* Line 350 of lalr1.java */
+			/* Line 7828 of "sql_yacc.y" */
+			{
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_COLUMN);
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADD_INDEX);
+			}
+			;
+			break;
 
 		case 974:
-		if (yyn == 974)
-		/* Line 350 of lalr1.java */
-		/* Line 7833 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// lex->change= ((lex_str)(yystack.valueAt (3-(3)))).str;
-			// ALTER CHANGE [field_ident]
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN);
-			Object columnNameObj = yystack.valueAt (3-(3));
-			String columnName = null;
-			if (columnNameObj != null) {
-				columnName = ((Token)columnNameObj).lexStr.str;
+			if (yyn == 974)
+			/* Line 350 of lalr1.java */
+			/* Line 7833 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// lex->change= ((lex_str)(yystack.valueAt (3-(3)))).str;
+				// ALTER CHANGE [field_ident]
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN);
+				Object columnNameObj = yystack.valueAt(3 - (3));
+				String columnName = null;
+				if (columnNameObj != null) {
+					columnName = ((Token) columnNameObj).lexStr.str;
+				}
+				MyParserProcessor.addFieldToList(thd, columnName, "", null, AlterFlag.ALTER_CHANGE_COLUMN);
 			}
-			MyParserProcessor.addFieldToList(thd, columnName, "", null, AlterFlag.ALTER_CHANGE_COLUMN);
-		};
-		break;
+			;
+			break;
 		//
 		//
 		// case 975:
@@ -10906,53 +10921,55 @@ public class MyParser {
 		// break;
 
 		case 976:
-		if (yyn == 976)
-		/* Line 350 of lalr1.java */
-		/* Line 7843 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// lex->length=lex->dec=0; lex->type=0;
-		// lex->default_value= lex->on_update_value= 0;
-		// lex->comment=null_lex_str;
-		// lex->charset= NULL;
-			// ALTER MODIFY
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN);
-			Object columnNameObj = yystack.valueAt (3-(3));
-			String columnName = null;
-			if (columnNameObj != null) {
-				columnName = ((Token) columnNameObj).lexStr.str;
+			if (yyn == 976)
+			/* Line 350 of lalr1.java */
+			/* Line 7843 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// lex->length=lex->dec=0; lex->type=0;
+				// lex->default_value= lex->on_update_value= 0;
+				// lex->comment=null_lex_str;
+				// lex->charset= NULL;
+				// ALTER MODIFY
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN);
+				Object columnNameObj = yystack.valueAt(3 - (3));
+				String columnName = null;
+				if (columnNameObj != null) {
+					columnName = ((Token) columnNameObj).lexStr.str;
+				}
+				MyParserProcessor.addFieldToList(thd, columnName, null, AlterFlag.ALTER_CHANGE_COLUMN);
 			}
-			MyParserProcessor.addFieldToList(thd, columnName, null, AlterFlag.ALTER_CHANGE_COLUMN);
-		};
-		break;
+			;
+			break;
 
-		 case 977:
-		 if (yyn == 977)
-		 /* Line 350 of lalr1.java */
-		 /* Line 7852 of "sql_yacc.y" */
-		 {
-		// LEX *lex=Lex;
-		// if (add_field_to_list(lex->thd,&((lex_str)(yystack.valueAt (6-(3)))),
-		// (enum enum_field_types) ((num)(yystack.valueAt (6-(5)))),
-		// lex->length,lex->dec,lex->type,
-		// lex->default_value, lex->on_update_value,
-		// &lex->comment,
-		// ((lex_str)(yystack.valueAt (6-(3)))).str, &lex->interval_list,
-		// lex->charset,
-		// lex->uint_geom_type))
-		// return YYABORT;
-			List<AlterColumnInfo> alterColumns = thd.lex.alterInfo.columns;
-			if (alterColumns.size() > 0) {
-				AlterColumnInfo curAlterColumnInfo = alterColumns.get(alterColumns.size() - 1);
-				if (AlterFlag.ALTER_CHANGE_COLUMN.equals(curAlterColumnInfo.alterFlag)) {
-					Object type = yystack.valueAt(6 - (5));
-					if (type != null) {
-						curAlterColumnInfo.typeName = ((Token) type).lexStr.str;
+		case 977:
+			if (yyn == 977)
+			/* Line 350 of lalr1.java */
+			/* Line 7852 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// if (add_field_to_list(lex->thd,&((lex_str)(yystack.valueAt (6-(3)))),
+				// (enum enum_field_types) ((num)(yystack.valueAt (6-(5)))),
+				// lex->length,lex->dec,lex->type,
+				// lex->default_value, lex->on_update_value,
+				// &lex->comment,
+				// ((lex_str)(yystack.valueAt (6-(3)))).str, &lex->interval_list,
+				// lex->charset,
+				// lex->uint_geom_type))
+				// return YYABORT;
+				List<AlterColumnInfo> alterColumns = thd.lex.alterInfo.columns;
+				if (alterColumns.size() > 0) {
+					AlterColumnInfo curAlterColumnInfo = alterColumns.get(alterColumns.size() - 1);
+					if (AlterFlag.ALTER_CHANGE_COLUMN.equals(curAlterColumnInfo.alterFlag)) {
+						Object type = yystack.valueAt(6 - (5));
+						if (type != null) {
+							curAlterColumnInfo.typeName = ((Token) type).lexStr.str;
+						}
 					}
 				}
 			}
-		 };
-		 break;
+			;
+			break;
 		//
 		//
 		// case 978:
@@ -10965,225 +10982,238 @@ public class MyParser {
 		// break;
 
 		case 979:
-		if (yyn == 979)
-		/* Line 350 of lalr1.java */
-		/* Line 7868 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// Alter_drop *ad= new Alter_drop(Alter_drop::COLUMN,
-		// ((lex_str)(yystack.valueAt (4-(3)))).str);
-		// if (ad == NULL)
-		// return YYABORT;
-		// lex->alter_info.drop_list.push_back(ad);
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_COLUMN);
-			Object columnNameObj = yystack.valueAt(4-(3));
-			String columnName = null;
-			if (columnNameObj != null) {
-				columnName = ((Token)columnNameObj).lexStr.str;
+			if (yyn == 979)
+			/* Line 350 of lalr1.java */
+			/* Line 7868 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// Alter_drop *ad= new Alter_drop(Alter_drop::COLUMN,
+				// ((lex_str)(yystack.valueAt (4-(3)))).str);
+				// if (ad == NULL)
+				// return YYABORT;
+				// lex->alter_info.drop_list.push_back(ad);
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_COLUMN);
+				Object columnNameObj = yystack.valueAt(4 - (3));
+				String columnName = null;
+				if (columnNameObj != null) {
+					columnName = ((Token) columnNameObj).lexStr.str;
+				}
+				MyParserProcessor.addFieldToList(thd, columnName, null, AlterFlag.ALTER_DROP_COLUMN);
 			}
-			MyParserProcessor.addFieldToList(thd, columnName, null, AlterFlag.ALTER_DROP_COLUMN);
-		};
-		break;
+			;
+			break;
 
 		case 980:
-		if (yyn == 980)
-		/* Line 350 of lalr1.java */
-		/* Line 7877 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// Alter_drop *ad= new Alter_drop(Alter_drop::FOREIGN_KEY,
-		// ((lex_str)(yystack.valueAt (4-(4)))).str);
-		// if (ad == NULL)
-		// return YYABORT;
-		// lex->alter_info.drop_list.push_back(ad);
-			thd.lex.alterInfo.flags.add(AlterFlag.DROP_FOREIGN_KEY);
-		};
-		break;
+			if (yyn == 980)
+			/* Line 350 of lalr1.java */
+			/* Line 7877 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// Alter_drop *ad= new Alter_drop(Alter_drop::FOREIGN_KEY,
+				// ((lex_str)(yystack.valueAt (4-(4)))).str);
+				// if (ad == NULL)
+				// return YYABORT;
+				// lex->alter_info.drop_list.push_back(ad);
+				thd.lex.alterInfo.flags.add(AlterFlag.DROP_FOREIGN_KEY);
+			}
+			;
+			break;
 
 		case 981:
-		if (yyn == 981)
-		/* Line 350 of lalr1.java */
-		/* Line 7886 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// Alter_drop *ad= new Alter_drop(Alter_drop::KEY, primary_key_name);
-		// if (ad == NULL)
-		// return YYABORT;
-		// lex->alter_info.drop_list.push_back(ad);
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_INDEX);
-		};
-		break;
+			if (yyn == 981)
+			/* Line 350 of lalr1.java */
+			/* Line 7886 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// Alter_drop *ad= new Alter_drop(Alter_drop::KEY, primary_key_name);
+				// if (ad == NULL)
+				// return YYABORT;
+				// lex->alter_info.drop_list.push_back(ad);
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_INDEX);
+			}
+			;
+			break;
 
 		case 982:
-		if (yyn == 982)
-		/* Line 350 of lalr1.java */
-		/* Line 7895 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// Alter_drop *ad= new Alter_drop(Alter_drop::KEY,
-		// ((lex_str)(yystack.valueAt (3-(3)))).str);
-		// if (ad == NULL)
-		// return YYABORT;
-		// lex->alter_info.drop_list.push_back(ad);
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_INDEX);
-		};
-		break;
+			if (yyn == 982)
+			/* Line 350 of lalr1.java */
+			/* Line 7895 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// Alter_drop *ad= new Alter_drop(Alter_drop::KEY,
+				// ((lex_str)(yystack.valueAt (3-(3)))).str);
+				// if (ad == NULL)
+				// return YYABORT;
+				// lex->alter_info.drop_list.push_back(ad);
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_DROP_INDEX);
+			}
+			;
+			break;
 
 		case 983:
-		if (yyn == 983)
-		/* Line 350 of lalr1.java */
-		/* Line 7904 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// lex->alter_info.keys_onoff= Alter_info::DISABLE;
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_KEYS_ONOFF);
-		};
-		break;
+			if (yyn == 983)
+			/* Line 350 of lalr1.java */
+			/* Line 7904 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// lex->alter_info.keys_onoff= Alter_info::DISABLE;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_KEYS_ONOFF);
+			}
+			;
+			break;
 
 		case 984:
-		if (yyn == 984)
-		/* Line 350 of lalr1.java */
-		/* Line 7910 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// lex->alter_info.keys_onoff= Alter_info::ENABLE;
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_KEYS_ONOFF);
-		};
-		break;
+			if (yyn == 984)
+			/* Line 350 of lalr1.java */
+			/* Line 7910 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// lex->alter_info.keys_onoff= Alter_info::ENABLE;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_KEYS_ONOFF);
+			}
+			;
+			break;
 
 		case 985:
-		if (yyn == 985)
-		/* Line 350 of lalr1.java */
-		/* Line 7916 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// Alter_column *ac= new Alter_column(((lex_str)(yystack.valueAt
-		// (6-(3)))).str,((item)(yystack.valueAt (6-(6)))));
-		// if (ac == NULL)
-		// return YYABORT;
-		// lex->alter_info.alter_list.push_back(ac);
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN_DEFAULT);
-		};
-		break;
+			if (yyn == 985)
+			/* Line 350 of lalr1.java */
+			/* Line 7916 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// Alter_column *ac= new Alter_column(((lex_str)(yystack.valueAt
+				// (6-(3)))).str,((item)(yystack.valueAt (6-(6)))));
+				// if (ac == NULL)
+				// return YYABORT;
+				// lex->alter_info.alter_list.push_back(ac);
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN_DEFAULT);
+			}
+			;
+			break;
 
 		case 986:
-		if (yyn == 986)
-		/* Line 350 of lalr1.java */
-		/* Line 7925 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// Alter_column *ac= new Alter_column(((lex_str)(yystack.valueAt
-		// (5-(3)))).str, (Item*) 0);
-		// if (ac == NULL)
-		// return YYABORT;
-		// lex->alter_info.alter_list.push_back(ac);
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN_DEFAULT);
-		};
-		break;
+			if (yyn == 986)
+			/* Line 350 of lalr1.java */
+			/* Line 7925 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// Alter_column *ac= new Alter_column(((lex_str)(yystack.valueAt
+				// (5-(3)))).str, (Item*) 0);
+				// if (ac == NULL)
+				// return YYABORT;
+				// lex->alter_info.alter_list.push_back(ac);
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_CHANGE_COLUMN_DEFAULT);
+			}
+			;
+			break;
 
 		case 987:
-		if (yyn == 987)
-		/* Line 350 of lalr1.java */
-		/* Line 7934 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-		// size_t dummy;
-		// lex->select_lex.db=((table)(yystack.valueAt (3-(3))))->db.str;
-		// if (lex->select_lex.db == NULL &&
-		// lex->copy_db_to(&lex->select_lex.db, &dummy))
-		// {
-		// return YYABORT;
-		// }
-		// enum_ident_name_check ident_check_status=
-		// check_table_name(((table)(yystack.valueAt
-		// (3-(3))))->table.str,((table)(yystack.valueAt
-		// (3-(3))))->table.length, FALSE);
-		// if (ident_check_status == IDENT_NAME_WRONG)
-		// {
-		// my_error(ER_WRONG_TABLE_NAME, MYF(0), ((table)(yystack.valueAt
-		// (3-(3))))->table.str);
-		// return YYABORT;
-		// }
-		// else if (ident_check_status == IDENT_NAME_TOO_LONG)
-		// {
-		// my_error(ER_TOO_LONG_IDENT, MYF(0), ((table)(yystack.valueAt
-		// (3-(3))))->table.str);
-		// return YYABORT;
-		// }
-		// if (((table)(yystack.valueAt (3-(3))))->db.str &&
-		// (check_and_convert_db_name(&((table)(yystack.valueAt (3-(3))))->db,
-		// FALSE) != IDENT_NAME_OK))
-		// return YYABORT;
-		// lex->name= ((table)(yystack.valueAt (3-(3))))->table;
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_RENAME);
-		};
-		break;
+			if (yyn == 987)
+			/* Line 350 of lalr1.java */
+			/* Line 7934 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				// size_t dummy;
+				// lex->select_lex.db=((table)(yystack.valueAt (3-(3))))->db.str;
+				// if (lex->select_lex.db == NULL &&
+				// lex->copy_db_to(&lex->select_lex.db, &dummy))
+				// {
+				// return YYABORT;
+				// }
+				// enum_ident_name_check ident_check_status=
+				// check_table_name(((table)(yystack.valueAt
+				// (3-(3))))->table.str,((table)(yystack.valueAt
+				// (3-(3))))->table.length, FALSE);
+				// if (ident_check_status == IDENT_NAME_WRONG)
+				// {
+				// my_error(ER_WRONG_TABLE_NAME, MYF(0), ((table)(yystack.valueAt
+				// (3-(3))))->table.str);
+				// return YYABORT;
+				// }
+				// else if (ident_check_status == IDENT_NAME_TOO_LONG)
+				// {
+				// my_error(ER_TOO_LONG_IDENT, MYF(0), ((table)(yystack.valueAt
+				// (3-(3))))->table.str);
+				// return YYABORT;
+				// }
+				// if (((table)(yystack.valueAt (3-(3))))->db.str &&
+				// (check_and_convert_db_name(&((table)(yystack.valueAt (3-(3))))->db,
+				// FALSE) != IDENT_NAME_OK))
+				// return YYABORT;
+				// lex->name= ((table)(yystack.valueAt (3-(3))))->table;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_RENAME);
+			}
+			;
+			break;
 
 		case 988:
-		if (yyn == 988)
-		/* Line 350 of lalr1.java */
-		/* Line 7962 of "sql_yacc.y" */
-		{
-		// if (!((charset)(yystack.valueAt (5-(4)))))
-		// {
-		// THD *thd= YYTHD;
-		// ((charset)(yystack.valueAt (5-(4))))=
-		// thd->variables.collation_database;
-		// }
-		// ((charset)(yystack.valueAt (5-(5))))= ((charset)(yystack.valueAt
-		// (5-(5)))) ? ((charset)(yystack.valueAt (5-(5)))) :
-		// ((charset)(yystack.valueAt (5-(4))));
-		// if (!my_charset_same(((charset)(yystack.valueAt
-		// (5-(4)))),((charset)(yystack.valueAt (5-(5))))))
-		// {
-		// my_error(ER_COLLATION_CHARSET_MISMATCH, MYF(0),
-		// ((charset)(yystack.valueAt (5-(5))))->name,
-		// ((charset)(yystack.valueAt (5-(4))))->csname);
-		// return YYABORT;
-		// }
-		// LEX *lex= Lex;
-		// lex->create_info.table_charset=
-		// lex->create_info.default_table_charset= ((charset)(yystack.valueAt
-		// (5-(5))));
-		// lex->create_info.used_fields|= (HA_CREATE_USED_CHARSET |
-		// HA_CREATE_USED_DEFAULT_CHARSET);
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_OPTIONS);
-		};
-		break;
+			if (yyn == 988)
+			/* Line 350 of lalr1.java */
+			/* Line 7962 of "sql_yacc.y" */
+			{
+				// if (!((charset)(yystack.valueAt (5-(4)))))
+				// {
+				// THD *thd= YYTHD;
+				// ((charset)(yystack.valueAt (5-(4))))=
+				// thd->variables.collation_database;
+				// }
+				// ((charset)(yystack.valueAt (5-(5))))= ((charset)(yystack.valueAt
+				// (5-(5)))) ? ((charset)(yystack.valueAt (5-(5)))) :
+				// ((charset)(yystack.valueAt (5-(4))));
+				// if (!my_charset_same(((charset)(yystack.valueAt
+				// (5-(4)))),((charset)(yystack.valueAt (5-(5))))))
+				// {
+				// my_error(ER_COLLATION_CHARSET_MISMATCH, MYF(0),
+				// ((charset)(yystack.valueAt (5-(5))))->name,
+				// ((charset)(yystack.valueAt (5-(4))))->csname);
+				// return YYABORT;
+				// }
+				// LEX *lex= Lex;
+				// lex->create_info.table_charset=
+				// lex->create_info.default_table_charset= ((charset)(yystack.valueAt
+				// (5-(5))));
+				// lex->create_info.used_fields|= (HA_CREATE_USED_CHARSET |
+				// HA_CREATE_USED_DEFAULT_CHARSET);
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_OPTIONS);
+			}
+			;
+			break;
 
 		case 989:
-		if (yyn == 989)
-		/* Line 350 of lalr1.java */
-		/* Line 7983 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_OPTIONS);
-		// if ((lex->create_info.used_fields & HA_CREATE_USED_ENGINE) &&
-		// !lex->create_info.db_type)
-		// {
-		// lex->create_info.used_fields&= ~HA_CREATE_USED_ENGINE;
-		// }
-		};
-		break;
+			if (yyn == 989)
+			/* Line 350 of lalr1.java */
+			/* Line 7983 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_OPTIONS);
+				// if ((lex->create_info.used_fields & HA_CREATE_USED_ENGINE) &&
+				// !lex->create_info.db_type)
+				// {
+				// lex->create_info.used_fields&= ~HA_CREATE_USED_ENGINE;
+				// }
+			}
+			;
+			break;
 
 		case 990:
-		if (yyn == 990)
-		/* Line 350 of lalr1.java */
-		/* Line 7993 of "sql_yacc.y" */
-		{
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_RECREATE);
-		};
-		break;
+			if (yyn == 990)
+			/* Line 350 of lalr1.java */
+			/* Line 7993 of "sql_yacc.y" */
+			{
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_RECREATE);
+			}
+			;
+			break;
 
 		case 991:
-		if (yyn == 991)
-		/* Line 350 of lalr1.java */
-		/* Line 7997 of "sql_yacc.y" */
-		{
-		// LEX *lex=Lex;
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ORDER);
-		};
-		break;
+			if (yyn == 991)
+			/* Line 350 of lalr1.java */
+			/* Line 7997 of "sql_yacc.y" */
+			{
+				// LEX *lex=Lex;
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ORDER);
+			}
+			;
+			break;
 		//
 		//
 		// case 999:
@@ -11305,24 +11335,26 @@ public class MyParser {
 		// break;
 
 		case 1011:
-		if (yyn == 1011)
-		/* Line 350 of lalr1.java */
-		/* Line 8063 of "sql_yacc.y" */
-		{
-		// store_position_for_column(((lex_str)(yystack.valueAt (2-(2)))).str);
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_COLUMN_ORDER);
-		};
-		break;
+			if (yyn == 1011)
+			/* Line 350 of lalr1.java */
+			/* Line 8063 of "sql_yacc.y" */
+			{
+				// store_position_for_column(((lex_str)(yystack.valueAt (2-(2)))).str);
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_COLUMN_ORDER);
+			}
+			;
+			break;
 
 		case 1012:
-		if (yyn == 1012)
-		/* Line 350 of lalr1.java */
-		/* Line 8068 of "sql_yacc.y" */
-		{
-		// store_position_for_column(first_keyword);
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_COLUMN_ORDER);
-		};
-		break;
+			if (yyn == 1012)
+			/* Line 350 of lalr1.java */
+			/* Line 8068 of "sql_yacc.y" */
+			{
+				// store_position_for_column(first_keyword);
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_COLUMN_ORDER);
+			}
+			;
+			break;
 		//
 		//
 		// case 1013:
@@ -12232,13 +12264,14 @@ public class MyParser {
 			break;
 
 		case 1110:
-		if (yyn == 1110)
-		/* Line 350 of lalr1.java */
-		/* Line 8591 of "sql_yacc.y" */
-		{
-			thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADMIN_PARTITION);
-		};
-		break;
+			if (yyn == 1110)
+			/* Line 350 of lalr1.java */
+			/* Line 8591 of "sql_yacc.y" */
+			{
+				thd.lex.alterInfo.flags.add(AlterFlag.ALTER_ADMIN_PARTITION);
+			}
+			;
+			break;
 		//
 		//
 		// case 1112:
@@ -12342,7 +12375,8 @@ public class MyParser {
 				// LEX *lex= Lex;
 				// SELECT_LEX *sel= lex->current_select;
 				// if (sel->linkage != UNION_TYPE)
-				if (thd.lex.selectLex == null) MyParserProcessor.mysqlInitSelect(thd.lex);
+				if (thd.lex.selectLex == null)
+					MyParserProcessor.mysqlInitSelect(thd.lex);
 				// lex->current_select->parsing_place= SELECT_LIST;
 			}
 			;
@@ -16224,8 +16258,7 @@ public class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 10827 of "sql_yacc.y" */
 			{
-				if (!(MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(5 - (2)),
-						(Item) (yystack.valueAt(5 - (4))), (Item) (yystack.valueAt(5 - (3))))))
+				if (!(MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(5 - (2)), (Item) (yystack.valueAt(5 - (4))), (Item) (yystack.valueAt(5 - (3))))))
 					return YYABORT;
 				// Select->add_joined_table(yyval);
 			}
@@ -16411,7 +16444,8 @@ public class MyParser {
 				// LEX *lex= Lex;
 				// SELECT_LEX *sel= lex->current_select;
 				// if (sel->linkage != UNION_TYPE)
-				if (thd.lex.selectLex == null) MyParserProcessor.mysqlInitSelect(thd.lex);
+				if (thd.lex.selectLex == null)
+					MyParserProcessor.mysqlInitSelect(thd.lex);
 				// lex->current_select->parsing_place= SELECT_LIST;
 			}
 			;
@@ -16939,13 +16973,14 @@ public class MyParser {
 		//
 		//
 		case 1523:
-		if (yyn == 1523)
-		/* Line 350 of lalr1.java */
-		/* Line 11244 of "sql_yacc.y" */
-		{
-			thd.inWhere = true;
-		};
-		break;
+			if (yyn == 1523)
+			/* Line 350 of lalr1.java */
+			/* Line 11244 of "sql_yacc.y" */
+			{
+				thd.inWhere = true;
+			}
+			;
+			break;
 
 		//
 		// case 1524:
@@ -18113,8 +18148,7 @@ public class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 11942 of "sql_yacc.y" */
 			{
-				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(2 - (1)), null,
-						((Item) (yystack.valueAt(2 - (2))))))
+				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(2 - (1)), null, ((Item) (yystack.valueAt(2 - (2))))))
 					return YYABORT;
 			}
 			;
@@ -18677,8 +18711,7 @@ public class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 12287 of "sql_yacc.y" */
 			{
-				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(3 - (2)), null,
-						((Item) (yystack.valueAt(3 - (3))))))
+				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(3 - (2)), null, ((Item) (yystack.valueAt(3 - (3))))))
 					return YYABORT;
 				// YYPS->m_lock_type= TL_READ_DEFAULT;
 				// YYPS->m_mdl_type= MDL_SHARED_READ;
@@ -18757,8 +18790,7 @@ public class MyParser {
 			/* Line 350 of lalr1.java */
 			/* Line 12343 of "sql_yacc.y" */
 			{
-				TableIdent ti = new TableIdent(((Token) yystack.valueAt(4 - (1))),
-						((Token) (yystack.valueAt(4 - (3)))));
+				TableIdent ti = new TableIdent(((Token) yystack.valueAt(4 - (1))), ((Token) (yystack.valueAt(4 - (3)))));
 				if (!MyParserProcessor.addTableToList(thd, ti, null, null))
 					return YYABORT;
 			}
@@ -19116,8 +19148,7 @@ public class MyParser {
 				// ((table)(yystack.valueAt
 				// (6-(4))))->change_db(((simple_string)(yystack.valueAt
 				// (6-(5)))));
-				if (!MyParserProcessor.prepareSchemaTable(thd, ((TableIdent) (yystack.valueAt(6 - (4)))),
-						SchemaTables.SCH_COLUMNS))
+				if (!MyParserProcessor.prepareSchemaTable(thd, ((TableIdent) (yystack.valueAt(6 - (4)))), SchemaTables.SCH_COLUMNS))
 					return YYABORT;
 			}
 			;
@@ -19176,8 +19207,7 @@ public class MyParser {
 				// ((table)(yystack.valueAt
 				// (5-(3))))->change_db(((simple_string)(yystack.valueAt
 				// (5-(4)))));
-				if (!MyParserProcessor.prepareSchemaTable(thd, ((TableIdent) (yystack.valueAt(5 - (3)))),
-						SchemaTables.SCH_STATISTICS))
+				if (!MyParserProcessor.prepareSchemaTable(thd, ((TableIdent) (yystack.valueAt(5 - (3)))), SchemaTables.SCH_STATISTICS))
 					return YYABORT;
 			}
 			;
@@ -19387,7 +19417,7 @@ public class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE;
-				if (!MyParserProcessor.addTableToList(thd, (TableIdent)yystack.valueAt(3 - (3)), null, null))
+				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(3 - (3)), null, null))
 					return YYABORT;
 				// lex->only_view= 0;
 				// lex->create_info.storage_media= HA_SM_DEFAULT;
@@ -19402,7 +19432,7 @@ public class MyParser {
 			{
 				// LEX *lex= Lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE;
-				if (!MyParserProcessor.addTableToList(thd, (TableIdent)yystack.valueAt(3 - (3)), null, null))
+				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(3 - (3)), null, null))
 					return YYABORT;
 				// lex->only_view= 1;
 			}
@@ -19658,8 +19688,7 @@ public class MyParser {
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_FIELDS;
 				// lex->select_lex.db= 0;
 				// lex->verbose= 0;
-				if (!MyParserProcessor.prepareSchemaTable(thd, ((TableIdent) (yystack.valueAt(2 - (2)))),
-						SchemaTables.SCH_COLUMNS))
+				if (!MyParserProcessor.prepareSchemaTable(thd, ((TableIdent) (yystack.valueAt(2 - (2)))), SchemaTables.SCH_COLUMNS))
 					return YYABORT;
 			}
 			;
@@ -20227,8 +20256,7 @@ public class MyParser {
 			/* Line 13106 of "sql_yacc.y" */
 			{
 				// LEX *lex=Lex;
-				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(13 - (12)))), null,
-						((Item) (yystack.valueAt(13 - (13))))))
+				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(13 - (12)))), null, ((Item) (yystack.valueAt(13 - (13))))))
 					return YYABORT;
 				// lex->field_list.empty();
 				// lex->update_list.empty();
@@ -21367,72 +21395,75 @@ public class MyParser {
 		// break;
 		//
 		//
-		 case 1962:
-		 if (yyn == 1962)
-		 /* Line 350 of lalr1.java */
-		 /* Line 13849 of "sql_yacc.y" */
-		 {
+		case 1962:
+			if (yyn == 1962)
+			/* Line 350 of lalr1.java */
+			/* Line 13849 of "sql_yacc.y" */
+			{
 //			 yyval=((lex_str)(yystack.valueAt (1-(1))));
-			 // field_ident
-		 };
-		 break;
+				// field_ident
+			}
+			;
+			break;
 
-
-		 case 1963:
-		 if (yyn == 1963)
-		 /* Line 350 of lalr1.java */
-		 /* Line 13851 of "sql_yacc.y" */
-		 {
-		// TABLE_LIST *table= Select->table_list.first;
-		// if (my_strcasecmp(table_alias_charset, ((lex_str)(yystack.valueAt
-		// (5-(1)))).str, table->db))
-		// {
-		// my_error(ER_WRONG_DB_NAME, MYF(0), ((lex_str)(yystack.valueAt
-		// (5-(1)))).str);
-		// return YYABORT;
-		// }
-		// if (my_strcasecmp(table_alias_charset, ((lex_str)(yystack.valueAt
-		// (5-(3)))).str,
-		// table->table_name))
-		// {
-		// my_error(ER_WRONG_TABLE_NAME, MYF(0), ((lex_str)(yystack.valueAt
-		// (5-(3)))).str);
-		// return YYABORT;
-		// }
-		// yyval=((lex_str)(yystack.valueAt (5-(5))));
+		case 1963:
+			if (yyn == 1963)
+			/* Line 350 of lalr1.java */
+			/* Line 13851 of "sql_yacc.y" */
+			{
+				// TABLE_LIST *table= Select->table_list.first;
+				// if (my_strcasecmp(table_alias_charset, ((lex_str)(yystack.valueAt
+				// (5-(1)))).str, table->db))
+				// {
+				// my_error(ER_WRONG_DB_NAME, MYF(0), ((lex_str)(yystack.valueAt
+				// (5-(1)))).str);
+				// return YYABORT;
+				// }
+				// if (my_strcasecmp(table_alias_charset, ((lex_str)(yystack.valueAt
+				// (5-(3)))).str,
+				// table->table_name))
+				// {
+				// my_error(ER_WRONG_TABLE_NAME, MYF(0), ((lex_str)(yystack.valueAt
+				// (5-(3)))).str);
+				// return YYABORT;
+				// }
+				// yyval=((lex_str)(yystack.valueAt (5-(5))));
 //			 Object fieldIdent = yystack.valueAt(5-(1));
-		 };
-		 break;
+			}
+			;
+			break;
 		//
 		//
-		 case 1964:
-		 if (yyn == 1964)
-		 /* Line 350 of lalr1.java */
-		 /* Line 13867 of "sql_yacc.y" */
-		 {
-		// TABLE_LIST *table= Select->table_list.first;
-		// if (my_strcasecmp(table_alias_charset, ((lex_str)(yystack.valueAt
-		// (3-(1)))).str, table->alias))
-		// {
-		// my_error(ER_WRONG_TABLE_NAME, MYF(0), ((lex_str)(yystack.valueAt
-		// (3-(1)))).str);
-		// return YYABORT;
-		// }
-		// yyval=((lex_str)(yystack.valueAt (3-(3))));
+		case 1964:
+			if (yyn == 1964)
+			/* Line 350 of lalr1.java */
+			/* Line 13867 of "sql_yacc.y" */
+			{
+				// TABLE_LIST *table= Select->table_list.first;
+				// if (my_strcasecmp(table_alias_charset, ((lex_str)(yystack.valueAt
+				// (3-(1)))).str, table->alias))
+				// {
+				// my_error(ER_WRONG_TABLE_NAME, MYF(0), ((lex_str)(yystack.valueAt
+				// (3-(1)))).str);
+				// return YYABORT;
+				// }
+				// yyval=((lex_str)(yystack.valueAt (3-(3))));
 //			 Object fieldIdent = yystack.valueAt(3-(1));
-		 };
-		 break;
+			}
+			;
+			break;
 		//
 		//
-		 case 1965:
-		 if (yyn == 1965)
-		 /* Line 350 of lalr1.java */
-		 /* Line 13876 of "sql_yacc.y" */
-		 {
+		case 1965:
+			if (yyn == 1965)
+			/* Line 350 of lalr1.java */
+			/* Line 13876 of "sql_yacc.y" */
+			{
 //			 yyval=((lex_str)(yystack.valueAt (2-(2))));
 //			 Object fieldIdent = yystack.valueAt(2-(2));
-		 };
-		 break;
+			}
+			;
+			break;
 
 		case 1966:
 			if (yyn == 1966)
@@ -25525,8 +25556,7 @@ public class MyParser {
 				// ((num)(yystack.valueAt
 				// (3-(3))));
 				// bool lock_for_write= (lock_type >= TL_WRITE_ALLOW_WRITE);
-				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(3 - (1)),
-						((Item) (yystack.valueAt(3 - (2)))), null))
+				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(3 - (1)), ((Item) (yystack.valueAt(3 - (2)))), null))
 					return YYABORT;
 			}
 			;
@@ -25605,8 +25635,7 @@ public class MyParser {
 				// return YYABORT;
 				// }
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_OPEN;
-				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(4 - (2)))),
-						((Item) (yystack.valueAt(4 - (4)))), null))
+				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(4 - (2)))), ((Item) (yystack.valueAt(4 - (4)))), null))
 					return YYABORT;
 				// lex->m_sql_cmd= new (thd->mem_root) Sql_cmd_handler_open();
 				// if (lex->m_sql_cmd == NULL)
@@ -28198,10 +28227,8 @@ public class MyParser {
 	}
 
 	/*
-	 * Return YYSTR after stripping away unnecessary quotes and backslashes, so
-	 * that it's suitable for yyerror. The heuristic is that double-quoting is
-	 * unnecessary unless the string contains an apostrophe, a comma, or
-	 * backslash (other than backslash-backslash). YYSTR is taken from yytname.
+	 * Return YYSTR after stripping away unnecessary quotes and backslashes, so that it's suitable for yyerror. The heuristic is that double-quoting is unnecessary
+	 * unless the string contains an apostrophe, a comma, or backslash (other than backslash-backslash). YYSTR is taken from yytname.
 	 */
 	private final String yytnamerr_(String yystr) {
 		if (yystr.charAt(0) == '"') {
@@ -28235,18 +28262,15 @@ public class MyParser {
 
 	private void yy_symbol_print(String s, int yytype, Object yyvaluep) {
 		if (yydebug > 0)
-			yycdebug(s + (yytype < yyntokens_ ? " token " : " nterm ") + yytname_[yytype] + " ("
-					+ (yyvaluep == null ? "(null)" : yyvaluep.toString()) + ")");
+			yycdebug(s + (yytype < yyntokens_ ? " token " : " nterm ") + yytname_[yytype] + " (" + (yyvaluep == null ? "(null)" : yyvaluep.toString()) + ")");
 	}
 
 	/**
-	 * Parse input from the scanner that was specified at object construction
-	 * time. Return whether the end of the input was reached successfully.
+	 * Parse input from the scanner that was specified at object construction time. Return whether the end of the input was reached successfully.
 	 *
-	 * @return <tt>true</tt> if the parsing succeeds. Note that this does not
-	 *         imply that there were no syntax errors.
+	 * @return <tt>true</tt> if the parsing succeeds. Note that this does not imply that there were no syntax errors.
 	 */
-	public boolean parse(SQLThread thd) {
+	public boolean myParse(SQLThread thd) {
 		/// Lookahead and lookahead in internal form.
 		int yychar = yyempty_;
 		int yytoken = 0;
@@ -28274,8 +28298,7 @@ public class MyParser {
 		for (;;)
 			switch (label) {
 			/*
-			 * New state. Unlike in the C/C++ skeletons, the state is already
-			 * pushed when we come here.
+			 * New state. Unlike in the C/C++ skeletons, the state is already pushed when we come here.
 			 */
 			case YYNEWSTATE:
 				yycdebug("Entering state " + yystate + "\n");
@@ -28313,8 +28336,7 @@ public class MyParser {
 				}
 
 				/*
-				 * If the proper action on seeing token YYTOKEN is to reduce or
-				 * to detect an error, take that action.
+				 * If the proper action on seeing token YYTOKEN is to reduce or to detect an error, take that action.
 				 */
 				yyn += yytoken;
 				if (yyn < 0 || yylast_ < yyn || yycheck_[yyn] != yytoken)
@@ -28338,8 +28360,7 @@ public class MyParser {
 					yychar = yyempty_;
 
 					/*
-					 * Count tokens shifted since error; after three, turn off
-					 * error status.
+					 * Count tokens shifted since error; after three, turn off error status.
 					 */
 					if (thd.yyerrstatus_ > 0)
 						--thd.yyerrstatus_;
@@ -28386,8 +28407,7 @@ public class MyParser {
 
 				if (thd.yyerrstatus_ == 3) {
 					/*
-					 * If just tried and failed to reuse lookahead token after
-					 * an error, discard it.
+					 * If just tried and failed to reuse lookahead token after an error, discard it.
 					 */
 
 					if (yychar <= EOF) {
@@ -28399,8 +28419,7 @@ public class MyParser {
 				}
 
 				/*
-				 * Else will try to reuse lookahead token after shifting the
-				 * error token.
+				 * Else will try to reuse lookahead token after shifting the error token.
 				 */
 				label = YYERRLAB1;
 				break;
@@ -28411,8 +28430,7 @@ public class MyParser {
 			case YYERROR:
 
 				/*
-				 * Do not reclaim the symbols of the rule which action triggered
-				 * this YYERROR.
+				 * Do not reclaim the symbols of the rule which action triggered this YYERROR.
 				 */
 				yystack.pop(yylen);
 				yylen = 0;
@@ -28438,8 +28456,7 @@ public class MyParser {
 					}
 
 					/*
-					 * Pop the current state because it cannot handle the error
-					 * token.
+					 * Pop the current state because it cannot handle the error token.
 					 */
 					if (yystack.height == 0)
 						return false;
@@ -28472,32 +28489,17 @@ public class MyParser {
 	private String yysyntax_error(int yystate, int tok) {
 		if (errorVerbose) {
 			/*
-			 * There are many possibilities here to consider: - Assume YYFAIL is
-			 * not used. It's too flawed to consider. See
-			 * <http://lists.gnu.org/archive/html/bison-patches/2009-12/msg00024
-			 * .html> for details. YYERROR is fine as it does not invoke this
-			 * function. - If this state is a consistent state with a default
-			 * action, then the only way this function was invoked is if the
-			 * default action is an error action. In that case, don't check for
-			 * expected tokens because there are none. - The only way there can
-			 * be no lookahead present (in tok) is if this state is a consistent
-			 * state with a default action. Thus, detecting the absence of a
-			 * lookahead is sufficient to determine that there is no unexpected
-			 * or expected token to report. In that case, just report a simple
-			 * "syntax error". - Don't assume there isn't a lookahead just
-			 * because this state is a consistent state with a default action.
-			 * There might have been a previous inconsistent state, consistent
-			 * state with a non-default action, or user semantic action that
-			 * manipulated yychar. (However, yychar is currently out of scope
-			 * during semantic actions.) - Of course, the expected token list
-			 * depends on states to have correct lookahead information, and it
-			 * depends on the parser not to perform extra reductions after
-			 * fetching a lookahead from the scanner and before detecting a
-			 * syntax error. Thus, state merging (from LALR or IELR) and default
-			 * reductions corrupt the expected token list. However, the list is
-			 * correct for canonical LR with one exception: it will still
-			 * contain any token that will not be accepted due to an error
-			 * action in a later state.
+			 * There are many possibilities here to consider: - Assume YYFAIL is not used. It's too flawed to consider. See
+			 * <http://lists.gnu.org/archive/html/bison-patches/2009-12/msg00024 .html> for details. YYERROR is fine as it does not invoke this function. - If this state is
+			 * a consistent state with a default action, then the only way this function was invoked is if the default action is an error action. In that case, don't check
+			 * for expected tokens because there are none. - The only way there can be no lookahead present (in tok) is if this state is a consistent state with a default
+			 * action. Thus, detecting the absence of a lookahead is sufficient to determine that there is no unexpected or expected token to report. In that case, just
+			 * report a simple "syntax error". - Don't assume there isn't a lookahead just because this state is a consistent state with a default action. There might have
+			 * been a previous inconsistent state, consistent state with a non-default action, or user semantic action that manipulated yychar. (However, yychar is
+			 * currently out of scope during semantic actions.) - Of course, the expected token list depends on states to have correct lookahead information, and it depends
+			 * on the parser not to perform extra reductions after fetching a lookahead from the scanner and before detecting a syntax error. Thus, state merging (from LALR
+			 * or IELR) and default reductions corrupt the expected token list. However, the list is correct for canonical LR with one exception: it will still contain any
+			 * token that will not be accepted due to an error action in a later state.
 			 */
 			if (tok != yyempty_) {
 				// FIXME: This method of building the message is not compatible
@@ -28507,9 +28509,8 @@ public class MyParser {
 				int yyn = yypact_[yystate];
 				if (!yy_pact_value_is_default_(yyn)) {
 					/*
-					 * Start YYX at -YYN if negative to avoid negative indexes
-					 * in YYCHECK. In other words, skip the first -YYN actions
-					 * for this state because they are default actions.
+					 * Start YYX at -YYN if negative to avoid negative indexes in YYCHECK. In other words, skip the first -YYN actions for this state because they are default
+					 * actions.
 					 */
 					int yyxbegin = yyn < 0 ? -yyn : 0;
 					/* Stay within bounds of both yycheck and yytname. */
@@ -28539,8 +28540,7 @@ public class MyParser {
 	/**
 	 * Whether the given <code>yypact_</code> value indicates a defaulted state.
 	 *
-	 * @param yyvalue
-	 *            the value to check
+	 * @param yyvalue the value to check
 	 */
 	private static boolean yy_pact_value_is_default_(int yyvalue) {
 		return yyvalue == yypact_ninf_;
@@ -28549,24 +28549,20 @@ public class MyParser {
 	/**
 	 * Whether the given <code>yytable_</code> value indicates a syntax error.
 	 *
-	 * @param yyvalue
-	 *            the value to check
+	 * @param yyvalue the value to check
 	 */
 	private static boolean yy_table_value_is_error_(int yyvalue) {
 		return yyvalue == yytable_ninf_;
 	}
 
 	/*
-	 * YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
-	 * STATE-NUM.
+	 * YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing STATE-NUM.
 	 */
 	private static final int yypact_ninf_ = -3874;
 	private static Integer yypact_[];
 
 	/*
-	 * YYDEFACT[S] -- default reduction number in state S. Performed when
-	 * YYTABLE doesn't specify something else to do. Zero means the default is
-	 * an error.
+	 * YYDEFACT[S] -- default reduction number in state S. Performed when YYTABLE doesn't specify something else to do. Zero means the default is an error.
 	 */
 	private static Short yydefact_[];
 
@@ -28577,9 +28573,8 @@ public class MyParser {
 	private static Short yydefgoto_[];
 
 	/*
-	 * YYTABLE[YYPACT[STATE-NUM]]. What to do in state STATE-NUM. If positive,
-	 * shift that token. If negative, reduce the rule which number is the
-	 * opposite. If YYTABLE_NINF_, syntax error.
+	 * YYTABLE[YYPACT[STATE-NUM]]. What to do in state STATE-NUM. If positive, shift that token. If negative, reduce the rule which number is the opposite. If
+	 * YYTABLE_NINF_, syntax error.
 	 */
 	private static final short yytable_ninf_ = -2610;
 	private static Short yytable_[];
@@ -28588,14 +28583,12 @@ public class MyParser {
 	private static Short yycheck_[];
 
 	/*
-	 * STOS_[STATE-NUM] -- The (internal number of the) accessing symbol of
-	 * state STATE-NUM.
+	 * STOS_[STATE-NUM] -- The (internal number of the) accessing symbol of state STATE-NUM.
 	 */
 	private static Short yystos_[];
 
 	/*
-	 * TOKEN_NUMBER_[YYLEX-NUM] -- Internal symbol number corresponding to
-	 * YYLEX-NUM.
+	 * TOKEN_NUMBER_[YYLEX-NUM] -- Internal symbol number corresponding to YYLEX-NUM.
 	 */
 	private static Short yytoken_number_[];
 
@@ -28606,8 +28599,7 @@ public class MyParser {
 	private static Byte yyr2_[];
 
 	/*
-	 * YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM. First, the
-	 * terminals, then, starting at \a yyntokens_, nonterminals.
+	 * YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM. First, the terminals, then, starting at \a yyntokens_, nonterminals.
 	 */
 	private static String yytname_[];
 
@@ -28677,5 +28669,20 @@ public class MyParser {
 //	  lex->col_list.empty();
 //	  lex->change= NullS;
 //	  return FALSE;
+	}
+
+	public ParseResult parse(MySQLThread mthd) {
+		SQLThread thd = (SQLThread)mthd;
+		ParseResult result = new ParseResult();
+		thd.success = myParse(thd);
+		result.parseItems.add(thd.getSQLResultAndReset(0));
+		while (thd.success && thd.foundSemicolon > 0 && !myLexer.lip.eof(thd)) {
+			int lastPos = thd.mPtr;
+			thd.nextState = MyLexStates.MY_LEX_START;
+			thd.success = myParse(thd);
+			result.parseItems.add(thd.getSQLResultAndReset(lastPos));
+		}
+		result.success = thd.success;
+		return result;
 	}
 }

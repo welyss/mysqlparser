@@ -1,13 +1,12 @@
 package org.welyss.mysqlparser.v84;
 
-import org.welyss.mysqlparser.items.Item;
+import org.welyss.mysqlparser.MySQLThread;
 import org.welyss.mysqlparser.v84.MyParser.Location;
 
 /**
  * Convert from class THD in sql_class.h
  */
-public class SQLThread {
-	public Item yylval;
+public class SQLThread extends MySQLThread {
 	public Location yylloc;
 	public ParserState mParserState;
 //	public SystemVariables variables;

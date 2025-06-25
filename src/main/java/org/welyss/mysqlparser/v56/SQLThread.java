@@ -7,21 +7,20 @@ import java.util.TreeSet;
 import org.welyss.mysqlparser.AlterColumnInfo;
 import org.welyss.mysqlparser.AlterFlag;
 import org.welyss.mysqlparser.Lex;
-import org.welyss.mysqlparser.ParseResult;
+import org.welyss.mysqlparser.MySQLThread;
+import org.welyss.mysqlparser.ParseItem;
 import org.welyss.mysqlparser.SQLInfo;
 import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.TableIdent;
 
-public class SQLThread {
+public class SQLThread extends MySQLThread {
 	public Boolean success;
 	public MyLexStates nextState = MyLexStates.MY_LEX_START;
-	public int foundSemicolon;
 	protected StringBuilder sql;
 	protected List<SQLInfo> parsedSqls = new ArrayList<SQLInfo>();
 	protected boolean inWhere;
 	protected String msg;
 	protected Lex lex;
-	protected Item yylval;
 	/** Current state of the lexical analyser. */
 	protected int mTokStartPrev;
 	/** Starting position of the last token parsed, in the raw buffer. */
@@ -35,13 +34,13 @@ public class SQLThread {
 	/**
 	 * Starting position of the TEXT_STRING or IDENT in the pre-processed
 	 * buffer.
-	 * 
+	 *
 	 * NOTE: this member must be used within MYSQLlex() function only.
 	 */
 	protected int mCppTextStart;
 	/**
 	 * Ending position of the TEXT_STRING or IDENT in the pre-processed buffer.
-	 * 
+	 *
 	 * NOTE: this member must be used within MYSQLlex() function only.
 	 */
 	protected int mCppTextEnd;
@@ -83,7 +82,16 @@ public class SQLThread {
 		mDigest = new SQLDigestState();
 	}
 
-	public ParseResult getSQLResultAndReset(int lastPos) {
+	protected void addSQL(int eof) {
+		String alterCmd = null;
+		if (lex.alterPos != null && lex.alterPos < eof) {
+			alterCmd = sql.substring(lex.alterPos, eof).trim();
+			lex.alterPos = null;
+		}
+		parsedSqls.add(new SQLInfo(sql.substring(foundSemicolon, eof), alterCmd));
+	}
+
+	public ParseItem getSQLResultAndReset(int lastPos) {
 		String parsedSQL;
 		String alterCommand;
 		if (success) {
@@ -98,7 +106,7 @@ public class SQLThread {
 			parsedSQL = sql.toString();
 			alterCommand = null;
 		}
-		ParseResult result = new ParseResult(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, lex.alterInfo.flags, this.inWhere, alterCommand, lex.alterInfo.columns);
+		ParseItem result = new ParseItem(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, lex.alterInfo.flags, this.inWhere, alterCommand, lex.alterInfo.columns);
 //		success = null;
 		this.lex.sqlCommand = null;
 		this.lex.tables.clear();
@@ -107,14 +115,5 @@ public class SQLThread {
 		lex.alterInfo.flags = new TreeSet<AlterFlag>();
 		lex.alterInfo.columns = new ArrayList<AlterColumnInfo>();
 		return result;
-	}
-
-	protected void addSQL(int eof) {
-		String alterCmd = null;
-		if (lex.alterPos != null && lex.alterPos < eof) {
-			alterCmd = sql.substring(lex.alterPos, eof).trim();
-			lex.alterPos = null;
-		}
-		parsedSqls.add(new SQLInfo(sql.substring(foundSemicolon, eof), alterCmd));
 	}
 }

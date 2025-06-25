@@ -4,12 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.welyss.mysqlparser.LexConstants;
+import org.welyss.mysqlparser.MySQLLexer;
 import org.welyss.mysqlparser.SQLPrivConstants;
 import org.welyss.mysqlparser.items.KeywordToken;
 import org.welyss.mysqlparser.items.Token;
 import org.welyss.mysqlparser.v56.MyParser.Lexer;
 
-public class MyLexer implements Lexer {
+public class MyLexer implements Lexer, MySQLLexer {
 	public Variables variables = new Variables();
 	public static final int LONG_LEN = 10;
 	public static final char[] LONG_STR = new char[] { '2', '1', '4', '7', '4', '8', '3', '6', '4', '7' };

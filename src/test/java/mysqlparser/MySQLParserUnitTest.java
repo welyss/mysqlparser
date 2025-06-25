@@ -3,7 +3,6 @@ package mysqlparser;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.junit.Test;
 import org.welyss.mysqlparser.MySQLParser;
@@ -19,8 +18,8 @@ public class MySQLParserUnitTest {
 	@Test
 	public void case1() throws IOException {
 		String sql = "select _utf8 0xD0B0D0B1D0B2;";
-		List<ParseResult> result = parser.parse(sql);
-		assertTrue(result.get(0).isSuccess());
+		ParseResult result = parser.parse(sql);
+		assertTrue(result.success);
 	}
 
 	@Test
@@ -30,8 +29,8 @@ public class MySQLParserUnitTest {
 				+ "  cte2 AS (SELECT id,nm, dt FROM t3)\r\n"
 				+ "SELECT cte1.c1,cte2.nm FROM cte1 JOIN cte2\r\n"
 				+ "WHERE cte1.id = cte2.id;";
-		List<ParseResult> result = parser.parse(sql);
-		assertTrue(result.get(0).isSuccess());
+		ParseResult result = parser.parse(sql);
+		assertTrue(result.success);
 	}
 
 	@Test
@@ -110,8 +109,8 @@ public class MySQLParserUnitTest {
 				+ "left join previous_assets_month pre_m on stat.inst_id=pre_m.inst_id and stat.mpd_id=pre_m.mpd_id\r\n"
 				+ "left join previous_assets_year pre_y on stat.inst_id=pre_y.inst_id and stat.mpd_id=pre_y.mpd_id \r\n"
 				+ "left join TIFP_MPD_INF mpd on stat.inst_id=mpd.inst_id and stat.mpd_id=mpd.mpd_id";
-		List<ParseResult> result = parser.parse(sql);
-		assertTrue(result.get(0).isSuccess());
+		ParseResult result = parser.parse(sql);
+		assertTrue(result.success);
 	}
 
 	@Test
@@ -132,8 +131,8 @@ public class MySQLParserUnitTest {
 				+ "  KEY `last_modified_dt` (`last_modified_dt`),\r\n"
 				+ "  KEY `name` (`name`)\r\n"
 				+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='基金公司信息表'";
-		List<ParseResult> result = parser.parse(sql);
-		assertTrue(result.get(0).isSuccess());
+		ParseResult result = parser.parse(sql);
+		assertTrue(result.success);
 	}
 
 	@Test
@@ -149,7 +148,7 @@ public class MySQLParserUnitTest {
 				+ "  PRIMARY KEY (`id`),\r\n"
 				+ "  KEY `idx_k12` (`key1`,`key2`)\r\n"
 				+ ") ENGINE=InnoDB AUTO_INCREMENT=1310726 DEFAULT CHARSET=utf8mb4;";
-		List<ParseResult> result = parser.parse(sql);
-		assertTrue(result.get(0).isSuccess());
+		ParseResult result = parser.parse(sql);
+		assertTrue(result.success);
 	}
 }
