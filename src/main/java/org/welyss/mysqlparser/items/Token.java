@@ -1,10 +1,12 @@
 package org.welyss.mysqlparser.items;
 
-public class Token extends Item {
+public class Token {
 	public int token;
-	public int pos;
+	public LexString lexStr;
 
 	public Token() {
+		token = -1;
+		lexStr = new LexString();
 	}
 
 	public Token(int token) {
@@ -16,9 +18,8 @@ public class Token extends Item {
 		this.token = token;
 	}
 
-	public Token(String lexStr, int token, int pos) {
-		this.lexStr = new LexString(lexStr);
+	public Token(int token, String lexStr, int pos) {
+		this.lexStr = new LexString(lexStr, pos);
 		this.token = token;
-		this.pos = pos;
 	}
 }

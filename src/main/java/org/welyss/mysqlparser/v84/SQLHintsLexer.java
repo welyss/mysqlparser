@@ -2,13 +2,12 @@ package org.welyss.mysqlparser.v84;
 
 import java.io.IOException;
 
-import org.welyss.mysqlparser.items.Item;
-import org.welyss.mysqlparser.items.Token;
+import org.welyss.mysqlparser.items.LexerYystype;
 import org.welyss.mysqlparser.v84.SQLHintsParser.Lexer;
 
 public class SQLHintsLexer implements Lexer {
 	public HintScanner scanner;
-	public Item yylval;
+	public LexerYystype yylval;
 
 	@Override
 	public Object getLVal() {
@@ -24,7 +23,7 @@ public class SQLHintsLexer implements Lexer {
 
 	@Override
 	public int yylex() throws IOException {
-		  yylval = new Token();
+		  yylval = new LexerYystype();
 		  int ret = scanner.getNextToken();
 		  yylval.hintString.str = scanner.yytext;
 		  yylval.hintString.length = scanner.yyleng;

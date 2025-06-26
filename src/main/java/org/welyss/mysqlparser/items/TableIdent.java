@@ -1,6 +1,6 @@
 package org.welyss.mysqlparser.items;
 
-public class TableIdent extends Item {
+public class TableIdent extends LexerYystype {
 	Token dbArg;
 	Token tableArg;
 
@@ -22,18 +22,18 @@ public class TableIdent extends Item {
 	}
 
 	public Integer getDbStartPos() {
-		return dbArg == null ? null : dbArg.pos;
+		return dbArg == null ? null : dbArg.lexStr.pos;
 	}
 
 	public void setDbStartPos(int pos) {
-		if (dbArg != null) dbArg.pos = pos;
+		if (dbArg != null) dbArg.lexStr.pos = pos;
 	}
 
 	public Integer getTableStartPos() {
-		return tableArg == null ? null : tableArg.pos;
+		return tableArg == null ? null : tableArg.lexStr.pos;
 	}
 
 	public void setTableStartPos(int pos) {
-		if (tableArg != null) tableArg.pos = pos;
+		if (tableArg != null) tableArg.lexStr.pos = pos;
 	}
 }

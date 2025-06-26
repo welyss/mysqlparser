@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.welyss.mysqlparser.LexConstants;
-import org.welyss.mysqlparser.items.Item;
+import org.welyss.mysqlparser.items.LexerYystype;
 import org.welyss.mysqlparser.items.Token;
 
 public class LexInputStreamProcessor {
@@ -225,7 +225,7 @@ public class LexInputStreamProcessor {
 //		}
 //	}
 
-	public SQLDigestState digestAddToken(SQLDigestState state, int token, Item yylval) {
+	public SQLDigestState digestAddToken(SQLDigestState state, int token, Token yylval) {
 		SQLDigestStorage digestStorage = null;
 		digestStorage = state.mDigestStorage;
 

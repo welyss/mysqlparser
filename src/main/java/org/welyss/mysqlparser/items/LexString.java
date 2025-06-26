@@ -7,22 +7,22 @@ package org.welyss.mysqlparser.items;
 public class LexString {
 	public String str;
 	public int length;
-	public int mPtr;
+	public int pos;
 
 	public LexString() {
 		str = null;
 		length = 0;
-		mPtr = 0;
+		pos = 0;
 	}
 
 	public LexString(String str) {
-		mPtr = 0;
+		pos = 0;
 		this.str = str;
 		length = this.str == null ? 0 : this.str.length();
 	}
 
-	public LexString(int mPtr, String str) {
-		this.mPtr = mPtr;
+	public LexString(String str, int mPtr) {
+		this.pos = mPtr;
 		this.str = str;
 		length = this.str == null ? 0 : this.str.length();
 	}

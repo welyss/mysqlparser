@@ -1,6 +1,6 @@
 package org.welyss.mysqlparser.v84;
 
-import org.welyss.mysqlparser.items.Item;
+import org.welyss.mysqlparser.items.LexerYystype;
 import org.welyss.mysqlparser.items.LexString;
 
 /**
@@ -46,7 +46,7 @@ public class LexInputStream {
 		yytoklen = 0;
 		yylval = null;
 		lookaheadToken = grammarSelectorToken = -1;
-		Item dummyYylval = null;
+		LexerYystype dummyYylval = null;
 		lookaheadYylval = dummyYylval;
 		skipDigest = false;
 		/*
@@ -399,7 +399,7 @@ public class LexInputStream {
 	int yytoklen;
 
 	/** Interface with bison, value of the last token parsed. */
-	Item yylval;
+	LexerYystype yylval;
 
 	/**
 	 * LALR(2) resolution, look ahead token. Value of the next token to return, if any, or -1, if no token was parsed in advance. Note: 0 is a legal token, and
@@ -408,7 +408,7 @@ public class LexInputStream {
 	int lookaheadToken;
 
 	/** LALR(2) resolution, value of the look ahead token. */
-	Item lookaheadYylval;
+	LexerYystype lookaheadYylval;
 
 	/**
 	 * Skip adding of the current token's digest since it is already added Usually we calculate a digest token by token at the top-level function of the lexer:
@@ -422,7 +422,7 @@ public class LexInputStream {
 	 */
 	boolean skipDigest;
 
-	void addDigestToken(int token, Item yylval) {
+	void addDigestToken(int token, LexerYystype yylval) {
 		if (mDigest != null) {
 			// TODO digest process
 //			mDigest = digestAddToken(mDigest, token, yylval);

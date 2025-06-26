@@ -5,7 +5,7 @@ import org.welyss.mysqlparser.AlterFlag;
 import org.welyss.mysqlparser.Lex;
 import org.welyss.mysqlparser.SchemaTables;
 import org.welyss.mysqlparser.SelectLex;
-import org.welyss.mysqlparser.items.Item;
+import org.welyss.mysqlparser.items.LexerYystype;
 import org.welyss.mysqlparser.items.TableIdent;
 
 public class MyParserProcessor {
@@ -16,7 +16,7 @@ public class MyParserProcessor {
 		lex.allSelectsList.add(lex.selectLex);
 	}
 
-	public static boolean addTableToList(SQLThread thd, TableIdent table, Item alias, Item partitionNames) {
+	public static boolean addTableToList(SQLThread thd, TableIdent table, LexerYystype alias, LexerYystype partitionNames) {
 		boolean success = false;
 		if (table != null) {
 			thd.lex.tables.add(table);
@@ -25,7 +25,7 @@ public class MyParserProcessor {
 		return success;
 	}
 
-	public static boolean addTableToList(Lex lex, TableIdent table, Item alias, Item partitionNames) {
+	public static boolean addTableToList(Lex lex, TableIdent table, LexerYystype alias, LexerYystype partitionNames) {
 		boolean success = false;
 		if (table != null) {
 			lex.tables.add(table);

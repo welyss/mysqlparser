@@ -215,7 +215,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 					break;
 				}
 			case MY_LEX_IDENT:
-				token.pos = thd.mTokStart;
+				token.lexStr.pos = thd.mTokStart;
 				int start; {
 					for (result_state = c; ident(c = lip.yyGet(thd)); result_state |= c)
 						;
@@ -357,7 +357,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 					thd.nextState = MyLexStates.MY_LEX_IDENT_SEP;// Next is '.'
 
 				token.lexStr.str = getToken(thd, 0, lip.yyLength(thd));
-				token.pos = thd.mTokStart;
+				token.lexStr.pos = thd.mTokStart;
 
 				// lip.body_utf8_append(lip.m_cpp_text_start);
 
@@ -394,7 +394,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 					token.lexStr.str = getToken(thd, 1, lip.yyLength(thd) - 1);
 				if (c == quote_char)
 					lip.yySkip(thd); // Skip end `
-				token.pos = thd.mCppTextStart;
+				token.lexStr.pos = thd.mCppTextStart;
 				thd.nextState = MyLexStates.MY_LEX_START;
 
 				// lip.body_utf8_append(lip.m_cpp_text_start);
@@ -972,7 +972,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 			}
 			if (token != null) {
 				keywordToken = new KeywordToken(token, tokstring, tokstringUpp);
-				keywordToken.pos = thd.mTokStart;
+				keywordToken.lexStr.pos = thd.mTokStart;
 			}
 //			else {
 //				if (function) {

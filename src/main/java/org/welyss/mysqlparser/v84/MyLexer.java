@@ -11,7 +11,8 @@ import org.apache.logging.log4j.Logger;
 import org.welyss.mysqlparser.MySQLLexer;
 import org.welyss.mysqlparser.MySQLThread;
 import org.welyss.mysqlparser.MySQLVersion;
-import org.welyss.mysqlparser.items.Item;
+import org.welyss.mysqlparser.items.LexerYystype;
+import org.welyss.mysqlparser.items.KeywordToken;
 import org.welyss.mysqlparser.items.LexString;
 import org.welyss.mysqlparser.items.LexSymbol;
 import org.welyss.mysqlparser.items.Position;
@@ -120,7 +121,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 	@Override
 	public int yylex(MySQLThread mthd) throws IOException {
 		SQLThread thd = (SQLThread)mthd;
-		Item yylval = thd.yylval;
+		LexerYystype yylval = thd.mParserState.mLip.yylval;
 		// POS in mysql-8.4.5/src/sql/parse_location.h
 		Location yylloc = thd.yylloc;
 		LexInputStream lip = thd.mParserState.mLip;
@@ -187,7 +188,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 		return token;
 	}
 
-	private int lexOneToken(Item yylval, SQLThread thd) {
+	private int lexOneToken(LexerYystype yylval, SQLThread thd) {
 		char c = 0;
 		boolean commentClosed;
 		int tokval, resultState;
@@ -197,7 +198,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 		MyLexStates[] stateMap = LexStateMapsSt.mainMap;
 		boolean[] identMap = LexStateMapsSt.identMap;
 
-		if (yylval == null) yylval = new Token();
+		if (yylval == null) yylval = new LexerYystype();
 		lip.yylval = yylval; // The global state
 
 		lip.startToken();
@@ -255,6 +256,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 				}
 				/* Found N'string' */
 				lip.yySkip(); // Skip '
+
 				if (!"".equals((yylval.lexStr.str = getText(lip, 2, 1)))) {
 					state = MyLexStates.MY_LEX_CHAR; // Read char by char
 					break;
@@ -301,7 +303,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 					}
 					lip.yySkip(); // next state does a unget
 				}
-				yylval.lexStr = getToken(lip, 0, length);
+				yylval.reset().lexStr = getToken(lip, 0, length);
 
 				/*
 				 * Note: "Select Bla As 'alias'" Bla should be considered as a Ident if charset haven't been found. So we don't want to produce any warning in findPrimary.
@@ -327,12 +329,12 @@ public class MyLexer implements Lexer, MySQLLexer {
 //		            yylval.charset = charsetName;
 //		            lip.mUnderscoreCs = underscoreCs;
 					lip.bodyUtf8Append(lip.mCppTextStart, lip.getCppTokStart() + length);
-					return (UNDERSCORE_CHARSET);
+					return (yylval.token = UNDERSCORE_CHARSET);
 //		          }
 				}
 				lip.bodyUtf8Append(lip.mCppTextStart);
 				lip.bodyUtf8AppendLiteral(thd, yylval.lexStr, lip.mCppTextEnd);
-				return (resultState); // Ident or IdentQuoted
+				return (yylval.token = resultState); // Ident or IdentQuoted
 
 			case MY_LEX_IDENT_SEP: // Found ident and now '.'
 //		        yylval.lexStr.str = constCast<char *>(lip.getPtr());
@@ -842,8 +844,8 @@ public class MyLexer implements Lexer, MySQLLexer {
 						yylval.lexStr.str = text.str;
 						yylval.lexStr.length = text.length;
 
-						lip.bodyUtf8Append(text.mPtr);
-						lip.bodyUtf8AppendLiteral(thd, yylval.lexStr, text.mPtr + text.length);
+						lip.bodyUtf8Append(text.pos);
+						lip.bodyUtf8AppendLiteral(thd, yylval.lexStr, text.pos + text.length);
 
 						return DOLLAR_QUOTED_STRING_SYM; // $$ ... $$
 					}
@@ -948,18 +950,12 @@ public class MyLexer implements Lexer, MySQLLexer {
 	 */
 	private int findKeyword(LexInputStream lip, int len, boolean function) {
 //		  int tok = lip.getTokStart();
-		String tok = lip.sqlBuf.substring(lip.getTokStart(), lip.getTokStart() + len);
-		Symbol symbol = LexHash.getHashSymbol(tok, function);
+		String tokStr = lip.sqlBuf.substring(lip.getTokStart(), lip.getTokStart() + len);
+		Symbol symbol = LexHash.getHashSymbol(tokStr, function);
 //		  Integer symbol = (symbolInstance == null ? null : symbolInstance.tok);
 
 		if (symbol != null) {
-			if (lip.yylval.keyword == null) {
-				lip.yylval.keyword = new LexSymbol(symbol.tok, tok, len);
-			} else {
-				lip.yylval.keyword.symbol = symbol.tok;
-				lip.yylval.keyword.str = tok;
-				lip.yylval.keyword.length = len;
-			}
+			lip.yylval = new LexerYystype(new LexString(tokStr, lip.getTokStart()), new LexSymbol(symbol.tok, symbol.name, symbol.length));
 
 			if ((symbol.tok == NOT_SYM) && (SystemVariables.isModeOn(SystemVariables.MODE_HIGH_NOT_PRECEDENCE)))
 				return NOT2_SYM;
@@ -1044,6 +1040,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 		tmp.str = lip.sqlBuf.substring(lip.getTokStart() + skip, lip.getTokStart() + skip + length);
 		lip.mCppTextStart = lip.getCppTokStart() + skip;
 		lip.mCppTextEnd = lip.mCppTextStart + tmp.length;
+		tmp.pos = lip.mCppTextStart;
 		return tmp;
 	}
 
@@ -1236,7 +1233,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 					if (c == lip.p2c(leftDelim + (++delimPos))) {
 						if (delimPos == tagLen + 1) {
 							int length = lip.getCppPtr() - bodyStart - tagLen - 2;
-							return new LexString(bodyStart, lip.sqlBuf.substring(bodyStart, bodyStart + length));
+							return new LexString(lip.sqlBuf.substring(bodyStart, bodyStart + length), bodyStart);
 						}
 					} else { // Not a right delimiter after all
 						state = DollarQuotedState.TEXT_BODY;

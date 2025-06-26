@@ -10,8 +10,8 @@ import org.welyss.mysqlparser.Lex;
 import org.welyss.mysqlparser.MySQLThread;
 import org.welyss.mysqlparser.ParseItem;
 import org.welyss.mysqlparser.SQLInfo;
-import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.TableIdent;
+import org.welyss.mysqlparser.items.Token;
 
 public class SQLThread extends MySQLThread {
 	public Boolean success;
@@ -66,7 +66,7 @@ public class SQLThread extends MySQLThread {
 	protected int lookaheadToken = -1;
 
 	/** LALR(2) resolution, value of the look ahead token. */
-	protected Item lookaheadYylval;
+	protected Token lookaheadYylval;
 
 	/**
 	 * Current statement digest instrumentation.

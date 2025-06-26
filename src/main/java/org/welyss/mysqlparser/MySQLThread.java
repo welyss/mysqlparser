@@ -1,8 +1,8 @@
 package org.welyss.mysqlparser;
 
-import org.welyss.mysqlparser.items.Item;
+import org.welyss.mysqlparser.items.Token;
 
 public abstract class MySQLThread {
-	public Item yylval;
+	public Token yylval;
 	public int foundSemicolon;
 }
