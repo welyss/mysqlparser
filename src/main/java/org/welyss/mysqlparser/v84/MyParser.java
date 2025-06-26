@@ -4001,8 +4001,8 @@ public class MyParser implements Parser {
 	 * @throws IOException
 	 */
 //  public MyParser84(Lexer yylexer, THD YYTHD,class Parse_tree_root parse_tree)
-	public MyParser(MyLexer yylexer) throws IOException {
-		this.yylexer = yylexer;
+	public MyParser(MySQLLexer yylexer) throws IOException {
+		this.yylexer = (MyLexer)yylexer;
 //this.YYTHD = YYTHD;
 //          this.parse_tree = parse_tree;
 
@@ -26089,10 +26089,10 @@ public class MyParser implements Parser {
 	private static final int YYFINAL_ = 1118;
 	private static final int YYNTOKENS_ = 832;
 
-	public ParseResult parse(MySQLThread thd) {
+	public ParseResult parse(String sql) {
 		ParseResult ret = new ParseResult();
 		try {
-			ret.success = myParse(thd);
+			ret.success = myParse(new SQLThread(sql));
 		} catch (IOException e) {
 			ret.success = false;
 		}

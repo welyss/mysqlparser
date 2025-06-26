@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.welyss.mysqlparser.LexConstants;
 import org.welyss.mysqlparser.MySQLLexer;
+import org.welyss.mysqlparser.MySQLVersion;
 import org.welyss.mysqlparser.SQLPrivConstants;
 import org.welyss.mysqlparser.items.KeywordToken;
 import org.welyss.mysqlparser.items.Token;
@@ -23,13 +24,14 @@ public class MyLexer implements Lexer, MySQLLexer {
 	public static final int UNSIGNED_LONGLONG_LEN = 20;
 	/** Lex_input_stream **/
 	public LexInputStreamProcessor lip;
-	public long mysqlVersionId;
+	public MySQLVersion mysqlVersion;
 	private Map<Character, MyLexStates> stateMap;
 	private Map<Character, Boolean> identMap;
 	private boolean ignoreSpace = (variables.sqlMode & Variables.MODE_IGNORE_SPACE) == Variables.MODE_IGNORE_SPACE;
 
 	public MyLexer() {
 		lip = new LexInputStreamProcessor();
+		mysqlVersion = MySQLVersion.v56;
 		initStateMaps();
 	}
 
@@ -557,7 +559,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 						// long version;
 						long version = Long.parseLong(new String(version_str));
 
-						if (version <= mysqlVersionId) {
+						if (version <= mysqlVersion.value()) {
 							/* Accept 'M' 'm' 'm' 'd' 'd' */
 							lip.yySkipn(thd, 5);
 							/*

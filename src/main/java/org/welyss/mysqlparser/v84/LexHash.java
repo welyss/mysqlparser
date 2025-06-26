@@ -848,7 +848,7 @@ public class LexHash {
 
 	public static Symbol getHashSymbol(String token, boolean function) {
 		Symbol result = null;
-		Symbol symbol = symbols.get(token);
+		Symbol symbol = symbols.get(token.toUpperCase());
 		if (symbol != null) {
 			//
 			if (function) {

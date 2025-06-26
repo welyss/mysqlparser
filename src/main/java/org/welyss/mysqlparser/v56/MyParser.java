@@ -9,7 +9,6 @@ import org.welyss.mysqlparser.CreateInfo;
 import org.welyss.mysqlparser.Lex;
 import org.welyss.mysqlparser.LexConstants;
 import org.welyss.mysqlparser.MySQLLexer;
-import org.welyss.mysqlparser.MySQLThread;
 import org.welyss.mysqlparser.ParseResult;
 import org.welyss.mysqlparser.Parser;
 import org.welyss.mysqlparser.SQLCommand;
@@ -1337,8 +1336,8 @@ public class MyParser implements Parser {
 	 * @param myLexer The scanner that will supply tokens to the parser.
 	 * @throws IOException
 	 */
-	public MyParser(MyLexer myLexer) throws IOException {
-		this.myLexer = myLexer;
+	public MyParser(MySQLLexer myLexer) throws IOException {
+		this.myLexer = (MyLexer)myLexer;
 		// Initial
 		yypact_ = MySQLParserUtils.initArrayForInt("56/yypact");
 		yydefact_ = MySQLParserUtils.initArrayForShort("56/yydefact");
@@ -28671,8 +28670,8 @@ public class MyParser implements Parser {
 //	  return FALSE;
 	}
 
-	public ParseResult parse(MySQLThread mthd) {
-		SQLThread thd = (SQLThread)mthd;
+	public ParseResult parse(String sql) {
+		SQLThread thd = new SQLThread(sql);
 		ParseResult result = new ParseResult();
 		thd.success = myParse(thd);
 		result.parseItems.add(thd.getSQLResultAndReset(0));

@@ -45,7 +45,7 @@ public class LexInputStream {
 		yylineno = 1;
 		yytoklen = 0;
 		yylval = null;
-		lookaheadToken = grammarSelectorToken;
+		lookaheadToken = grammarSelectorToken = -1;
 		Item dummyYylval = null;
 		lookaheadYylval = dummyYylval;
 		skipDigest = false;
@@ -56,19 +56,19 @@ public class LexInputStream {
 		 * For now, cast away const here. This means that e.g. SHOW PROCESSLIST can see partially patched query strings. It would be better if we could replicate the
 		 * query string as is and have the slave take the master version into account.
 		 */
-		mPtr = null;
-		mTokStart = null;
-		mTokEnd = null;
+		mPtr = 0;
+		mTokStart = 0;
+		mTokEnd = 0;
 		mEndOfQuery = buff + length;
 		mBuf = buff;
 		mBufLength = length;
 		mEcho = true;
-		mCppTokStart = null;
-		mCppTokEnd = null;
+		mCppTokStart = 0;
+		mCppTokEnd = 0;
 		mBodyUtf8 = null;
-		mCppUtf8ProcessedPtr = null;
+		mCppUtf8ProcessedPtr = 0;
 		nextState = MyLexStates.MY_LEX_START;
-		foundSemicolon = null;
+		foundSemicolon = 0;
 		ignoreSpace = false;
 		stmtPrepareMode = false;
 		multiStatements = true;
@@ -118,10 +118,14 @@ public class LexInputStream {
 	 * @return the next character to parse.
 	 */
 	char yyGet() {
-		char c = sqlBuf.charAt(mPtr++);
-		if (mEcho)
-			mCppPtr = mPtr;
-		return c;
+		if (eof()) {
+			return MyParser.SymbolKind.S_YYEOF.getChar();
+		} else {
+			char c = sqlBuf.charAt(mPtr++);
+			if (mEcho)
+				mCppPtr = mPtr;
+			return c;
+		}
 	}
 
 	/**
@@ -468,19 +472,19 @@ public class LexInputStream {
 
 // private
 	/** Pointer to the current position in the raw input stream. */
-	Integer mPtr;
+	int mPtr;
 
 	/** Starting position of the last token parsed, in the raw buffer. */
-	Integer mTokStart;
+	int mTokStart;
 
 	/** Ending position of the previous token parsed, in the raw buffer. */
-	Integer mTokEnd;
+	int mTokEnd;
 
 	/** End of the query text in the input stream, in the raw buffer. */
-	Integer mEndOfQuery;
+	int mEndOfQuery;
 
 	/** Begining of the query text in the input stream, in the raw buffer. */
-	Integer mBuf;
+	int mBuf;
 
 	/** Length of the raw buffer. */
 	int mBufLength;
@@ -490,26 +494,26 @@ public class LexInputStream {
 	boolean mEchoSaved;
 
 	/** Pre-processed buffer. */
-	Integer mCppBuf;
+	int mCppBuf;
 
 	/** Pointer to the current position in the pre-processed input stream. */
-	Integer mCppPtr;
+	int mCppPtr;
 
 	/**
 	 * Starting position of the last token parsed, in the pre-processed buffer.
 	 */
-	Integer mCppTokStart;
+	int mCppTokStart;
 
 	/**
 	 * Ending position of the previous token parsed, in the pre-processed buffer.
 	 */
-	Integer mCppTokEnd;
+	int mCppTokEnd;
 
 	/** UTF8-body buffer created during parsing. */
 	String mBodyUtf8;
 
 	/** Pointer to the current position in the UTF8-body buffer. */
-	Integer mBodyUtf8Ptr;
+	int mBodyUtf8Ptr;
 
 	/**
 	 * Position in the pre-processed buffer. The query from mCppBuf to m_cpp_utf_processed_ptr is converted to UTF8-body.
@@ -523,7 +527,7 @@ public class LexInputStream {
 	/**
 	 * Position of ';' in the stream, to delimit multiple queries. This delimiter is in the raw buffer.
 	 */
-	Integer foundSemicolon;
+	int foundSemicolon;
 
 	/** Token character bitmaps, to detect 7bit strings. */
 	char tokBitmap;

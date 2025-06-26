@@ -10,9 +10,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.welyss.mysqlparser.MySQLLexer;
 import org.welyss.mysqlparser.MySQLThread;
+import org.welyss.mysqlparser.MySQLVersion;
 import org.welyss.mysqlparser.items.Item;
 import org.welyss.mysqlparser.items.LexString;
+import org.welyss.mysqlparser.items.LexSymbol;
 import org.welyss.mysqlparser.items.Position;
+import org.welyss.mysqlparser.items.Token;
 import org.welyss.mysqlparser.v84.MyParser.Lexer;
 import org.welyss.mysqlparser.v84.MyParser.Location;
 
@@ -21,7 +24,7 @@ import org.welyss.mysqlparser.v84.MyParser.Location;
  * <b>CHARSET_INFO</b> is from include/mysql/strings/m_ctype.h and utf8mb3/utf8mb4 instance in strings/ctype-utf8.cc.
  */
 public class MyLexer implements Lexer, MySQLLexer {
-	public long mysqlVersionId = 80405;
+	public MySQLVersion mysqlVersion;
 	public static final String LONG_STR = "2147483647";
 	public static final int LONG_LEN = 10;
 	public static final String SIGNED_LONG_STR = "-2147483648";
@@ -88,6 +91,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 
 	public MyLexer() {
 		stateMaps = new LexStateMapsSt();
+		mysqlVersion = MySQLVersion.v84;
 	}
 
 	@Override
@@ -193,6 +197,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 		MyLexStates[] stateMap = LexStateMapsSt.mainMap;
 		boolean[] identMap = LexStateMapsSt.identMap;
 
+		if (yylval == null) yylval = new Token();
 		lip.yylval = yylval; // The global state
 
 		lip.startToken();
@@ -633,7 +638,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 						} catch (NumberFormatException e) {
 							version = Long.parseLong(versionStr.toString().replaceFirst("^(\\d+).*", "$1"));
 						}
-						if (version <= mysqlVersionId) {
+						if (version <= mysqlVersion.value()) {
 							/* Accept ('M') 'M' 'm' 'm' 'd' 'd' */
 							int skipLen = 0;
 							for (int i = 6; i >= 0; i--) {
@@ -948,9 +953,13 @@ public class MyLexer implements Lexer, MySQLLexer {
 //		  Integer symbol = (symbolInstance == null ? null : symbolInstance.tok);
 
 		if (symbol != null) {
-			lip.yylval.keyword.symbol = symbol.tok;
-			lip.yylval.keyword.str = tok;
-			lip.yylval.keyword.length = len;
+			if (lip.yylval.keyword == null) {
+				lip.yylval.keyword = new LexSymbol(symbol.tok, tok, len);
+			} else {
+				lip.yylval.keyword.symbol = symbol.tok;
+				lip.yylval.keyword.str = tok;
+				lip.yylval.keyword.length = len;
+			}
 
 			if ((symbol.tok == NOT_SYM) && (SystemVariables.isModeOn(SystemVariables.MODE_HIGH_NOT_PRECEDENCE)))
 				return NOT2_SYM;

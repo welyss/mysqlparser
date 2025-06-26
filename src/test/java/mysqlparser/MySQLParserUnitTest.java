@@ -6,13 +6,14 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.welyss.mysqlparser.MySQLParser;
+import org.welyss.mysqlparser.MySQLVersion;
 import org.welyss.mysqlparser.ParseResult;
 
 public class MySQLParserUnitTest {
 	MySQLParser parser;
 
 	public MySQLParserUnitTest() throws IOException {
-		parser = new MySQLParser();
+		parser = new MySQLParser(MySQLVersion.v84);
 	}
 
 	@Test

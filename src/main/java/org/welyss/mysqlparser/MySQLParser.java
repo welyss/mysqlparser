@@ -2,24 +2,28 @@ package org.welyss.mysqlparser;
 
 import java.io.IOException;
 
-import org.welyss.mysqlparser.v56.MyLexer;
-import org.welyss.mysqlparser.v56.MyParser;
-import org.welyss.mysqlparser.v56.SQLThread;
-
-
-
 public class MySQLParser {
-	private MyParser myParser;
+	private Parser myParser;
+	private MySQLVersion version;
 
 	public MySQLParser() throws IOException {
-		this(50644);
+		this(MySQLVersion.v56);
 	}
 
-	public MySQLParser(long version) throws IOException {
+	public MySQLParser(MySQLVersion version) throws IOException {
+		this.version = version;
 		try {
-			MyLexer lexer = new MyLexer();
-			lexer.mysqlVersionId = version;
-			myParser = new MyParser(lexer);
+			MySQLLexer lexer;
+			switch (this.version) {
+			case v84:
+				lexer = new org.welyss.mysqlparser.v84.MyLexer();
+				myParser = new org.welyss.mysqlparser.v84.MyParser(lexer);
+				break;
+			default:
+				lexer = new org.welyss.mysqlparser.v56.MyLexer();
+				myParser = new org.welyss.mysqlparser.v56.MyParser(lexer);
+				break;
+			}
 		} catch (IOException e) {
 			throw new IOException("Action table file read faild.", e);
 		}
@@ -31,9 +35,7 @@ public class MySQLParser {
 	 * @return Parsed Info
 	 */
 	public ParseResult parse(String sql) {
-		MySQLThread sqlThread = new SQLThread(sql);
-		ParseResult result = myParser.parse(sqlThread);
-		return result;
+		return myParser.parse(sql);
 	}
 
 	/**
