@@ -112,8 +112,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 
 	@Override
 	public void yyerror(Location loc, String msg) {
-		// TODO Auto-generated method stub
-
+		LOGGER.error("{}, Location: {}, {}.", msg, loc.begin.offset, loc.end.offset);
 	}
 
 	@Override
@@ -354,7 +353,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 				if (lip.yyGetLast() == '0') {
 					c = lip.yyGet();
 					if (c == 'x') {
-						while (Character.isDigit(c = lip.yyGet()))
+						while (lip.myIsxdigit(c = lip.yyGet()))
 							;
 						if ((lip.yyLength() >= 3) && !identMap[c]) {
 							/* skip '0x' */

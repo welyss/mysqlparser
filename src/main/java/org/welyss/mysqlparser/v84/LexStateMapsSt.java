@@ -54,7 +54,7 @@ public class LexStateMapsSt {
 		 * Create a second map to make it faster to find identifiers
 		 */
 		for (short i = 0; i < 256; i++) {
-			identMap[i] = stateMap[i] == MyLexStates.MY_LEX_IDENT || stateMap[i] == MyLexStates.MY_LEX_NUMBER_IDENT;
+			identMap[i] = (stateMap[i] == MyLexStates.MY_LEX_IDENT || stateMap[i] == MyLexStates.MY_LEX_NUMBER_IDENT);
 		}
 
 		/* Special handling of hex and binary strings */

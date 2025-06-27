@@ -14,7 +14,6 @@ import org.welyss.mysqlparser.Parser;
 import org.welyss.mysqlparser.SQLCommand;
 import org.welyss.mysqlparser.SQLPrivConstants;
 import org.welyss.mysqlparser.SchemaTables;
-import org.welyss.mysqlparser.items.Token;
 import org.welyss.mysqlparser.items.TableIdent;
 import org.welyss.mysqlparser.items.Token;
 import org.welyss.mysqlparser.utils.MySQLParserUtils;
@@ -1547,13 +1546,13 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 1982 of "sql_yacc.y" */
 			{
+				thd.addSQL(myLexer.lip.getPtr(thd));
 				if (myLexer.lip.eof(thd)) {
-					thd.addSQL(myLexer.lip.getPtr(thd) - 1);
+					thd.foundSemicolon = 0;
 				} else {
 					thd.nextState = org.welyss.mysqlparser.v56.MyLexStates.MY_LEX_END;
-					thd.addSQL(myLexer.lip.getPtr(thd) - 1);
+					thd.foundSemicolon = myLexer.lip.getPtr(thd);
 				}
-				thd.foundSemicolon = myLexer.lip.getPtr(thd);
 				// Lex_input_stream *lip = YYLIP;
 				//
 				// if ((YYTHD->client_capabilities & CLIENT_MULTI_QUERIES) &&
@@ -1585,7 +1584,7 @@ public class MyParser implements Parser {
 			{
 				/* Single query, not terminated. */
 //		YYLIP->found_semicolon= NULL;
-				thd.addSQL(myLexer.lip.getPtr(thd) - 1);
+				thd.addSQL(myLexer.lip.getPtr(thd));
 			}
 			;
 			break;
@@ -20635,23 +20634,24 @@ public class MyParser implements Parser {
 		// break;
 		//
 		//
-		// case 1923:
-		// if (yyn == 1923)
-		// /* Line 350 of lalr1.java */
-		// /* Line 13325 of "sql_yacc.y" */
-		// {
-		// Item_string *str= new (YYTHD->mem_root)
-		// Item_string(((lex_str)(yystack.valueAt (2-(2)))).str,
-		// ((lex_str)(yystack.valueAt (2-(2)))).length,
-		// ((charset)(yystack.valueAt (2-(1)))));
-		// if (str == NULL)
-		// return YYABORT;
-		// str->set_repertoire_from_value();
-		// str->set_cs_specified(TRUE);
-		//
-		// yyval= str;
-		// };
-		// break;
+		 case 1923:
+		 if (yyn == 1923)
+		 /* Line 350 of lalr1.java */
+		 /* Line 13325 of "sql_yacc.y" */
+		 {
+//		 Item_string *str= new (YYTHD->mem_root)
+//		 Item_string(((lex_str)(yystack.valueAt (2-(2)))).str,
+//		 ((lex_str)(yystack.valueAt (2-(2)))).length,
+//		 ((charset)(yystack.valueAt (2-(1)))));
+		     Object obj = yystack.valueAt (2-(2));
+			 if (obj == null)
+				 return YYABORT;
+//			 str->set_repertoire_from_value();
+//			 str->set_cs_specified(TRUE);
+
+			 yyval = obj;
+		 };
+		 break;
 		//
 		//
 		// case 1924:
@@ -20881,43 +20881,46 @@ public class MyParser implements Parser {
 		// break;
 		//
 		//
-		// case 1940:
-		// if (yyn == 1940)
-		// /* Line 350 of lalr1.java */
-		// /* Line 13464 of "sql_yacc.y" */
-		// {
-		// Item *tmp= new (YYTHD->mem_root)
-		// Item_hex_string(((lex_str)(yystack.valueAt (2-(2)))).str,
-		// ((lex_str)(yystack.valueAt (2-(2)))).length);
-		// if (tmp == NULL)
-		// return YYABORT;
-		// /*
-		// it is OK only emulate fix_fieds, because we need only
-		// value of constant
-		// */
-		// tmp->quick_fix_field();
-		// String *str= tmp->val_str((String*) 0);
-		//
-		// Item_string *item_str;
-		// item_str= new (YYTHD->mem_root)
-		// Item_string(null_name_string, /* name will be set in select_item */
-		// str ? str->ptr() : "",
-		// str ? str->length() : 0,
-		// ((charset)(yystack.valueAt (2-(1)))));
-		// if (!item_str ||
-		// !item_str->check_well_formed_result(&item_str->str_value,
-		// true, //send error
-		// true)) //truncate
-		// {
-		// return YYABORT;
-		// }
-		//
-		// item_str->set_repertoire_from_value();
-		// item_str->set_cs_specified(TRUE);
-		//
-		// yyval= item_str;
-		// };
-		// break;
+		 case 1940:
+		 if (yyn == 1940)
+		 /* Line 350 of lalr1.java */
+		 /* Line 13464 of "sql_yacc.y" */
+		 {
+//		 Item *tmp= new (YYTHD->mem_root)
+//		 Item_hex_string(((lex_str)(yystack.valueAt (2-(2)))).str,
+//		 ((lex_str)(yystack.valueAt (2-(2)))).length);
+//		 if (tmp == NULL)
+//		 return YYABORT;
+//		 /*
+//		 it is OK only emulate fix_fieds, because we need only
+//		 value of constant
+//		 */
+//		 tmp->quick_fix_field();
+//		 String *str= tmp->val_str((String*) 0);
+//
+//		 Item_string *item_str;
+//		 item_str= new (YYTHD->mem_root)
+//		 Item_string(null_name_string, /* name will be set in select_item */
+//		 str ? str->ptr() : "",
+//		 str ? str->length() : 0,
+//		 ((charset)(yystack.valueAt (2-(1)))));
+//		 if (!item_str ||
+//		 !item_str->check_well_formed_result(&item_str->str_value,
+//		 true, //send error
+//		 true)) //truncate
+//		 {
+//		 return YYABORT;
+//		 }
+//
+//		 item_str->set_repertoire_from_value();
+//		 item_str->set_cs_specified(TRUE);
+//
+//		 yyval= item_str;
+			 Object obj = yystack.valueAt (2-(2));
+			 if (obj == null) return YYABORT;
+			 yyval= obj;
+		 };
+		 break;
 		//
 		//
 		// case 1941:

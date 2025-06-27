@@ -257,21 +257,21 @@ public class MyLexer implements Lexer, MySQLLexer {
 				 * error.
 				 */
 
-				// if (token.lexStr.str.charAt(0) == '_')
-				// {
-				// CHARSET_INFO *cs= get_charset_by_csname(yylval->lex_str.str +
-				// 1,
-				// MY_CS_PRIMARY, MYF(0));
-				// if (cs)
-				// {
-				// yylval->charset= cs;
-				// lip.m_underscore_cs= cs;
-				//
-				// lip.body_utf8_append(lip.m_cpp_text_start,
-				// lip.get_cpp_tok_start(thd) + length);
-				// return(UNDERSCORE_CHARSET);
-				// }
-				// }
+				 if (token.lexStr.str.charAt(0) == '_')
+				 {
+//				 CHARSET_INFO *cs= get_charset_by_csname(yylval->lex_str.str +
+//				 1,
+//				 MY_CS_PRIMARY, MYF(0));
+//				 if (cs)
+//				 {
+//				 yylval->charset= cs;
+//				 lip.m_underscore_cs= cs;
+//
+//				 lip.body_utf8_append(lip.m_cpp_text_start,
+//				 lip.get_cpp_tok_start(thd) + length);
+					 return(MyParser.UNDERSCORE_CHARSET);
+//				 }
+				 }
 
 				// lip.body_utf8_append(lip.m_cpp_text_start);
 				//
@@ -294,11 +294,12 @@ public class MyLexer implements Lexer, MySQLLexer {
 				if (lip.yyGetLast(thd) == '0') {
 					c = lip.yyGet(thd);
 					if (c == 'x') {
-						while (Character.isDigit(c = lip.yyGet(thd)))
+						while (LexInputStreamProcessor.myIsxdigit(c = lip.yyGet(thd)))
 							;
 						if ((lip.yyLength(thd) >= 3) && !ident(c)) {
 							/* skip '0x' */
 							token.lexStr.str = getToken(thd, 2, lip.yyLength(thd) - 2);
+							token.lexStr.length = token.lexStr.str.length();
 							return (MyParser.HEX_NUM);
 						}
 						lip.yyUnget(thd);

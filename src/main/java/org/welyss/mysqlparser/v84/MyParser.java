@@ -21549,11 +21549,12 @@ public class MyParser implements Parser {
 			break;
 
 		case 2241: /* literal: UNDERSCORE_CHARSET HEX_NUM */
-//  if (yyn == 2241)
-//    /* "sql_yacc.y":14789  */
-//          {
-//            yyval= NEW_PTN PTI_literal_underscore_charset_hex_num((yyloc), ((lexer.charset)(yystack.valueAt (1))), ((lexer.lex_str)(yystack.valueAt (0))));
-//          };
+			if (yyn == 2241)
+    /* "sql_yacc.y":14789  */
+	        {
+//	            yyval= NEW_PTN PTI_literal_underscore_charset_hex_num((yyloc), ((lexer.charset)(yystack.valueAt (1))), ((lexer.lex_str)(yystack.valueAt (0))));
+				yyval = yystack.valueAt (0);
+	        };
 			break;
 
 		case 2242: /* literal: UNDERSCORE_CHARSET BIN_NUM */
@@ -25724,7 +25725,7 @@ public class MyParser implements Parser {
 		Location yyerrloc = null;
 
 		/* Location. */
-		Location yylloc = new Location(null, null);
+		Location yylloc = new Location(new Position(0));
 
 		/* Semantic value of the lookahead. */
 		Object yylval = null;

@@ -79,6 +79,10 @@ public class LexInputStreamProcessor {
 		return c < ctypeLatin1.length && ((ctypeLatin1[c] & _MY_U) == _MY_U || (ctypeLatin1[c] & _MY_L) == _MY_L || (ctypeLatin1[c] & _MY_NMR) == _MY_NMR);
 	}
 
+	public static boolean myIsxdigit(char c) {
+		return c < ctypeLatin1.length && ((ctypeLatin1[c] & _MY_X) == _MY_X);
+	}
+
 	/** Mark the stream position as the start of a new token. */
 	public void startToken(SQLThread thd) {
 		thd.mTokStartPrev = thd.mTokStart;
@@ -215,7 +219,7 @@ public class LexInputStreamProcessor {
 	 * @return true if there are no more characters to parse
 	 */
 	public boolean eof(SQLThread thd) {
-		return (thd.mPtr >= thd.sql.length());
+		return (thd.mPtr >= thd.sql.length() - 1);
 	}
 
 //	public void addDigestToken(int token, SQLThread thd) {
