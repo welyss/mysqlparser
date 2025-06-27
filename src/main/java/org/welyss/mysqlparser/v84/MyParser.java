@@ -3934,14 +3934,14 @@ public class MyParser implements Parser {
 		 *
 		 * @return the position at which the last scanned token starts.
 		 */
-		Position getStartPos();
+		Position getStartPos(MySQLThread thd);
 
 		/**
 		 * Method to retrieve the ending position of the last scanned token.
 		 *
 		 * @return the first position beyond the last scanned token.
 		 */
-		Position getEndPos();
+		Position getEndPos(MySQLThread thd);
 
 		/**
 		 * Method to retrieve the semantic value of the last scanned token.
@@ -25758,7 +25758,7 @@ public class MyParser implements Parser {
 
 					yychar = yylexer.yylex(thd);
 					yylval = yylexer.getLVal(thd);
-					yylloc = new Location(yylexer.getStartPos(), yylexer.getEndPos());
+					yylloc = new Location(yylexer.getStartPos(thd), yylexer.getEndPos(thd));
 
 				}
 

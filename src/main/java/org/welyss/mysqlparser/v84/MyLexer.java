@@ -11,12 +11,10 @@ import org.apache.logging.log4j.Logger;
 import org.welyss.mysqlparser.MySQLLexer;
 import org.welyss.mysqlparser.MySQLThread;
 import org.welyss.mysqlparser.MySQLVersion;
-import org.welyss.mysqlparser.items.LexerYystype;
-import org.welyss.mysqlparser.items.KeywordToken;
 import org.welyss.mysqlparser.items.LexString;
 import org.welyss.mysqlparser.items.LexSymbol;
+import org.welyss.mysqlparser.items.LexerYystype;
 import org.welyss.mysqlparser.items.Position;
-import org.welyss.mysqlparser.items.Token;
 import org.welyss.mysqlparser.v84.MyParser.Lexer;
 import org.welyss.mysqlparser.v84.MyParser.Location;
 
@@ -96,20 +94,20 @@ public class MyLexer implements Lexer, MySQLLexer {
 	}
 
 	@Override
-	public Position getEndPos() {
-		// TODO Auto-generated method stub
-		return null;
+	public Position getEndPos(MySQLThread thd) {
+		LexerYystype yylval = ((SQLThread)thd).mParserState.mLip.yylval;
+		return new Position(yylval.lexStr.pos + yylval.lexStr.length);
 	}
 
 	@Override
-	public Object getLVal(MySQLThread thd) {
-		return thd.yylval;
+	public Object getLVal(MySQLThread mThd) {
+		return ((SQLThread)mThd).mParserState.mLip.yylval;
 	}
 
 	@Override
-	public Position getStartPos() {
-		// TODO Auto-generated method stub
-		return null;
+	public Position getStartPos(MySQLThread thd) {
+		LexerYystype yylval = ((SQLThread)thd).mParserState.mLip.yylval;
+		return new Position(yylval.lexStr.pos);
 	}
 
 	@Override

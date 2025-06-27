@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.welyss.mysqlparser.LexConstants;
-import org.welyss.mysqlparser.items.LexerYystype;
 import org.welyss.mysqlparser.items.Token;
 
 public class LexInputStreamProcessor {
