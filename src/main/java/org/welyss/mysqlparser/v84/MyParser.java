@@ -3968,7 +3968,7 @@ public class MyParser implements Parser {
 		 * @param loc The location of the element to which the error message is related.
 		 * @param msg The string for the error message.
 		 */
-		void yyerror(Location loc, String msg);
+		void yyerror(MySQLThread thd, Location loc, String msg);
 
 	}
 
@@ -3996,7 +3996,7 @@ public class MyParser implements Parser {
 	 */
 //  public MyParser84(Lexer yylexer, THD YYTHD,class Parse_tree_root parse_tree)
 	public MyParser(MySQLLexer yylexer) throws IOException {
-		this.yylexer = (MyLexer)yylexer;
+		this.yylexer = (MyLexer) yylexer;
 //this.YYTHD = YYTHD;
 //          this.parse_tree = parse_tree;
 
@@ -4020,36 +4020,6 @@ public class MyParser implements Parser {
 	 */
 	public final int getNumberOfErrors() {
 		return yynerrs;
-	}
-
-	/**
-	 * Print an error message via the lexer. Use a <code>null</code> location.
-	 *
-	 * @param msg The error message.
-	 */
-	public final void yyerror(String msg, SQLThread thd) {
-//      yylexer.yyerror((Location)null, msg);
-		yylexer.yyerror(new Location(null), msg);
-	}
-
-	/**
-	 * Print an error message via the lexer.
-	 *
-	 * @param loc The location associated with the message.
-	 * @param msg The error message.
-	 */
-	public final void yyerror(Location loc, String msg) {
-		yylexer.yyerror(loc, msg);
-	}
-
-	/**
-	 * Print an error message via the lexer.
-	 *
-	 * @param pos The position associated with the message.
-	 * @param msg The error message.
-	 */
-	public final void yyerror(Position pos, String msg) {
-		yylexer.yyerror(new Location(pos), msg);
 	}
 
 	private final class YYStack {
@@ -4167,7 +4137,8 @@ public class MyParser implements Parser {
 			return yydefgoto_[yysym - YYNTOKENS_];
 	}
 
-	private int yyaction(int yyn, YYStack yystack, int yylen) {
+	private int yyaction(int yyn, YYStack yystack, int yylen, MySQLThread mThd) {
+		SQLThread thd = (SQLThread) mThd;
 		/*
 		 * If YYLEN is nonzero, implement the default value of the action: '$$ = $1'. Otherwise, use the top of the stack.
 		 *
@@ -4256,9 +4227,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 9: /* $@1: %empty */
-//  if (yyn == 9)
-//    /* "sql_yacc.y":2361  */
-//          {
+			if (yyn == 9)
+			/* "sql_yacc.y":2361 */
+			{
 //            Lex_input_stream *lip = YYLIP;
 //
 //            if (YYTHD->get_protocol()->has_client_capability(CLIENT_MULTI_QUERIES) &&
@@ -4279,7 +4250,15 @@ public class MyParser implements Parser {
 //              /* Single query, terminated. */
 //              lip->found_semicolon= nullptr;
 //            }
-//          };
+				LexInputStream lip = thd.mParserState.mLip;
+				if (!lip.eof()) {
+					lip.nextState = MyLexStates.MY_LEX_END;
+					lip.foundSemicolon = lip.getPtr();
+				} else {
+					lip.foundSemicolon = 0;
+				}
+			}
+			;
 			break;
 
 		case 11: /* sql_statement: simple_statement_or_begin END_OF_INPUT */
@@ -21544,11 +21523,12 @@ public class MyParser implements Parser {
 
 		case 2241: /* literal: UNDERSCORE_CHARSET HEX_NUM */
 			if (yyn == 2241)
-    /* "sql_yacc.y":14789  */
-	        {
+			/* "sql_yacc.y":14789 */
+			{
 //	            yyval= NEW_PTN PTI_literal_underscore_charset_hex_num((yyloc), ((lexer.charset)(yystack.valueAt (1))), ((lexer.lex_str)(yystack.valueAt (0))));
-				yyval = yystack.valueAt (0);
-	        };
+				yyval = yystack.valueAt(0);
+			}
+			;
 			break;
 
 		case 2242: /* literal: UNDERSCORE_CHARSET BIN_NUM */
@@ -25827,7 +25807,7 @@ public class MyParser implements Parser {
 			`-----------------------------*/
 			case YYREDUCE:
 				yylen = yyr2_[yyn];
-				label = yyaction(yyn, yystack, yylen);
+				label = yyaction(yyn, yystack, yylen, thd);
 				yystate = yystack.stateAt(0);
 				break;
 
@@ -25840,7 +25820,7 @@ public class MyParser implements Parser {
 					++yynerrs;
 					if (yychar == YYEMPTY_)
 						yytoken = null;
-					yyreportSyntaxError(new Context(this, yystack, yytoken, yylloc));
+					yyreportSyntaxError(thd, new Context(this, yystack, yytoken, yylloc));
 				}
 
 				yyerrloc = yylloc;
@@ -26009,8 +25989,8 @@ public class MyParser implements Parser {
 	 *
 	 * @param ctx The context of the error.
 	 */
-	private void yyreportSyntaxError(Context yyctx) {
-		yyerror(yyctx.yylocation, "syntax error");
+	private void yyreportSyntaxError(MySQLThread thd, Context yyctx) {
+		yylexer.yyerror(thd, yyctx.yylocation, "syntax error");
 	}
 
 	/**
@@ -26091,6 +26071,12 @@ public class MyParser implements Parser {
 	private static final int YYFINAL_ = 1118;
 	private static final int YYNTOKENS_ = 832;
 
+	private void yySymbolPrint(String s, int yytype, Object yyvalue) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(s + " {} {} ({})", yytype < YYNTOKENS_ ? "token" : "nterm", SymbolKind.yytname_[yytype], yyvalue == null ? "(null)" : yyvalue.toString());
+		}
+	}
+
 	public ParseResult parse(String sql) {
 		ParseResult ret = new ParseResult();
 		try {
@@ -26098,11 +26084,6 @@ public class MyParser implements Parser {
 		} catch (IOException e) {
 			ret.success = false;
 		}
-		return ret;	}
-
-	private void yySymbolPrint(String s, int yytype, Object yyvalue) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(s + " {} {} ({})", yytype < YYNTOKENS_ ? "token" : "nterm", SymbolKind.yytname_[yytype], yyvalue == null ? "(null)" : yyvalue.toString());
-		}
+		return ret;
 	}
 }

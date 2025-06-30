@@ -20,7 +20,6 @@ public class SQLThread extends MySQLThread {
 	protected List<SQLInfo> parsedSqls = new ArrayList<SQLInfo>();
 	protected boolean inWhere;
 	public Token yylval;
-	protected String msg;
 	protected Lex lex;
 	/** Current state of the lexical analyser. */
 	protected int mTokStartPrev;

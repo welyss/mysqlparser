@@ -1518,6 +1518,7 @@ public class MyParser implements Parser {
 				if (myLexer.lip.eof(thd)) {
 					thd.foundSemicolon = 0;
 				} else {
+					// multi queries
 					thd.nextState = org.welyss.mysqlparser.v56.MyLexStates.MY_LEX_END;
 					thd.foundSemicolon = myLexer.lip.getPtr(thd);
 				}

@@ -111,7 +111,11 @@ public class MyLexer implements Lexer, MySQLLexer {
 	}
 
 	@Override
-	public void yyerror(Location loc, String msg) {
+	public void yyerror(MySQLThread mThd, Location loc, String msg) {
+		SQLThread thd = (SQLThread)mThd;
+		LexInputStream lip = thd.mParserState.mLip;
+		thd.msg = String.format("You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '%s' at line %d",
+				lip.sqlBuf.substring(lip.mTokEnd, lip.mEndOfQuery), lip.yylineno);
 		LOGGER.error("{}, Location: {}, {}.", msg, loc.begin.offset, loc.end.offset);
 	}
 
