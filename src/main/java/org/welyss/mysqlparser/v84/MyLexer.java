@@ -94,20 +94,46 @@ public class MyLexer implements Lexer, MySQLLexer {
 	}
 
 	@Override
-	public Position getEndPos(MySQLThread thd) {
-		LexerYystype yylval = ((SQLThread)thd).mParserState.mLip.yylval;
-		return new Position(yylval.lexStr.pos + yylval.lexStr.length);
-	}
-
-	@Override
 	public Object getLVal(MySQLThread mThd) {
 		return ((SQLThread)mThd).mParserState.mLip.yylval;
 	}
 
 	@Override
 	public Position getStartPos(MySQLThread thd) {
-		LexerYystype yylval = ((SQLThread)thd).mParserState.mLip.yylval;
-		return new Position(yylval.lexStr.pos);
+		Position ret = null;
+		LexInputStream lip = ((SQLThread)thd).mParserState.mLip;
+		LexerYystype yylval = lip.yylval;
+		LexString lexString = yylval.lexStr;
+		if (lexString == null) {
+			if (lip.lookaheadYylval != null && lip.lookaheadYylval.lexStr != null) {
+				lexString = lip.lookaheadYylval.lexStr;
+				ret = new Position(lexString.pos);
+			} else {
+				ret = new Position(lip.mPtr);
+			}
+		} else {
+			ret = new Position(lexString.pos);
+		}
+		return ret;
+	}
+
+	@Override
+	public Position getEndPos(MySQLThread thd) {
+		Position ret = null;
+		LexInputStream lip = ((SQLThread)thd).mParserState.mLip;
+		LexerYystype yylval = lip.yylval;
+		LexString lexString = yylval.lexStr;
+		if (lexString == null) {
+			if (lip.lookaheadYylval != null && lip.lookaheadYylval.lexStr != null) {
+				lexString = lip.lookaheadYylval.lexStr;
+				ret = new Position(lexString.pos + lexString.length);
+			} else {
+				ret = new Position(lip.mPtr);
+			}
+		} else {
+			ret = new Position(lexString.pos + lexString.length);
+		}
+		return ret;
 	}
 
 	@Override
@@ -122,6 +148,8 @@ public class MyLexer implements Lexer, MySQLLexer {
 	@Override
 	public int yylex(MySQLThread mthd) throws IOException {
 		SQLThread thd = (SQLThread)mthd;
+		if (thd.mParserState.mLip.yylval == null) thd.mParserState.mLip.yylval = new LexerYystype();
+
 		LexerYystype yylval = thd.mParserState.mLip.yylval;
 		// POS in mysql-8.4.5/src/sql/parse_location.h
 		Location yylloc = thd.yylloc;
@@ -171,7 +199,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 				 * Save the token following 'WITH'
 				 */
 				lip.lookaheadYylval = lip.yylval;
-				lip.yylval = null;
+				lip.yylval.reset();
 				lip.lookaheadToken = token;
 //		          yylloc.cpp.end = lip.getCppPtr();
 //		          yylloc.raw.end = lip.getPtr();
@@ -199,7 +227,6 @@ public class MyLexer implements Lexer, MySQLLexer {
 		MyLexStates[] stateMap = LexStateMapsSt.mainMap;
 		boolean[] identMap = LexStateMapsSt.identMap;
 
-		if (yylval == null) yylval = new LexerYystype();
 		lip.yylval = yylval; // The global state
 
 		lip.startToken();
@@ -956,7 +983,9 @@ public class MyLexer implements Lexer, MySQLLexer {
 //		  Integer symbol = (symbolInstance == null ? null : symbolInstance.tok);
 
 		if (symbol != null) {
-			lip.yylval = new LexerYystype(new LexString(tokStr, lip.getTokStart()), new LexSymbol(symbol.tok, symbol.name, symbol.length));
+			lip.yylval.reset();
+			lip.yylval.lexStr = new LexString(tokStr, lip.getTokStart());
+			lip.yylval.keyword = new LexSymbol(symbol.tok, symbol.name, symbol.length);
 
 			if ((symbol.tok == NOT_SYM) && (SystemVariables.isModeOn(SystemVariables.MODE_HIGH_NOT_PRECEDENCE)))
 				return NOT2_SYM;
