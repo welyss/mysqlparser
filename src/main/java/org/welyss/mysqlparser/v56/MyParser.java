@@ -21402,8 +21402,8 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 13849 of "sql_yacc.y" */
 			{
-//			 yyval=((lex_str)(yystack.valueAt (1-(1))));
-				// field_ident
+			 yyval=((Token)(yystack.valueAt (1-(1))));
+//				 field_ident
 			}
 			;
 			break;

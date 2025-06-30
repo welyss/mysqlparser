@@ -514,7 +514,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 				// lip.m_underscore_cs= NULL;
 
 				thd.textStringIs7bit = (lip.tokBitmap & 0x80) == 0x80 ? false : true;
-				int a = thd.lex.selectLex.options;
+//				int a = thd.lex.selectLex.options;
 				return (MyParser.TEXT_STRING);
 			case MY_LEX_COMMENT: // Comment
 				thd.lex.selectLex.options |= SQLPrivConstants.OPTION_FOUND_COMMENT;

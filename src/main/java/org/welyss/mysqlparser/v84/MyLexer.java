@@ -567,7 +567,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 				/* " used for strings */
 //		        [[fallthrough]];
 			case MY_LEX_STRING: // Incomplete text string
-				if ((yylval.lexStr.str = getText(lip, 1, 1)) != null) {
+				if ((yylval.lexStr.str = getText(lip, 1, 1)) == null) {
 					state = MyLexStates.MY_LEX_CHAR; // Read char by char
 					break;
 				}
