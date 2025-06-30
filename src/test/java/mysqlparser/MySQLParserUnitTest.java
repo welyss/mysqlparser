@@ -14,7 +14,7 @@ public class MySQLParserUnitTest {
 
 	public MySQLParserUnitTest() throws IOException {
 		parser = new MySQLParser(MySQLVersion.v56);
-		parser.setDebugLevel(1);
+//		parser.setDebugLevel(1);
 	}
 
 	@Test

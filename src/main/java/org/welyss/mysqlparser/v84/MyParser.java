@@ -2,6 +2,8 @@ package org.welyss.mysqlparser.v84;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.welyss.mysqlparser.MySQLLexer;
 import org.welyss.mysqlparser.MySQLThread;
 import org.welyss.mysqlparser.ParseResult;
@@ -20,6 +22,8 @@ public class MyParser implements Parser {
 
 	/** Name of the skeleton that generated this parser. */
 	public static final String bisonSkeleton = "lalr1.java";
+
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	/**
 	 * A class defining a pair of positions. Positions, defined by the <code>Position</code> class, denote a point in the input. Locations represent a part of the
@@ -3978,17 +3982,7 @@ public class MyParser implements Parser {
 		return yylexer;
 	}
 
-	private int yydebug = 0;
-
-	@Override
-	public int getDebugLevel() {
-		return yydebug;
-	}
-
-	@Override
-	public void setDebugLevel(int level) {
-		yydebug = level;
-	}
+//	private int yydebug = 0;
 
 	/* User arguments. */
 //    protected final class THD *YYTHD;
@@ -4114,14 +4108,14 @@ public class MyParser implements Parser {
 		}
 
 		// Print the state stack on the debug stream.
-		public void print(java.io.PrintStream out) {
-			out.print("Stack now");
-
-			for (int i = 0; i <= height; i++) {
-				out.print(' ');
-				out.print(stateStack[i]);
+		public void printStateStack() {
+			if (LOGGER.isDebugEnabled()) {
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i <= height; i++) {
+					sb.append(' ').append(stateStack[i]);
+				}
+				LOGGER.debug("Stack now{}", sb);
 			}
-			out.println();
 		}
 	}
 
@@ -25730,6 +25724,8 @@ public class MyParser implements Parser {
 		/* Semantic value of the lookahead. */
 		Object yylval = null;
 
+		LOGGER.debug("Starting parse");
+
 		yyerrstatus_ = 0;
 		yynerrs = 0;
 
@@ -25742,7 +25738,7 @@ public class MyParser implements Parser {
 			 * New state. Unlike in the C/C++ skeletons, the state is already pushed when we come here.
 			 */
 			case YYNEWSTATE:
-
+				LOGGER.debug("Entering state {}", yystate);
 				/* Accept? */
 				if (yystate == YYFINAL_)
 					return true;
@@ -25756,7 +25752,7 @@ public class MyParser implements Parser {
 
 				/* Read a lookahead token. */
 				if (yychar == YYEMPTY_) {
-
+					LOGGER.debug("Reading a token: ");
 					yychar = yylexer.yylex(thd);
 					yylval = yylexer.getLVal(thd);
 					yylloc = new Location(yylexer.getStartPos(thd), yylexer.getEndPos(thd));
@@ -25765,6 +25761,7 @@ public class MyParser implements Parser {
 
 				/* Convert token to internal form. */
 				yytoken = yytranslate_(yychar);
+				yySymbolPrint("Next token is", yytoken.yycode_, yylval);
 
 				if (yytoken == SymbolKind.S_YYerror) {
 					// The scanner already issued an error message, process directly
@@ -25796,6 +25793,8 @@ public class MyParser implements Parser {
 
 					else {
 						/* Shift the lookahead token. */
+						yySymbolPrint("Shifting", yytoken.yycode_, yylval);
+
 						/* Discard the token being shifted. */
 						yychar = YYEMPTY_;
 
@@ -25905,6 +25904,7 @@ public class MyParser implements Parser {
 					yyerrloc = yystack.locationAt(0);
 					yystack.pop();
 					yystate = yystack.stateAt(0);
+					yystack.printStateStack();
 				}
 
 				if (label == YYABORT)
@@ -25918,6 +25918,7 @@ public class MyParser implements Parser {
 				yystack.pop(2);
 
 				/* Shift the error token. */
+				yySymbolPrint("Shifting", yystos_[yyn], yylval);
 
 				yystate = yyn;
 				yystack.push(yyn, yylval, yyloc);
@@ -26098,4 +26099,10 @@ public class MyParser implements Parser {
 			ret.success = false;
 		}
 		return ret;	}
+
+	private void yySymbolPrint(String s, int yytype, Object yyvalue) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(s + " {} {} ({})", yytype < YYNTOKENS_ ? "token" : "nterm", SymbolKind.yytname_[yytype], yyvalue == null ? "(null)" : yyvalue.toString());
+		}
+	}
 }

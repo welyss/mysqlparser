@@ -3,6 +3,8 @@ package org.welyss.mysqlparser.v56;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.welyss.mysqlparser.AlterColumnInfo;
 import org.welyss.mysqlparser.AlterFlag;
 import org.welyss.mysqlparser.CreateInfo;
@@ -48,6 +50,8 @@ public class MyParser implements Parser {
 
 	/** Name of the skeleton that generated this parser. */
 	public static final String bisonSkeleton = "lalr1.java";
+
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	/** True if verbose error messages are enabled. */
 	public boolean errorVerbose = false;
@@ -1355,43 +1359,7 @@ public class MyParser implements Parser {
 		yytranslate_table_ = MySQLParserUtils.initArrayForShort("56/yytranslate_table");
 	}
 
-	private java.io.PrintStream yyDebugStream = System.err;
-
-	/**
-	 * Return the <tt>PrintStream</tt> on which the debugging output is printed.
-	 */
-	public final java.io.PrintStream getDebugStream() {
-		return yyDebugStream;
-	}
-
-	/**
-	 * Set the <tt>PrintStream</tt> on which the debug output is printed.
-	 *
-	 * @param s The stream that is used for debugging output.
-	 */
-	public final void setDebugStream(java.io.PrintStream s) {
-		yyDebugStream = s;
-	}
-
-	private int yydebug = 0;
-
-	/**
-	 * Answer the verbosity of the debugging output; 0 means that all kinds of output from the parser are suppressed.
-	 */
-	@Override
-	public final int getDebugLevel() {
-		return yydebug;
-	}
-
-	/**
-	 * Set the verbosity of the debugging output; 0 means that all kinds of output from the parser are suppressed.
-	 *
-	 * @param level The verbosity level for debugging output.
-	 */
-	@Override
-	public final void setDebugLevel(int level) {
-		yydebug = level;
-	}
+//	private int yydebug = 0;
 
 	private final int yylex(SQLThread thd) {
 		return myLexer.mysqlLex(thd);
@@ -1401,10 +1369,10 @@ public class MyParser implements Parser {
 		myLexer.mysqlError(s, thd);
 	}
 
-	protected final void yycdebug(String s) {
-		if (yydebug > 0)
-			yyDebugStream.println(s);
-	}
+//	protected final void yycdebug(String s) {
+//		if (yydebug > 0)
+//			yyDebugStream.println(s);
+//	}
 
 	private final class YYStack {
 		private int[] stateStack = new int[16];
@@ -1455,14 +1423,14 @@ public class MyParser implements Parser {
 		}
 
 		// Print the state stack on the debug stream.
-		public void print(java.io.PrintStream out) {
-			out.print("Stack now");
-
-			for (int i = 0; i <= height; i++) {
-				out.print(' ');
-				out.print(stateStack[i]);
+		public void printStateStack() {
+			if (LOGGER.isDebugEnabled()) {
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i <= height; i++) {
+					sb.append(' ').append(stateStack[i]);
+				}
+				LOGGER.debug("Stack now{}", sb);
 			}
-			out.println();
 		}
 	}
 
@@ -28263,8 +28231,10 @@ public class MyParser implements Parser {
 	`--------------------------------*/
 
 	private void yy_symbol_print(String s, int yytype, Object yyvaluep) {
-		if (yydebug > 0)
-			yycdebug(s + (yytype < yyntokens_ ? " token " : " nterm ") + yytname_[yytype] + " (" + (yyvaluep == null ? "(null)" : yyvaluep.toString()) + ")");
+		if (LOGGER.isDebugEnabled()) {
+//			LOGGER.debug(s + (yytype < yyntokens_ ? " token " : " nterm ") + yytname_[yytype] + " (" + (yyvaluep == null ? "(null)" : yyvaluep.toString()) + ")");
+			LOGGER.debug(s + " {} {} ({})", yytype < yyntokens_ ? " token " : " nterm ", yytname_[yytype], yyvaluep == null ? "(null)" : yyvaluep.toString());
+		}
 	}
 
 	/**
@@ -28290,7 +28260,7 @@ public class MyParser implements Parser {
 		/// Semantic value of the lookahead.
 		Object yylval = null;
 
-		yycdebug("Starting parse\n");
+		LOGGER.debug("Starting parse");
 		thd.yyerrstatus_ = 0;
 
 		/* Initialize the stack. */
@@ -28303,9 +28273,8 @@ public class MyParser implements Parser {
 			 * New state. Unlike in the C/C++ skeletons, the state is already pushed when we come here.
 			 */
 			case YYNEWSTATE:
-				yycdebug("Entering state " + yystate + "\n");
-				if (yydebug > 0)
-					yystack.print(yyDebugStream);
+				LOGGER.debug("Entering state {}", yystate);
+				yystack.printStateStack();
 
 				/* Accept? */
 				if (yystate == yyfinal_)
@@ -28320,7 +28289,7 @@ public class MyParser implements Parser {
 
 				/* Read a lookahead token. */
 				if (yychar == yyempty_) {
-					yycdebug("Reading a token: ");
+					LOGGER.debug("Reading a token: ");
 					yychar = yylex(thd);
 					// System.out.println(LexInputStreamProcessor.getTokenString(yychar));
 					// System.out.println(yychar);
@@ -28331,7 +28300,7 @@ public class MyParser implements Parser {
 				/* Convert token to internal form. */
 				if (yychar <= EOF) {
 					yychar = yytoken = EOF;
-					yycdebug("Now at end of input.\n");
+					LOGGER.debug("Now at end of input.");
 				} else {
 					yytoken = yytranslate_(yychar);
 					yy_symbol_print("Next token is", yytoken, yylval);
@@ -28465,8 +28434,7 @@ public class MyParser implements Parser {
 
 					yystack.pop();
 					yystate = yystack.stateAt(0);
-					if (yydebug > 0)
-						yystack.print(yyDebugStream);
+					yystack.printStateStack();
 				}
 
 				/* Shift the error token. */
@@ -28618,17 +28586,17 @@ public class MyParser implements Parser {
 
 	// Report on the debug stream that the rule yyrule is going to be reduced.
 	private void yy_reduce_print(int yyrule, YYStack yystack) {
-		if (yydebug == 0)
-			return;
+		if (LOGGER.isDebugEnabled()) {
+			int yylno = yyrline_[yyrule];
+			int yynrhs = yyr2_[yyrule];
+			/* Print the symbols being reduced, and their result. */
+//			yycdebug("Reducing stack by rule " + (yyrule - 1) + " (line " + yylno + "), ");
+			LOGGER.debug("Reducing stack by rule {} (line {}), ", yyrule - 1, yylno);
 
-		int yylno = yyrline_[yyrule];
-		int yynrhs = yyr2_[yyrule];
-		/* Print the symbols being reduced, and their result. */
-		yycdebug("Reducing stack by rule " + (yyrule - 1) + " (line " + yylno + "), ");
-
-		/* The symbols being reduced. */
-		for (int yyi = 0; yyi < yynrhs; yyi++)
-			yy_symbol_print("   $" + (yyi + 1) + " =", yyrhs_[yyprhs_[yyrule] + yyi], ((yystack.valueAt(yynrhs - (yyi + 1)))));
+			/* The symbols being reduced. */
+			for (int yyi = 0; yyi < yynrhs; yyi++)
+				yy_symbol_print("   $" + (yyi + 1) + " =", yyrhs_[yyprhs_[yyrule] + yyi], ((yystack.valueAt(yynrhs - (yyi + 1)))));
+		}
 	}
 
 	/* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX. */

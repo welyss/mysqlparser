@@ -37,12 +37,4 @@ public class MySQLParser {
 	public ParseResult parse(String sql) {
 		return myParser.parse(sql);
 	}
-
-	/**
-	 * set debug level.
-	 * @param level
-	 */
-	public void setDebugLevel(int level) {
-		myParser.setDebugLevel(level);
-	}
 }
