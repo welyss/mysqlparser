@@ -1546,7 +1546,7 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 1982 of "sql_yacc.y" */
 			{
-				thd.addSQL(myLexer.lip.getPtr(thd));
+				thd.addSQL(myLexer.lip.getPtr(thd) - 1);
 				if (myLexer.lip.eof(thd)) {
 					thd.foundSemicolon = 0;
 				} else {
@@ -1584,7 +1584,7 @@ public class MyParser implements Parser {
 			{
 				/* Single query, not terminated. */
 //		YYLIP->found_semicolon= NULL;
-				thd.addSQL(myLexer.lip.getPtr(thd));
+				thd.addSQL(myLexer.lip.getPtr(thd) - 1);
 			}
 			;
 			break;

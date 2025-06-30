@@ -14,6 +14,7 @@ public class MySQLParserUnitTest {
 
 	public MySQLParserUnitTest() throws IOException {
 		parser = new MySQLParser(MySQLVersion.v56);
+		parser.setDebugLevel(1);
 	}
 
 	@Test
@@ -132,7 +133,8 @@ public class MySQLParserUnitTest {
 				+ "  PRIMARY KEY (`id`),\r\n"
 				+ "  KEY `last_modified_dt` (`last_modified_dt`),\r\n"
 				+ "  KEY `name` (`name`)\r\n"
-				+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='基金公司信息表'";
+				+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='基金公司信息表';\r\n"
+				+ "insert into `std_fund_companies` values(1,2,3);";
 //		String sql = "CREATE TABLE `std_fund_companies` (\r\n"
 //				+ "  `id` varchar(40) NOT NULL COMMENT 'ID',\r\n"
 //				+ "  `name` varchar(255) NOT NULL COMMENT '基金公司名称',\r\n"

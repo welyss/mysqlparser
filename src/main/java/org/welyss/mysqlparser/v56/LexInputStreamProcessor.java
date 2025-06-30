@@ -219,7 +219,7 @@ public class LexInputStreamProcessor {
 	 * @return true if there are no more characters to parse
 	 */
 	public boolean eof(SQLThread thd) {
-		return (thd.mPtr >= thd.sql.length() - 1);
+		return (thd.mPtr >= thd.sql.length());
 	}
 
 //	public void addDigestToken(int token, SQLThread thd) {
