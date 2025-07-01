@@ -118,14 +118,16 @@ public class LexInputStream {
 	 * @return the next character to parse.
 	 */
 	char yyGet() {
+		char c;
 		if (eof()) {
-			return MyParser.SymbolKind.S_YYEOF.getChar();
+			c = MyParser.SymbolKind.S_YYEOF.getChar();
 		} else {
-			char c = sqlBuf.charAt(mPtr++);
+			c = sqlBuf.charAt(mPtr);
 			if (mEcho)
 				mCppPtr = mPtr;
-			return c;
 		}
+		mPtr++;
+		return c;
 	}
 
 	/**
@@ -215,7 +217,7 @@ public class LexInputStream {
 	 * @return true if there are no more characters to parse
 	 */
 	boolean eof() {
-		return (mPtr >= mEndOfQuery);
+		return eof(0);
 	}
 
 	/**

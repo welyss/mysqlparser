@@ -5,6 +5,7 @@ package org.welyss.mysqlparser.v84;
  * strings/sql_chars.h,strings/sql_chars.cc
  */
 public class LexStateMapsSt {
+	private static final int MAX_CHARACTER_SIZE = 256;
 	public static MyLexStates[] mainMap;
 	public static boolean[] identMap;
 	public static HintLexCharClasses[] hintMap;
@@ -15,13 +16,13 @@ public class LexStateMapsSt {
 //		if (mainMap != null && identMap != null)
 //			return false;
 
-		MyLexStates[] stateMap = mainMap = new MyLexStates[256];
-		identMap = new boolean[256];
+		MyLexStates[] stateMap = mainMap = new MyLexStates[MAX_CHARACTER_SIZE];
+		identMap = new boolean[MAX_CHARACTER_SIZE];
 
 		hintLexInitMaps();
 
 		/* Fill stateMap with states to get a faster parser */
-		for (short i = 0; i < 256; i++) {
+		for (short i = 0; i < MAX_CHARACTER_SIZE; i++) {
 			if (Character.isAlphabetic(i))
 				stateMap[i] = MyLexStates.MY_LEX_IDENT;
 			else if (Character.isDigit(i))
@@ -53,7 +54,7 @@ public class LexStateMapsSt {
 		/*
 		 * Create a second map to make it faster to find identifiers
 		 */
-		for (short i = 0; i < 256; i++) {
+		for (short i = 0; i < MAX_CHARACTER_SIZE; i++) {
 			identMap[i] = (stateMap[i] == MyLexStates.MY_LEX_IDENT || stateMap[i] == MyLexStates.MY_LEX_NUMBER_IDENT);
 		}
 
@@ -84,8 +85,8 @@ public class LexStateMapsSt {
 	}
 
 	private static void hintLexInitMaps() {
-		hintMap = new HintLexCharClasses[256];
-		for (short i = 0; i < 256; i++) {
+		hintMap = new HintLexCharClasses[MAX_CHARACTER_SIZE];
+		for (short i = 0; i < MAX_CHARACTER_SIZE; i++) {
 			if (myIsmb1st((char)i))
 				hintMap[i] = HintLexCharClasses.HINT_CHR_MB;
 			else if (Character.isAlphabetic(i))
@@ -142,5 +143,17 @@ public class LexStateMapsSt {
 		if (c < 0xf8)
 			return 4;
 		return 0; /* Illegal mb head */
+	}
+
+	public static boolean isState(char c, MyLexStates state) {
+		return getState(c) == state;
+	}
+
+	public static MyLexStates getState(char c) {
+		return c < MAX_CHARACTER_SIZE ? mainMap[c] : MyLexStates.MY_LEX_IDENT;
+	}
+
+	public static boolean isIdent(char c) {
+		return c > MAX_CHARACTER_SIZE || identMap[c];
 	}
 }

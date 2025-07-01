@@ -224,8 +224,8 @@ public class MyLexer implements Lexer, MySQLLexer {
 		int length;
 		MyLexStates state;
 		LexInputStream lip = thd.mParserState.mLip;
-		MyLexStates[] stateMap = LexStateMapsSt.mainMap;
-		boolean[] identMap = LexStateMapsSt.identMap;
+//		MyLexStates[] stateMap = LexStateMapsSt.mainMap;
+//		boolean[] identMap = LexStateMapsSt.identMap;
 
 		lip.yylval = yylval; // The global state
 
@@ -236,7 +236,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 			switch (state) {
 			case MY_LEX_START: // Start of token
 				// Skip starting whitespace
-				while (stateMap[c = lip.yyPeek()] == MyLexStates.MY_LEX_SKIP) {
+				while (LexStateMapsSt.isState(c = lip.yyPeek(), MyLexStates.MY_LEX_SKIP)) {
 					if (c == '\n')
 						lip.yylineno++;
 					lip.yySkip();
@@ -245,7 +245,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 				/* Start of real token */
 				lip.restartToken();
 				c = lip.yyGet();
-				state = stateMap[c];
+				state = LexStateMapsSt.getState(c);
 				break;
 			case MY_LEX_CHAR: // Unknown or single char token
 			case MY_LEX_SKIP: // This should not happen
@@ -272,7 +272,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 				 * Check for a placeholder: it should not precede a possible identifier because of binlogging: when a placeholder is replaced with its value in a query for the
 				 * binlog, the query must stay grammatically correct.
 				 */
-				if (c == '?' && lip.stmtPrepareMode && !identMap[lip.yyPeek()])
+				if (c == '?' && lip.stmtPrepareMode && !LexStateMapsSt.isIdent(lip.yyPeek()))
 					return (PARAM_MARKER);
 
 				return ((int) c);
@@ -306,7 +306,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 //		        [[fallthrough]];
 			case MY_LEX_IDENT:
 				int start;
-				for (resultState = c; identMap[c = lip.yyGet()]; resultState |= c)
+				for (resultState = c; LexStateMapsSt.isIdent(c = lip.yyGet()); resultState |= c)
 					;
 				/* If there were non-ASCII characters, mark that we must convert */
 				resultState = (resultState & 0x80) == 0x80 ? IDENT_QUOTED : IDENT;
@@ -316,12 +316,12 @@ public class MyLexer implements Lexer, MySQLLexer {
 					/*
 					 * If we find a space then this can't be an identifier. We notice this below by checking start != lex.ptr.
 					 */
-					for (; stateMap[c] == MyLexStates.MY_LEX_SKIP; c = lip.yyGet()) {
+					for (; LexStateMapsSt.isState(c, MyLexStates.MY_LEX_SKIP); c = lip.yyGet()) {
 						if (c == '\n')
 							lip.yylineno++;
 					}
 				}
-				if (start == lip.getPtr() && c == '.' && identMap[lip.yyPeek()])
+				if (start == lip.getPtr() && c == '.' && LexStateMapsSt.isIdent(lip.yyPeek()))
 					lip.nextState = MyLexStates.MY_LEX_IDENT_SEP;
 				else { // '(' must follow directly if function
 					lip.yyUnget();
@@ -366,11 +366,11 @@ public class MyLexer implements Lexer, MySQLLexer {
 
 			case MY_LEX_IDENT_SEP: // Found ident and now '.'
 //		        yylval.lexStr.str = constCast<char *>(lip.getPtr());
-				yylval.lexStr.str = String.valueOf(lip.getPtr());
+				yylval.lexStr.str = String.valueOf(lip.p2c(lip.getPtr()));
 				yylval.lexStr.length = 1;
 				c = lip.yyGet(); // should be '.'
 				char nextC = lip.yyPeek();
-				if (identMap[nextC]) {
+				if (LexStateMapsSt.isIdent(nextC)) {
 					lip.nextState = MyLexStates.MY_LEX_IDENT_START; // Next is an ident (not a keyword)
 					if (nextC == '$') // We got .$ident
 //		            pushDeprecatedWarnNoReplacement(lip.mThd, "$ as the first character of an unquoted identifier");
@@ -386,7 +386,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 					if (c == 'x') {
 						while (lip.myIsxdigit(c = lip.yyGet()))
 							;
-						if ((lip.yyLength() >= 3) && !identMap[c]) {
+						if ((lip.yyLength() >= 3) && !LexStateMapsSt.isIdent(c)) {
 							/* skip '0x' */
 							yylval.lexStr = getToken(lip, 2, lip.yyLength() - 2);
 							return (HEX_NUM);
@@ -397,7 +397,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 					} else if (c == 'b') {
 						while ((c = lip.yyGet()) == '0' || c == '1')
 							;
-						if ((lip.yyLength() >= 3) && !identMap[c]) {
+						if ((lip.yyLength() >= 3) && !LexStateMapsSt.isIdent(c)) {
 							/* Skip '0b' */
 							yylval.lexStr = getToken(lip, 2, lip.yyLength() - 2);
 							return (BIN_NUM);
@@ -411,7 +411,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 
 				while (Character.isDigit(c = lip.yyGet()))
 					;
-				if (!identMap[c]) { // Can't be identifier
+				if (!LexStateMapsSt.isIdent(c)) { // Can't be identifier
 					state = MyLexStates.MY_LEX_INT_OR_REAL;
 					break;
 				}
@@ -449,12 +449,12 @@ public class MyLexer implements Lexer, MySQLLexer {
 //		            }
 //		          }
 //		        } else {
-				for (resultState = 0; identMap[c = lip.yyGet()]; resultState |= c)
+				for (resultState = 0; LexStateMapsSt.isIdent(c = lip.yyGet()); resultState |= c)
 					;
 				/* If there were non-ASCII characters, mark that we must convert */
 				resultState = (resultState & 0x80) == 0x80 ? IDENT_QUOTED : IDENT;
 //		        }
-				if (c == '.' && identMap[lip.yyPeek()])
+				if (c == '.' && LexStateMapsSt.isIdent(lip.yyPeek()))
 					lip.nextState = MyLexStates.MY_LEX_IDENT_SEP; // Next is '.'
 
 				yylval.lexStr = getToken(lip, 0, lip.yyLength());
@@ -558,7 +558,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 				return (BIN_NUM);
 
 			case MY_LEX_CMP_OP: // Incomplete comparison operator
-				if (stateMap[lip.yyPeek()] == MyLexStates.MY_LEX_CMP_OP || stateMap[lip.yyPeek()] == MyLexStates.MY_LEX_LONG_CMP_OP)
+				if (LexStateMapsSt.isState(lip.yyPeek(), MyLexStates.MY_LEX_CMP_OP) || LexStateMapsSt.isState(lip.yyPeek(), MyLexStates.MY_LEX_LONG_CMP_OP))
 					lip.yySkip();
 				if ((tokval = findKeyword(lip, lip.yyLength() + 1, false)) != 0) {
 					lip.nextState = MyLexStates.MY_LEX_START; // Allow signed numbers
@@ -568,9 +568,9 @@ public class MyLexer implements Lexer, MySQLLexer {
 				break;
 
 			case MY_LEX_LONG_CMP_OP: // Incomplete comparison operator
-				if (stateMap[lip.yyPeek()] == MyLexStates.MY_LEX_CMP_OP || stateMap[lip.yyPeek()] == MyLexStates.MY_LEX_LONG_CMP_OP) {
+				if (LexStateMapsSt.isState(lip.yyPeek(), MyLexStates.MY_LEX_CMP_OP) || LexStateMapsSt.isState(lip.yyPeek(), MyLexStates.MY_LEX_LONG_CMP_OP)) {
 					lip.yySkip();
-					if (stateMap[lip.yyPeek()] == MyLexStates.MY_LEX_CMP_OP)
+					if (LexStateMapsSt.isState(lip.yyPeek(), MyLexStates.MY_LEX_CMP_OP))
 						lip.yySkip();
 				}
 				if ((tokval = findKeyword(lip, lip.yyLength() + 1, false)) != 0) {
@@ -792,7 +792,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 				}
 				break;
 			case MY_LEX_USER_END: // end '@' of user@hostname
-				switch (stateMap[lip.yyPeek()]) {
+				switch (LexStateMapsSt.getState(lip.yyPeek())) {
 				case MY_LEX_STRING:
 				case MY_LEX_USER_VARIABLE_DELIMITER:
 				case MY_LEX_STRING_OR_DELIMITER:
@@ -816,14 +816,14 @@ public class MyLexer implements Lexer, MySQLLexer {
 				yylval.lexStr.str = String.valueOf(lip.p2c(lip.getPtr()));
 				yylval.lexStr.length = 1;
 				lip.yySkip(); // Skip '@'
-				lip.nextState = (stateMap[lip.yyPeek()] == MyLexStates.MY_LEX_USER_VARIABLE_DELIMITER ? MyLexStates.MY_LEX_START : MyLexStates.MY_LEX_IDENT_OR_KEYWORD);
+				lip.nextState = (LexStateMapsSt.isState(lip.yyPeek(), MyLexStates.MY_LEX_USER_VARIABLE_DELIMITER) ? MyLexStates.MY_LEX_START : MyLexStates.MY_LEX_IDENT_OR_KEYWORD);
 				return ((int) '@');
 			case MY_LEX_IDENT_OR_KEYWORD:
 				/*
 				 * We come here when we have found two '@' in a row. We should now be able to handle: [(global | local | session) .]variableName
 				 */
 
-				for (resultState = 0; identMap[c = lip.yyGet()]; resultState |= c)
+				for (resultState = 0; LexStateMapsSt.isIdent(c = lip.yyGet()); resultState |= c)
 					;
 				/* If there were non-ASCII characters, mark that we must convert */
 				resultState = (resultState & 0x80) == 0x80 ? IDENT_QUOTED : IDENT;
@@ -849,7 +849,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 				int len = 0; /* Length of the tag of the dollar quote */
 				char p = lip.yyPeek(); /* Character succeeding first $ */
 				// Find $ character after the tag
-				while (p != '$' && identMap[p] && lip.getPtr() + len <= lip.getEndOfQuery()) {
+				while (p != '$' && LexStateMapsSt.isIdent(p) && lip.getPtr() + len <= lip.getEndOfQuery()) {
 //		          if (useMb(cs)) {
 //		            int l =
 //		                myIsmbchar(cs, lip.getPtr() + len, lip.getEndOfQuery());
@@ -1014,12 +1014,12 @@ public class MyLexer implements Lexer, MySQLLexer {
 	 * @return true is failed, false is successful.
 	 */
 	private boolean consumeOptimizerHints(LexInputStream lip) {
-		MyLexStates[] stateMap = LexStateMapsSt.mainMap;
+//		MyLexStates[] stateMap = LexStateMapsSt.mainMap;
 		int whitespace = 0;
 		char c = lip.yyPeek();
 		int newlines = 0;
 
-		for (; stateMap[c] == MyLexStates.MY_LEX_SKIP; whitespace++, c = lip.yyPeekn(whitespace)) {
+		for (; LexStateMapsSt.isState(c, MyLexStates.MY_LEX_SKIP) ; whitespace++, c = lip.yyPeekn(whitespace)) {
 			if (c == '\n')
 				newlines++;
 		}
