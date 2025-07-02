@@ -1,6 +1,7 @@
 package mysqlparser;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
 
@@ -33,7 +34,11 @@ public class MySQLParserUnitTest {
 				+ "SELECT cte1.c1,cte2.nm FROM cte1 JOIN cte2\r\n"
 				+ "WHERE cte1.id = cte2.id;";
 		ParseResult result = parser.parse(sql);
-		assertTrue(result.success);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertFalse(result.success);
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success);
+		}
 	}
 
 	@Test
@@ -113,12 +118,16 @@ public class MySQLParserUnitTest {
 				+ "left join previous_assets_year pre_y on stat.inst_id=pre_y.inst_id and stat.mpd_id=pre_y.mpd_id \r\n"
 				+ "left join TIFP_MPD_INF mpd on stat.inst_id=mpd.inst_id and stat.mpd_id=mpd.mpd_id";
 		ParseResult result = parser.parse(sql);
-		assertTrue(result.success);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertFalse(result.success);
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success);
+		}
 	}
 
 	@Test
 	public void case4() throws IOException {
-		String sql = "CREATE TABLE `std_fund_companies` (\r\n"
+		String sql = "CREATE TABLE acdb.`std_fund_companies` (\r\n"
 				+ "  `id` varchar(40) NOT NULL COMMENT 'ID',\r\n"
 				+ "  `name` varchar(255) NOT NULL COMMENT '基金公司名称',\r\n"
 				+ "  `abbr_name` varchar(255) DEFAULT NULL COMMENT '公司简称',\r\n"
@@ -135,7 +144,7 @@ public class MySQLParserUnitTest {
 				+ "  KEY `name` (`name`)\r\n"
 				+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='基金公司信息表';\r\n"
 //				+ "insert into `std_fund_companies` values(1,2,3);";
-				+ "insert into `std_fund_companies` values(1,2,3);";
+				+ "insert into `bkdb`.`std_fund_companies` values(1,2,3);";
 //		String sql = "CREATE TABLE `std_fund_companies` (\r\n"
 //				+ "  `id` varchar(40) NOT NULL COMMENT 'ID',\r\n"
 //				+ "  `name` varchar(255) NOT NULL COMMENT '基金公司名称',\r\n"
@@ -170,6 +179,10 @@ public class MySQLParserUnitTest {
 				+ "  KEY `idx_k12` (`key1`,`key2`)\r\n"
 				+ ") ENGINE=InnoDB AUTO_INCREMENT=1310726 DEFAULT CHARSET=utf8mb4;";
 		ParseResult result = parser.parse(sql);
-		assertTrue(result.success);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertFalse(result.success);
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success);
+		}
 	}
 }

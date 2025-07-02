@@ -37,4 +37,8 @@ public class MySQLParser {
 	public ParseResult parse(String sql) {
 		return myParser.parse(sql);
 	}
+
+	public MySQLVersion version() {
+		return version;
+	}
 }

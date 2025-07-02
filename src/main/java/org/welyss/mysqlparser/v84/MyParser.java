@@ -26080,7 +26080,8 @@ public class MyParser implements Parser {
 	public ParseResult parse(String sql) {
 		ParseResult ret = new ParseResult();
 		try {
-			ret.success = myParse(new SQLThread(sql));
+			SQLThread thd = new SQLThread(sql);
+			ret.success = myParse(thd);
 		} catch (IOException e) {
 			ret.success = false;
 		}

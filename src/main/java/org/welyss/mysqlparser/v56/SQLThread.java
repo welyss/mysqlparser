@@ -1,7 +1,6 @@
 package org.welyss.mysqlparser.v56;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.TreeSet;
 
 import org.welyss.mysqlparser.AlterColumnInfo;
@@ -17,7 +16,6 @@ public class SQLThread extends MySQLThread {
 	public Boolean success;
 	public MyLexStates nextState = MyLexStates.MY_LEX_START;
 	protected StringBuilder sql;
-	protected List<SQLInfo> parsedSqls = new ArrayList<SQLInfo>();
 	protected boolean inWhere;
 	public Token yylval;
 	protected Lex lex;
