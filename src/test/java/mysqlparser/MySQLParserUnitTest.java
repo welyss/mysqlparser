@@ -20,7 +20,8 @@ public class MySQLParserUnitTest {
 
 	@Test
 	public void case1() throws IOException {
-		String sql = "select _utf8 0xD0B0D0B1D0B2;";
+		String sql = "select _utf8 0xD0B0D0B1D0B2;select 1;select 2;aaa";
+//		String sql = "select _utf8 0xD0B0D0B1D0B2;";
 //		String sql = "select id from acnt_account;";
 		ParseResult result = parser.parse(sql);
 		assertTrue(result.success);

@@ -5,7 +5,6 @@ import java.util.TreeSet;
 
 import org.welyss.mysqlparser.AlterColumnInfo;
 import org.welyss.mysqlparser.AlterFlag;
-import org.welyss.mysqlparser.Lex;
 import org.welyss.mysqlparser.MySQLThread;
 import org.welyss.mysqlparser.ParseItem;
 import org.welyss.mysqlparser.SQLInfo;
@@ -18,7 +17,8 @@ public class SQLThread extends MySQLThread {
 	protected StringBuilder sql;
 	protected boolean inWhere;
 	public Token yylval;
-	protected Lex lex;
+	public int foundSemicolon;
+
 	/** Current state of the lexical analyser. */
 	protected int mTokStartPrev;
 	/** Starting position of the last token parsed, in the raw buffer. */
@@ -76,7 +76,6 @@ public class SQLThread extends MySQLThread {
 		this.sql = new StringBuilder(sql);
 		this.inComment = EnumCommentState.NO_COMMENT;
 		mTokEnd = this.sql.length();
-		lex = new Lex();
 		mDigest = new SQLDigestState();
 	}
 

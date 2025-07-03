@@ -8,6 +8,7 @@ import org.welyss.mysqlparser.MySQLLexer;
 import org.welyss.mysqlparser.MySQLThread;
 import org.welyss.mysqlparser.ParseResult;
 import org.welyss.mysqlparser.Parser;
+import org.welyss.mysqlparser.SQLCommand;
 import org.welyss.mysqlparser.items.Position;
 import org.welyss.mysqlparser.utils.MySQLParserUtils;
 
@@ -4211,9 +4212,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 8: /* sql_statement: END_OF_INPUT */
-//  if (yyn == 8)
-//    /* "sql_yacc.y":2349  */
-//          {
+			if (yyn == 8)
+			/* "sql_yacc.y":2349 */
+			{
 //            THD *thd= YYTHD;
 //            if (!thd->is_bootstrap_system_thread() &&
 //                !thd->m_parser_state->has_comment())
@@ -4223,7 +4224,11 @@ public class MyParser implements Parser {
 //            }
 //            thd->lex->sql_command= SQLCOM_EMPTY_QUERY;
 //            YYLIP->found_semicolon= nullptr;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_EMPTY_QUERY;
+				LexInputStream lip = thd.mParserState.mLip;
+				lip.foundSemicolon = 0;
+			}
+			;
 			break;
 
 		case 9: /* $@1: %empty */
@@ -4251,23 +4256,29 @@ public class MyParser implements Parser {
 //              lip->found_semicolon= nullptr;
 //            }
 				LexInputStream lip = thd.mParserState.mLip;
+				String sql;
 				if (!lip.eof()) {
 					lip.nextState = MyLexStates.MY_LEX_END;
+					sql = lip.sqlBuf.substring(lip.foundSemicolon, lip.getPtr() - 1);
 					lip.foundSemicolon = lip.getPtr();
 				} else {
-					lip.foundSemicolon = 0;
+					sql = lip.sqlBuf.substring(lip.foundSemicolon, lip.getPtr() - 1);					lip.foundSemicolon = 0;
 				}
+				thd.addSQL(sql);
 			}
 			;
 			break;
 
 		case 11: /* sql_statement: simple_statement_or_begin END_OF_INPUT */
-//  if (yyn == 11)
-//    /* "sql_yacc.y":2386  */
-//          {
+			if (yyn == 11)
+			/* "sql_yacc.y":2386 */
+			{
 //            /* Single query, not terminated. */
 //            YYLIP->found_semicolon= nullptr;
-//          };
+				LexInputStream lip = thd.mParserState.mLip;
+				lip.foundSemicolon = 0;
+			}
+			;
 			break;
 
 		case 14: /* simple_statement_or_begin: simple_statement */
@@ -26081,7 +26092,14 @@ public class MyParser implements Parser {
 		ParseResult ret = new ParseResult();
 		try {
 			SQLThread thd = new SQLThread(sql);
-			ret.success = myParse(thd);
+			LexInputStream lip = thd.mParserState.mLip;
+			ret.success = true;
+			while(ret.success && !lip.eof()) {
+				lip.nextState = MyLexStates.MY_LEX_START;
+				lip.yylval = null;
+				ret.success = myParse(thd);
+			}
+//			ret.parsedSqls = thd.parsedSqls;
 		} catch (IOException e) {
 			ret.success = false;
 		}
