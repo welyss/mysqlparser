@@ -20,11 +20,11 @@ public class MySQLParserUnitTest {
 
 	@Test
 	public void case1() throws IOException {
-		String sql = "select _utf8 0xD0B0D0B1D0B2;select 1;select 2;aaa";
+		String sql = "select _utf8 0xD0B0D0B1D0B2;select 1;insert into `test` values(1,2,3,4);";
 //		String sql = "select _utf8 0xD0B0D0B1D0B2;";
 //		String sql = "select id from acnt_account;";
 		ParseResult result = parser.parse(sql);
-		assertTrue(result.success);
+		assertTrue(result.success());
 	}
 
 	@Test
@@ -36,9 +36,9 @@ public class MySQLParserUnitTest {
 				+ "WHERE cte1.id = cte2.id;";
 		ParseResult result = parser.parse(sql);
 		if (parser.version().equals(MySQLVersion.v56)) {
-			assertFalse(result.success);
+			assertFalse(result.success());
 		} else if(parser.version().equals(MySQLVersion.v84)) {
-			assertTrue(result.success);
+			assertTrue(result.success());
 		}
 	}
 
@@ -120,9 +120,9 @@ public class MySQLParserUnitTest {
 				+ "left join TIFP_MPD_INF mpd on stat.inst_id=mpd.inst_id and stat.mpd_id=mpd.mpd_id";
 		ParseResult result = parser.parse(sql);
 		if (parser.version().equals(MySQLVersion.v56)) {
-			assertFalse(result.success);
+			assertFalse(result.success());
 		} else if(parser.version().equals(MySQLVersion.v84)) {
-			assertTrue(result.success);
+			assertTrue(result.success());
 		}
 	}
 
@@ -163,7 +163,7 @@ public class MySQLParserUnitTest {
 //				+ "  KEY `name` (`name`)\r\n"
 //				+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='基金公司信息表'";
 		ParseResult result = parser.parse(sql);
-		assertTrue(result.success);
+		assertTrue(result.success());
 	}
 
 	@Test
@@ -181,9 +181,9 @@ public class MySQLParserUnitTest {
 				+ ") ENGINE=InnoDB AUTO_INCREMENT=1310726 DEFAULT CHARSET=utf8mb4;";
 		ParseResult result = parser.parse(sql);
 		if (parser.version().equals(MySQLVersion.v56)) {
-			assertFalse(result.success);
+			assertFalse(result.success());
 		} else if(parser.version().equals(MySQLVersion.v84)) {
-			assertTrue(result.success);
+			assertTrue(result.success());
 		}
 	}
 }

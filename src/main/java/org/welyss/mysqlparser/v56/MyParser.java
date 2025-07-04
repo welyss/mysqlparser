@@ -28644,7 +28644,7 @@ public class MyParser implements Parser {
 
 	public ParseResult parse(String sql) {
 		SQLThread thd = new SQLThread(sql);
-		ParseResult result = new ParseResult();
+		MyParseResult result = new MyParseResult();
 		thd.success = myParse(thd);
 		result.parseItems.add(thd.getSQLResultAndReset(0));
 		while (thd.success && thd.foundSemicolon > 0 && !myLexer.lip.eof(thd)) {

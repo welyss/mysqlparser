@@ -26089,7 +26089,7 @@ public class MyParser implements Parser {
 	}
 
 	public ParseResult parse(String sql) {
-		ParseResult ret = new ParseResult();
+		MyParseResult ret = new MyParseResult();
 		try {
 			SQLThread thd = new SQLThread(sql);
 			LexInputStream lip = thd.mParserState.mLip;
