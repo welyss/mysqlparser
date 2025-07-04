@@ -60,6 +60,15 @@ public enum SQLCommand {
 	SQLCOM_GET_DIAGNOSTICS,
 	SQLCOM_ALTER_USER,
 
+	/* MySQL8.4 new added */
+	SQLCOM_CHANGE_REPLICATION_SOURCE,
+	SQLCOM_CHANGE_REPLICATION_FILTER,
+	SQLCOM_STOP_GROUP_REPLICATION,
+	SQLCOM_START_GROUP_REPLICATION,
+	SQLCOM_REPLICA_STOP,
+	SQLCOM_REPLICA_START,
+	/* MySQL8.4 new added */
+
 	/*
 	When a command is added here, be sure it's also added in mysqld.cc
 	in "struct show_var_st status_vars[]= {" ...
