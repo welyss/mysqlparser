@@ -6,7 +6,7 @@ import java.util.TreeSet;
 import org.welyss.mysqlparser.AlterColumnInfo;
 import org.welyss.mysqlparser.AlterFlag;
 import org.welyss.mysqlparser.MySQLThread;
-import org.welyss.mysqlparser.ParseItem;
+import org.welyss.mysqlparser.SQLCommand;
 import org.welyss.mysqlparser.SQLInfo;
 import org.welyss.mysqlparser.items.TableIdent;
 import org.welyss.mysqlparser.items.Token;
@@ -88,22 +88,18 @@ public class SQLThread extends MySQLThread {
 		parsedSqls.add(new SQLInfo(sql.substring(foundSemicolon, eof), alterCmd));
 	}
 
-	public ParseItem getSQLResultAndReset(int lastPos) {
-		String parsedSQL;
-		String alterCommand;
+	public SQLInfo getSQLResultAndReset(int lastPos) {
+		SQLInfo ret;
 		if (success) {
-			SQLInfo sqlInfo = parsedSqls.get(parsedSqls.size() - 1);
-			alterCommand = sqlInfo.alterCommand;
-			parsedSQL = sqlInfo.sql;
+			ret = parsedSqls.get(parsedSqls.size() - 1);
 			for(TableIdent ti : this.lex.tables) {
 				if (ti.getDbStartPos() != null) ti.setDbStartPos(ti.getDbStartPos() - lastPos);
 				if (ti.getTableStartPos() != null) ti.setTableStartPos(ti.getTableStartPos() - lastPos);
 			}
 		} else {
-			parsedSQL = sql.toString();
-			alterCommand = null;
+			ret = new SQLInfo(sql.toString());
 		}
-		ParseItem result = new ParseItem(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, lex.alterInfo.flags, this.inWhere, alterCommand, lex.alterInfo.columns);
+//		ParseItem result = new ParseItem(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, lex.alterInfo.flags, this.inWhere, alterCommand, lex.alterInfo.columns);
 //		success = null;
 		this.lex.sqlCommand = null;
 		this.lex.tables.clear();
@@ -111,6 +107,6 @@ public class SQLThread extends MySQLThread {
 		this.inWhere = false;
 		lex.alterInfo.flags = new TreeSet<AlterFlag>();
 		lex.alterInfo.columns = new ArrayList<AlterColumnInfo>();
-		return result;
+		return ret;
 	}
 }

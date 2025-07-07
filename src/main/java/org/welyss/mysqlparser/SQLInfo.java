@@ -4,6 +4,11 @@ public class SQLInfo {
 	public String sql;
 	public String alterCommand;
 	public SQLCommand sqlCommand;
+
+	public SQLInfo(String sql) {
+		this.sql = sql;
+	}
+
 	public SQLInfo(String sql, SQLCommand sqlCommand) {
 		this.sql = sql;
 		this.sqlCommand = sqlCommand;

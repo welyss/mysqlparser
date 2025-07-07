@@ -28646,12 +28646,12 @@ public class MyParser implements Parser {
 		SQLThread thd = new SQLThread(sql);
 		MyParseResult result = new MyParseResult();
 		thd.success = myParse(thd);
-		result.parseItems.add(thd.getSQLResultAndReset(0));
+		result.parsedSQLInfo.add(thd.getSQLResultAndReset(0));
 		while (thd.success && thd.foundSemicolon > 0 && !myLexer.lip.eof(thd)) {
 			int lastPos = thd.mPtr;
 			thd.nextState = MyLexStates.MY_LEX_START;
 			thd.success = myParse(thd);
-			result.parseItems.add(thd.getSQLResultAndReset(lastPos));
+			result.parsedSQLInfo.add(thd.getSQLResultAndReset(lastPos));
 		}
 		result.success = thd.success;
 		return result;

@@ -26290,7 +26290,7 @@ public class MyParser implements Parser {
 				lip.yylval = null;
 				ret.success = myParse(thd);
 			}
-//			ret.parsedSqls = thd.parsedSqls;
+			ret.parsedSQLInfo = thd.parsedSqls;
 		} catch (IOException e) {
 			ret.success = false;
 		}
