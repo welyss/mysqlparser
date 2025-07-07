@@ -14200,11 +14200,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 1267: /* $@45: %empty */
-//  if (yyn == 1267)
-//    /* "sql_yacc.y":9535  */
-//          {
+			if (yyn == 1267)
+			/* "sql_yacc.y":9535 */
+			{
 //            Lex->sql_command= SQLCOM_RENAME_TABLE;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_RENAME_TABLE;
+			}
+			;
 			break;
 
 		case 1268: /* rename: RENAME table_or_tables $@45 table_to_table_list */
@@ -14214,11 +14216,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 1269: /* rename: RENAME USER rename_list */
-//  if (yyn == 1269)
-//    /* "sql_yacc.y":9541  */
-//          {
+			if (yyn == 1269)
+			/* "sql_yacc.y":9541 */
+			{
 //            Lex->sql_command = SQLCOM_RENAME_USER;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_RENAME_USER;
+			}
+			;
 			break;
 
 		case 1270: /* rename_list: user TO_SYM user */
@@ -18948,9 +18952,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 1900: /* drop_table_stmt: DROP opt_temporary table_or_tables if_exists table_list opt_restrict */
-//  if (yyn == 1900)
-//    /* "sql_yacc.y":12726  */
-//          {
+			if (yyn == 1900)
+			/* "sql_yacc.y":12726 */
+			{
 //            // Note: opt_restrict ($6) is ignored!
 //            LEX *lex=Lex;
 //            lex->sql_command = SQLCOM_DROP_TABLE;
@@ -18965,7 +18969,10 @@ public class MyParser implements Parser {
 //            Lex->m_sql_cmd= NEW_PTN Sql_cmd_drop_table();
 //            if (!Lex->m_sql_cmd)
 //              MYSQL_YYABORT; /* purecov: inspected */ //OOM
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_TABLE;
+//	  		thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_TABLE;.
+			}
+			;
 			break;
 
 		case 1901: /* drop_index_stmt: DROP INDEX_SYM ident ON_SYM table_ident opt_index_lock_and_algorithm */
@@ -18979,21 +18986,23 @@ public class MyParser implements Parser {
 			break;
 
 		case 1902: /* drop_database_stmt: DROP DATABASE if_exists ident */
-//  if (yyn == 1902)
-//    /* "sql_yacc.y":12755  */
-//          {
+			if (yyn == 1902)
+			/* "sql_yacc.y":12755 */
+			{
 //            LEX *lex=Lex;
 //            lex->sql_command= SQLCOM_DROP_DB;
 //            lex->drop_if_exists=((num)(yystack.valueAt (1)));
 //            lex->name= ((lexer.lex_str)(yystack.valueAt (0)));
 //            MAKE_CMD_DDL_DUMMY();
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_DB;
+			}
+			;
 			break;
 
 		case 1903: /* drop_function_stmt: DROP FUNCTION_SYM if_exists ident '.' ident */
-//  if (yyn == 1903)
-//    /* "sql_yacc.y":12766  */
-//          {
+			if (yyn == 1903)
+			/* "sql_yacc.y":12766 */
+			{
 //            THD *thd= YYTHD;
 //            LEX *lex= thd->lex;
 //            sp_name *spname;
@@ -19015,13 +19024,15 @@ public class MyParser implements Parser {
 //            spname->init_qname(thd);
 //            lex->spname= spname;
 //            MAKE_CMD_DDL_DUMMY();
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_FUNCTION;
+			}
+			;
 			break;
 
 		case 1904: /* drop_function_stmt: DROP FUNCTION_SYM if_exists ident */
-//  if (yyn == 1904)
-//    /* "sql_yacc.y":12790  */
-//          {
+			if (yyn == 1904)
+			/* "sql_yacc.y":12790 */
+			{
 //            /*
 //              Unlike DROP PROCEDURE, "DROP FUNCTION ident" should work
 //              even if there is no current database. In this case it
@@ -19052,7 +19063,9 @@ public class MyParser implements Parser {
 //            spname->init_qname(thd);
 //            lex->spname= spname;
 //            MAKE_CMD_DDL_DUMMY();
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_FUNCTION;
+			}
+			;
 			break;
 
 		case 1905: /* drop_resource_group_stmt: DROP RESOURCE_SYM GROUP_SYM ident opt_force */
@@ -19064,9 +19077,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 1906: /* drop_procedure_stmt: DROP PROCEDURE_SYM if_exists sp_name */
-//  if (yyn == 1906)
-//    /* "sql_yacc.y":12833  */
-//          {
+			if (yyn == 1906)
+			/* "sql_yacc.y":12833 */
+			{
 //            LEX *lex=Lex;
 //            if (lex->sphead)
 //            {
@@ -19077,25 +19090,29 @@ public class MyParser implements Parser {
 //            lex->drop_if_exists= ((num)(yystack.valueAt (1)));
 //            lex->spname= ((spname)(yystack.valueAt (0)));
 //            MAKE_CMD_DDL_DUMMY();
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_PROCEDURE;
+			}
+			;
 			break;
 
 		case 1907: /* drop_user_stmt: DROP USER if_exists user_list */
-//  if (yyn == 1907)
-//    /* "sql_yacc.y":12849  */
-//          {
+			if (yyn == 1907)
+			/* "sql_yacc.y":12849 */
+			{
 //             LEX *lex=Lex;
 //             lex->sql_command= SQLCOM_DROP_USER;
 //             lex->drop_if_exists= ((num)(yystack.valueAt (1)));
 //             lex->users_list= *((user_list)(yystack.valueAt (0)));
 //             MAKE_CMD_DCL_DUMMY();
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_USER;
+			}
+			;
 			break;
 
 		case 1908: /* drop_view_stmt: DROP VIEW_SYM if_exists table_list opt_restrict */
-//  if (yyn == 1908)
-//    /* "sql_yacc.y":12860  */
-//          {
+			if (yyn == 1908)
+			/* "sql_yacc.y":12860 */
+			{
 //            // Note: opt_restrict ($5) is ignored!
 //            LEX *lex= Lex;
 //            lex->sql_command= SQLCOM_DROP_VIEW;
@@ -19106,36 +19123,42 @@ public class MyParser implements Parser {
 //                                   YYPS->m_lock_type, YYPS->m_mdl_type))
 //              MYSQL_YYABORT;
 //            MAKE_CMD_DDL_DUMMY();
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_VIEW;
+			}
+			;
 			break;
 
 		case 1909: /* drop_event_stmt: DROP EVENT_SYM if_exists sp_name */
-//  if (yyn == 1909)
-//    /* "sql_yacc.y":12876  */
-//          {
+			if (yyn == 1909)
+			/* "sql_yacc.y":12876 */
+			{
 //            Lex->drop_if_exists= ((num)(yystack.valueAt (1)));
 //            Lex->spname= ((spname)(yystack.valueAt (0)));
 //            Lex->sql_command = SQLCOM_DROP_EVENT;
 //            MAKE_CMD_DDL_DUMMY();
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_EVENT;
+			}
+			;
 			break;
 
 		case 1910: /* drop_trigger_stmt: DROP TRIGGER_SYM if_exists sp_name */
-//  if (yyn == 1910)
-//    /* "sql_yacc.y":12886  */
-//          {
+			if (yyn == 1910)
+			/* "sql_yacc.y":12886 */
+			{
 //            LEX *lex= Lex;
 //            lex->sql_command= SQLCOM_DROP_TRIGGER;
 //            lex->drop_if_exists= ((num)(yystack.valueAt (1)));
 //            lex->spname= ((spname)(yystack.valueAt (0)));
 //            Lex->m_sql_cmd= new (YYTHD->mem_root) Sql_cmd_drop_trigger();
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_TRIGGER;
+			}
+			;
 			break;
 
 		case 1911: /* drop_tablespace_stmt: DROP TABLESPACE_SYM ident opt_drop_ts_options */
-//  if (yyn == 1911)
-//    /* "sql_yacc.y":12897  */
-//          {
+			if (yyn == 1911)
+			/* "sql_yacc.y":12897 */
+			{
 //            auto pc= NEW_PTN Alter_tablespace_parse_context{YYTHD};
 //            if (pc == nullptr)
 //              MYSQL_YYABORT; /* purecov: inspected */ // OOM
@@ -19151,13 +19174,15 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT; /* purecov: inspected */ // OOM
 //            Lex->m_sql_cmd= cmd;
 //            Lex->sql_command= SQLCOM_ALTER_TABLESPACE;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_TABLESPACE;
+			}
+			;
 			break;
 
 		case 1912: /* drop_undo_tablespace_stmt: DROP UNDO_SYM TABLESPACE_SYM ident opt_undo_tablespace_options */
-//  if (yyn == 1912)
-//    /* "sql_yacc.y":12917  */
-//          {
+			if (yyn == 1912)
+			/* "sql_yacc.y":12917 */
+			{
 //            auto pc= NEW_PTN Alter_tablespace_parse_context{YYTHD};
 //            if (pc == nullptr)
 //              MYSQL_YYABORT; // OOM
@@ -19174,13 +19199,15 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT; // OOM
 //            Lex->m_sql_cmd= cmd;
 //            Lex->sql_command= SQLCOM_ALTER_TABLESPACE;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_TABLESPACE;
+			}
+			;
 			break;
 
 		case 1913: /* drop_logfile_stmt: DROP LOGFILE_SYM GROUP_SYM ident opt_drop_ts_options */
-//  if (yyn == 1913)
-//    /* "sql_yacc.y":12939  */
-//          {
+			if (yyn == 1913)
+			/* "sql_yacc.y":12939 */
+			{
 //            auto pc= NEW_PTN Alter_tablespace_parse_context{YYTHD};
 //            if (pc == nullptr)
 //              MYSQL_YYABORT; /* purecov: inspected */ // OOM
@@ -19197,16 +19224,20 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT; /* purecov: inspected */ // OOM
 //            Lex->m_sql_cmd= cmd;
 //            Lex->sql_command= SQLCOM_ALTER_TABLESPACE;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_TABLESPACE;
+			}
+			;
 			break;
 
 		case 1914: /* drop_server_stmt: DROP SERVER_SYM if_exists ident_or_text */
-//  if (yyn == 1914)
-//    /* "sql_yacc.y":12962  */
-//          {
+			if (yyn == 1914)
+			/* "sql_yacc.y":12962 */
+			{
 //            Lex->sql_command = SQLCOM_DROP_SERVER;
 //            Lex->m_sql_cmd= NEW_PTN Sql_cmd_drop_server(((lexer.lex_str)(yystack.valueAt (0))), ((num)(yystack.valueAt (1))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_SERVER;
+			}
+			;
 			break;
 
 		case 1915: /* drop_srs_stmt: DROP SPATIAL_SYM REFERENCE_SYM SYSTEM_SYM if_exists real_ulonglong_num */
@@ -20601,14 +20632,16 @@ public class MyParser implements Parser {
 			break;
 
 		case 2107: /* $@46: %empty */
-//  if (yyn == 2107)
-//    /* "sql_yacc.y":14093  */
-//          {
+			if (yyn == 2107)
+			/* "sql_yacc.y":14093 */
+			{
 //            LEX *lex=Lex;
 //            lex->sql_command= SQLCOM_FLUSH;
 //            lex->type= 0;
 //            lex->no_write_to_binlog= ((num)(yystack.valueAt (0)));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_FLUSH;
+			}
+			;
 			break;
 
 		case 2108: /* flush: FLUSH_SYM opt_no_write_to_binlog $@46 flush_options */
@@ -20773,12 +20806,14 @@ public class MyParser implements Parser {
 			break;
 
 		case 2131: /* $@49: %empty */
-//  if (yyn == 2131)
-//    /* "sql_yacc.y":14199  */
-//          {
+			if (yyn == 2131)
+			/* "sql_yacc.y":14199 */
+			{
 //            LEX *lex=Lex;
 //            lex->sql_command= SQLCOM_RESET; lex->type=0;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_RESET;
+			}
+			;
 			break;
 
 		case 2132: /* reset: RESET_SYM $@49 reset_options */
@@ -20788,14 +20823,16 @@ public class MyParser implements Parser {
 			break;
 
 		case 2133: /* reset: RESET_SYM PERSIST_SYM opt_if_exists_ident */
-//  if (yyn == 2133)
-//    /* "sql_yacc.y":14206  */
-//          {
+			if (yyn == 2133)
+			/* "sql_yacc.y":14206 */
+			{
 //            LEX *lex=Lex;
 //            lex->sql_command= SQLCOM_RESET;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_RESET;
 //            lex->type|= REFRESH_PERSIST;
 //            lex->option_type= OPT_PERSIST;
-//          };
+			}
+			;
 			break;
 
 		case 2136: /* opt_if_exists_ident: %empty */
@@ -20913,13 +20950,15 @@ public class MyParser implements Parser {
 			break;
 
 		case 2149: /* $@52: %empty */
-//  if (yyn == 2149)
-//    /* "sql_yacc.y":14305  */
-//          {
+			if (yyn == 2149)
+			/* "sql_yacc.y":14305 */
+			{
 //            LEX *lex=Lex;
 //            lex->type=0;
 //            lex->sql_command = SQLCOM_PURGE;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_PURGE;
+			}
+			;
 			break;
 
 		case 2150: /* purge: PURGE $@52 purge_options */
@@ -20937,29 +20976,33 @@ public class MyParser implements Parser {
 			break;
 
 		case 2153: /* purge_option: BEFORE_SYM expr */
-//  if (yyn == 2153)
-//    /* "sql_yacc.y":14324  */
-//          {
+			if (yyn == 2153)
+			/* "sql_yacc.y":14324 */
+			{
 //            ITEMIZE(((item)(yystack.valueAt (0))), &((item)(yystack.valueAt (0))));
 
 //            LEX *lex= Lex;
 //            lex->purge_value_list.clear();
 //            lex->purge_value_list.push_front(((item)(yystack.valueAt (0))));
 //            lex->sql_command= SQLCOM_PURGE_BEFORE;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_PURGE_BEFORE;
+			}
+			;
 			break;
 
 		case 2154: /* kill: KILL_SYM kill_option expr */
-//  if (yyn == 2154)
-//    /* "sql_yacc.y":14338  */
-//          {
+			if (yyn == 2154)
+			/* "sql_yacc.y":14338 */
+			{
 //            ITEMIZE(((item)(yystack.valueAt (0))), &((item)(yystack.valueAt (0))));
 
 //            LEX *lex=Lex;
 //            lex->kill_value_list.clear();
 //            lex->kill_value_list.push_front(((item)(yystack.valueAt (0))));
 //            lex->sql_command= SQLCOM_KILL;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_KILL;
+			}
+			;
 			break;
 
 		case 2155: /* kill_option: %empty */
@@ -20981,17 +21024,19 @@ public class MyParser implements Parser {
 			break;
 
 		case 2158: /* use: USE_SYM ident */
-//  if (yyn == 2158)
-//    /* "sql_yacc.y":14358  */
-//          {
+			if (yyn == 2158)
+			/* "sql_yacc.y":14358 */
+			{
 //            LEX *lex=Lex;
 //            if (lex->sphead) {
 //              my_error(ER_SP_BADSTATEMENT, MYF(0), "USE");
 //              MYSQL_YYABORT;
 //            }
 //            lex->sql_command=SQLCOM_CHANGE_DB;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_CHANGE_DB;
 //            lex->query_block->db= ((lexer.lex_str)(yystack.valueAt (0))).str;
-//          };
+			}
+			;
 			break;
 
 		case 2159: /*
@@ -22189,21 +22234,25 @@ public class MyParser implements Parser {
 			break;
 
 		case 2787: /* set_role_stmt: SET_SYM ROLE_SYM NONE_SYM */
-//  if (yyn == 2787)
-//    /* "sql_yacc.y":15827  */
-//          {
+			if (yyn == 2787)
+			/* "sql_yacc.y":15827 */
+			{
 //            yyval= NEW_PTN PT_set_role((yyloc), role_enum::ROLE_NONE);
 //            Lex->sql_command= SQLCOM_SET_ROLE;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SET_ROLE;
+			}
+			;
 			break;
 
 		case 2788: /* set_role_stmt: SET_SYM ROLE_SYM DEFAULT_SYM */
-//  if (yyn == 2788)
-//    /* "sql_yacc.y":15832  */
-//          {
+			if (yyn == 2788)
+			/* "sql_yacc.y":15832 */
+			{
 //            yyval= NEW_PTN PT_set_role((yyloc), role_enum::ROLE_DEFAULT);
 //            Lex->sql_command= SQLCOM_SET_ROLE;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SET_ROLE;
+			}
+			;
 			break;
 
 		case 2789: /* set_role_stmt: SET_SYM DEFAULT_SYM ROLE_SYM role_list TO_SYM role_list */
@@ -22234,12 +22283,14 @@ public class MyParser implements Parser {
 			break;
 
 		case 2792: /* set_role_stmt: SET_SYM ROLE_SYM ALL opt_except_role_list */
-//  if (yyn == 2792)
-//    /* "sql_yacc.y":15852  */
-//          {
+			if (yyn == 2792)
+			/* "sql_yacc.y":15852 */
+			{
 //            yyval= NEW_PTN PT_set_role((yyloc), role_enum::ROLE_ALL, ((user_list)(yystack.valueAt (0))));
 //            Lex->sql_command= SQLCOM_SET_ROLE;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SET_ROLE;
+			}
+			;
 			break;
 
 		case 2793: /* opt_except_role_list: %empty */
@@ -22735,9 +22786,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 2861: /* $@53: %empty */
-//  if (yyn == 2861)
-//    /* "sql_yacc.y":16130  */
-//          {
+			if (yyn == 2861)
+			/* "sql_yacc.y":16130 */
+			{
 //            LEX *lex= Lex;
 
 //            if (lex->sphead)
@@ -22746,7 +22797,9 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT;
 //            }
 //            lex->sql_command= SQLCOM_LOCK_TABLES;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_LOCK_TABLES;
+			}
+			;
 			break;
 
 		case 2862: /* lock: LOCK_SYM table_or_tables $@53 table_lock_list */
@@ -22756,14 +22809,16 @@ public class MyParser implements Parser {
 			break;
 
 		case 2863: /* lock: LOCK_SYM INSTANCE_SYM FOR_SYM BACKUP_SYM */
-//  if (yyn == 2863)
-//    /* "sql_yacc.y":16143  */
-//          {
+			if (yyn == 2863)
+			/* "sql_yacc.y":16143 */
+			{
 //            Lex->sql_command= SQLCOM_LOCK_INSTANCE;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_LOCK_INSTANCE;
 //            Lex->m_sql_cmd= NEW_PTN Sql_cmd_lock_instance();
 //            if (Lex->m_sql_cmd == nullptr)
 //              MYSQL_YYABORT; // OOM
-//          };
+			}
+			;
 			break;
 
 		case 2868: /* table_lock: table_ident opt_table_alias lock_option */
@@ -22814,9 +22869,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 2872: /* $@54: %empty */
-//  if (yyn == 2872)
-//    /* "sql_yacc.y":16197  */
-//          {
+			if (yyn == 2872)
+			/* "sql_yacc.y":16197 */
+			{
 //            LEX *lex= Lex;
 
 //            if (lex->sphead)
@@ -22825,7 +22880,9 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT;
 //            }
 //            lex->sql_command= SQLCOM_UNLOCK_TABLES;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_UNLOCK_TABLES;
+			}
+			;
 			break;
 
 		case 2873: /* unlock: UNLOCK_SYM $@54 table_or_tables */
@@ -22835,23 +22892,27 @@ public class MyParser implements Parser {
 			break;
 
 		case 2874: /* unlock: UNLOCK_SYM INSTANCE_SYM */
-//  if (yyn == 2874)
-//    /* "sql_yacc.y":16210  */
-//          {
+			if (yyn == 2874)
+			/* "sql_yacc.y":16210 */
+			{
 //            Lex->sql_command= SQLCOM_UNLOCK_INSTANCE;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_UNLOCK_INSTANCE;
 //            Lex->m_sql_cmd= NEW_PTN Sql_cmd_unlock_instance();
 //            if (Lex->m_sql_cmd == nullptr)
 //              MYSQL_YYABORT; // OOM
-//          };
+			}
+			;
 			break;
 
 		case 2875: /* shutdown_stmt: SHUTDOWN */
-//  if (yyn == 2875)
-//    /* "sql_yacc.y":16221  */
-//          {
+			if (yyn == 2875)
+			/* "sql_yacc.y":16221 */
+			{
 //            Lex->sql_command= SQLCOM_SHUTDOWN;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHUTDOWN;
 //            yyval= NEW_PTN PT_shutdown();
-//          };
+			}
+			;
 			break;
 
 		case 2876: /* restart_server_stmt: RESTART_SYM */
@@ -22863,12 +22924,14 @@ public class MyParser implements Parser {
 			break;
 
 		case 2877: /* alter_instance_stmt: ALTER INSTANCE_SYM alter_instance_action */
-//  if (yyn == 2877)
-//    /* "sql_yacc.y":16236  */
-//          {
+			if (yyn == 2877)
+			/* "sql_yacc.y":16236 */
+			{
 //            Lex->sql_command= SQLCOM_ALTER_INSTANCE;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_INSTANCE;
 //            yyval= ((alter_instance_cmd)(yystack.valueAt (0)));
-//          };
+			}
+			;
 			break;
 
 		case 2878: /* alter_instance_action: ROTATE_SYM ident_or_text MASTER_SYM KEY_SYM */
@@ -23142,30 +23205,34 @@ public class MyParser implements Parser {
 			break;
 
 		case 2906: /* revoke: REVOKE if_exists ALL opt_privileges ',' GRANT OPTION FROM user_list opt_ignore_unknown_user */
-//  if (yyn == 2906)
-//    /* "sql_yacc.y":16426  */
-//          {
+			if (yyn == 2906)
+			/* "sql_yacc.y":16426 */
+			{
 //            Lex->grant_if_exists = ((num)(yystack.valueAt (8)));
 //            Lex->ignore_unknown_user = ((num)(yystack.valueAt (0)));
 //            Lex->sql_command = SQLCOM_REVOKE_ALL;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_REVOKE_ALL;
 //            Lex->users_list= *((user_list)(yystack.valueAt (1)));
 //            MAKE_CMD_DCL_DUMMY();
-//          };
+			}
+			;
 			break;
 
 		case 2907: /* revoke: REVOKE if_exists PROXY_SYM ON_SYM user FROM user_list opt_ignore_unknown_user */
-//  if (yyn == 2907)
-//    /* "sql_yacc.y":16434  */
-//          {
+			if (yyn == 2907)
+			/* "sql_yacc.y":16434 */
+			{
 //            LEX *lex= Lex;
 //            lex->grant_if_exists = ((num)(yystack.valueAt (6)));
 //            lex->ignore_unknown_user = ((num)(yystack.valueAt (0)));
 //            lex->sql_command= SQLCOM_REVOKE;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_REVOKE;
 //            lex->users_list= *((user_list)(yystack.valueAt (1)));
 //            lex->users_list.push_front (((lex_user)(yystack.valueAt (3))));
 //            lex->type= TYPE_ENUM_PROXY;
 //            MAKE_CMD_DCL_DUMMY();
-//          };
+			}
+			;
 			break;
 
 		case 2908: /* grant: GRANT role_or_privilege_list TO_SYM user_list opt_with_admin_option */
@@ -23178,11 +23245,12 @@ public class MyParser implements Parser {
 			break;
 
 		case 2909: /* grant: GRANT role_or_privilege_list ON_SYM opt_acl_type grant_ident TO_SYM user_list grant_options opt_grant_as */
-//  if (yyn == 2909)
-//    /* "sql_yacc.y":16454  */
-//          {
+			if (yyn == 2909)
+			/* "sql_yacc.y":16454 */
+			{
 //            LEX *lex= Lex;
 //            lex->sql_command= SQLCOM_GRANT;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_GRANT;
 //            if (apply_privileges(YYTHD, *((role_or_privilege_list)(yystack.valueAt (7)))))
 //              MYSQL_YYABORT;
 
@@ -23194,7 +23262,8 @@ public class MyParser implements Parser {
 //            lex->type= static_cast<ulong>(((acl_type)(yystack.valueAt (5))));
 //            lex->users_list= *((user_list)(yystack.valueAt (2)));
 //            MAKE_CMD_DCL_DUMMY();
-//          };
+			}
+			;
 			break;
 
 		case 2910: /* $@56: %empty */
@@ -23207,11 +23276,12 @@ public class MyParser implements Parser {
 			break;
 
 		case 2911: /* grant: GRANT ALL opt_privileges $@56 ON_SYM opt_acl_type grant_ident TO_SYM user_list grant_options opt_grant_as */
-//  if (yyn == 2911)
-//    /* "sql_yacc.y":16475  */
-//          {
+			if (yyn == 2911)
+			/* "sql_yacc.y":16475 */
+			{
 //            LEX *lex= Lex;
 //            lex->sql_command= SQLCOM_GRANT;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_GRANT;
 //            if (((acl_type)(yystack.valueAt (5))) != Acl_type::TABLE && !lex->columns.is_empty())
 //            {
 //              YYTHD->syntax_error();
@@ -23220,22 +23290,25 @@ public class MyParser implements Parser {
 //            lex->type= static_cast<ulong>(((acl_type)(yystack.valueAt (5))));
 //            lex->users_list= *((user_list)(yystack.valueAt (2)));
 //            MAKE_CMD_DCL_DUMMY();
-//          };
+			}
+			;
 			break;
 
 		case 2912: /* grant: GRANT PROXY_SYM ON_SYM user TO_SYM user_list opt_grant_option */
-//  if (yyn == 2912)
-//    /* "sql_yacc.y":16488  */
-//          {
+			if (yyn == 2912)
+			/* "sql_yacc.y":16488 */
+			{
 //            LEX *lex= Lex;
 //            lex->sql_command= SQLCOM_GRANT;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_GRANT;
 //            if (((is_not_empty)(yystack.valueAt (0))))
 //              lex->grant |= GRANT_ACL;
 //            lex->users_list= *((user_list)(yystack.valueAt (1)));
 //            lex->users_list.push_front (((lex_user)(yystack.valueAt (3))));
 //            lex->type= TYPE_ENUM_PROXY;
 //            MAKE_CMD_DCL_DUMMY();
-//          };
+			}
+			;
 			break;
 
 		case 2913: /* opt_acl_type: %empty */
@@ -24342,13 +24415,15 @@ public class MyParser implements Parser {
 			break;
 
 		case 3042: /* $@57: %empty */
-//  if (yyn == 3042)
-//    /* "sql_yacc.y":17245  */
-//          {
+			if (yyn == 3042)
+			/* "sql_yacc.y":17245 */
+			{
 //            LEX *lex=Lex;
 //            lex->sql_command = SQLCOM_BEGIN;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_BEGIN;
 //            lex->start_transaction_opt= 0;
-//          };
+			}
+			;
 			break;
 
 		case 3043: /* begin_stmt: BEGIN_SYM $@57 opt_work */
@@ -24418,59 +24493,69 @@ public class MyParser implements Parser {
 			break;
 
 		case 3054: /* commit: COMMIT_SYM opt_work opt_chain opt_release */
-//  if (yyn == 3054)
-//    /* "sql_yacc.y":17277  */
-//          {
+			if (yyn == 3054)
+			/* "sql_yacc.y":17277 */
+			{
 //            LEX *lex=Lex;
 //            lex->sql_command= SQLCOM_COMMIT;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_COMMIT;
 //            /* Don't allow AND CHAIN RELEASE. */
 //            MYSQL_YYABORT_UNLESS(((m_yes_no_unk)(yystack.valueAt (1))) != TVL_YES || ((m_yes_no_unk)(yystack.valueAt (0))) != TVL_YES);
 //            lex->tx_chain= ((m_yes_no_unk)(yystack.valueAt (1)));
 //            lex->tx_release= ((m_yes_no_unk)(yystack.valueAt (0)));
-//          };
+			}
+			;
 			break;
 
 		case 3055: /* rollback: ROLLBACK_SYM opt_work opt_chain opt_release */
-//  if (yyn == 3055)
-//    /* "sql_yacc.y":17289  */
-//          {
+			if (yyn == 3055)
+			/* "sql_yacc.y":17289 */
+			{
 //            LEX *lex=Lex;
 //            lex->sql_command= SQLCOM_ROLLBACK;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ROLLBACK;
 //            /* Don't allow AND CHAIN RELEASE. */
 //            MYSQL_YYABORT_UNLESS(((m_yes_no_unk)(yystack.valueAt (1))) != TVL_YES || ((m_yes_no_unk)(yystack.valueAt (0))) != TVL_YES);
 //            lex->tx_chain= ((m_yes_no_unk)(yystack.valueAt (1)));
 //            lex->tx_release= ((m_yes_no_unk)(yystack.valueAt (0)));
-//          };
+			}
+			;
 			break;
 
 		case 3056: /* rollback: ROLLBACK_SYM opt_work TO_SYM opt_savepoint ident */
-//  if (yyn == 3056)
-//    /* "sql_yacc.y":17299  */
-//          {
+			if (yyn == 3056)
+			/* "sql_yacc.y":17299 */
+			{
 //            LEX *lex=Lex;
 //            lex->sql_command= SQLCOM_ROLLBACK_TO_SAVEPOINT;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ROLLBACK_TO_SAVEPOINT;
 //            lex->ident= ((lexer.lex_str)(yystack.valueAt (0)));
-//          };
+			}
+			;
 			break;
 
 		case 3057: /* savepoint: SAVEPOINT_SYM ident */
-//  if (yyn == 3057)
-//    /* "sql_yacc.y":17308  */
-//          {
+			if (yyn == 3057)
+			/* "sql_yacc.y":17308 */
+			{
 //            LEX *lex=Lex;
 //            lex->sql_command= SQLCOM_SAVEPOINT;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SAVEPOINT;
 //            lex->ident= ((lexer.lex_str)(yystack.valueAt (0)));
-//          };
+			}
+			;
 			break;
 
 		case 3058: /* release: RELEASE_SYM SAVEPOINT_SYM ident */
-//  if (yyn == 3058)
-//    /* "sql_yacc.y":17317  */
-//          {
+			if (yyn == 3058)
+			/* "sql_yacc.y":17317 */
+			{
 //            LEX *lex=Lex;
 //            lex->sql_command= SQLCOM_RELEASE_SAVEPOINT;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_RELEASE_SAVEPOINT;
 //            lex->ident= ((lexer.lex_str)(yystack.valueAt (0)));
-//          };
+			}
+			;
 			break;
 
 		case 3059: /* union_option: %empty */
@@ -24665,12 +24750,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 3102: /* $@58: %empty */
-//  if (yyn == 3102)
-//    /* "sql_yacc.y":17479  */
-//          {
+			if (yyn == 3102)
+			/* "sql_yacc.y":17479 */
+			{
 //            THD *thd= YYTHD;
 //            LEX *lex= thd->lex;
 //            lex->sql_command= SQLCOM_CREATE_VIEW;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_VIEW;
 //            /* first table in list is target VIEW name */
 //            if (!lex->query_block->add_table_to_list(thd, ((table)(yystack.valueAt (1))), nullptr,
 //                                                    TL_OPTION_UPDATING,
@@ -24701,7 +24787,8 @@ public class MyParser implements Parser {
 //              lex->query_tables->
 //                set_derived_column_names(static_cast<Create_col_name_list* >(rawmem));
 //            }
-//          };
+			}
+			;
 			break;
 
 		case 3104: /* view_query_block: query_expression_with_opt_locking_clauses view_check_option */
@@ -24855,9 +24942,9 @@ public class MyParser implements Parser {
 					 * trigger_tail: TRIGGER_SYM opt_if_not_exists sp_name trg_action_time trg_event ON_SYM table_ident FOR_SYM EACH_SYM ROW_SYM trigger_follows_precedes_clause
 					 * $@59 sp_proc_stmt
 					 */
-//  if (yyn == 3114)
-//    /* "sql_yacc.y":17651  */
-//          {                               /* $14 */
+			if (yyn == 3114)
+			/* "sql_yacc.y":17651 */
+			{ /* $14 */
 //            THD *thd= YYTHD;
 //            LEX *lex= Lex;
 //            sp_head *sp= lex->sphead;
@@ -24865,6 +24952,7 @@ public class MyParser implements Parser {
 //            sp_finish_parsing(thd);
 
 //            lex->sql_command= SQLCOM_CREATE_TRIGGER;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_TRIGGER;
 
 //            if (sp->is_not_allowed_in_function("trigger"))
 //              MYSQL_YYABORT;
@@ -24882,13 +24970,14 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT;
 
 //            Lex->m_sql_cmd= new (YYTHD->mem_root) Sql_cmd_create_trigger();
-//          };
+			}
+			;
 			break;
 
 		case 3115: /* udf_tail: AGGREGATE_SYM FUNCTION_SYM opt_if_not_exists ident RETURNS_SYM udf_type SONAME_SYM TEXT_STRING_sys */
-//  if (yyn == 3115)
-//    /* "sql_yacc.y":17694  */
-//          {                     /* $9 */
+			if (yyn == 3115)
+			/* "sql_yacc.y":17694 */
+			{ /* $9 */
 //            THD *thd= YYTHD;
 //            LEX *lex= thd->lex;
 
@@ -24907,19 +24996,21 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT;
 //            }
 //            lex->sql_command = SQLCOM_CREATE_FUNCTION;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_FUNCTION;
 //            lex->udf.type= UDFTYPE_AGGREGATE;
 //            lex->stmt_definition_begin= yystack.locationAt (6).cpp.start;
 //            lex->create_info->options= ((is_not_empty)(yystack.valueAt (5))) ? HA_LEX_CREATE_IF_NOT_EXISTS : 0;
 //            lex->udf.name = ((lexer.lex_str)(yystack.valueAt (4)));
 //            lex->udf.returns=(Item_result) ((num)(yystack.valueAt (2)));
 //            lex->udf.dl=((lexer.lex_str)(yystack.valueAt (0))).str;
-//          };
+			}
+			;
 			break;
 
 		case 3116: /* udf_tail: FUNCTION_SYM opt_if_not_exists ident RETURNS_SYM udf_type SONAME_SYM TEXT_STRING_sys */
-//  if (yyn == 3116)
-//    /* "sql_yacc.y":17727  */
-//          {
+			if (yyn == 3116)
+			/* "sql_yacc.y":17727 */
+			{
 //            THD *thd= YYTHD;
 //            LEX *lex= thd->lex;
 
@@ -24938,13 +25029,15 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT;
 //            }
 //            lex->sql_command = SQLCOM_CREATE_FUNCTION;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_FUNCTION;
 //            lex->udf.type= UDFTYPE_FUNCTION;
 //            lex->stmt_definition_begin= yystack.locationAt (6).cpp.start;
 //            lex->create_info->options= ((is_not_empty)(yystack.valueAt (5))) ? HA_LEX_CREATE_IF_NOT_EXISTS : 0;
 //            lex->udf.name = ((lexer.lex_str)(yystack.valueAt (4)));
 //            lex->udf.returns=(Item_result) ((num)(yystack.valueAt (2)));
 //            lex->udf.dl=((lexer.lex_str)(yystack.valueAt (0))).str;
-//          };
+			}
+			;
 			break;
 
 		case 3117: /* $@60: %empty */
@@ -25044,9 +25137,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 3121: /* sf_tail: FUNCTION_SYM opt_if_not_exists sp_name '(' $@60 sp_fdparam_list ')' $@61 RETURNS_SYM type opt_collate $@62 sp_c_chistics $@63 stored_routine_body */
-//  if (yyn == 3121)
-//    /* "sql_yacc.y":17844  */
-//          {
+			if (yyn == 3121)
+			/* "sql_yacc.y":17844 */
+			{
 //            THD *thd= YYTHD;
 //            LEX *lex= thd->lex;
 //            sp_head *sp= lex->sphead;
@@ -25055,6 +25148,7 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT;
 
 //            lex->sql_command= SQLCOM_CREATE_SPFUNCTION;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_SPFUNCTION;
 
 //            if (sp->is_sql() && !(sp->m_flags & sp_head::HAS_RETURN)) {
 //              my_error(ER_SP_NORETURN, MYF(0), sp->m_qname.str);
@@ -25096,7 +25190,8 @@ public class MyParser implements Parser {
 //                                  ER_THD(thd, ER_NATIVE_FCT_NAME_COLLISION),
 //                                  sp->m_name.str);
 //            }
-//          };
+			}
+			;
 			break;
 
 		case 3124: /* stored_routine_body: AS routine_string */
@@ -25190,66 +25285,80 @@ public class MyParser implements Parser {
 			break;
 
 		case 3130: /* sp_tail: PROCEDURE_SYM opt_if_not_exists sp_name $@64 '(' $@65 sp_pdparam_list ')' $@66 sp_c_chistics $@67 stored_routine_body */
-//  if (yyn == 3130)
-//    /* "sql_yacc.y":17975  */
-//          {                     /*$13*/
+			if (yyn == 3130)
+			/* "sql_yacc.y":17975 */
+			{ /* $13 */
 //            LEX *lex= Lex;
 //            lex->sql_command= SQLCOM_CREATE_PROCEDURE;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_PROCEDURE;
+			}
+			;
 			break;
 
 		case 3131: /* xa: XA_SYM begin_or_start xid opt_join_or_resume */
-//  if (yyn == 3131)
-//    /* "sql_yacc.y":17985  */
-//          {
+			if (yyn == 3131)
+			/* "sql_yacc.y":17985 */
+			{
 //            Lex->sql_command = SQLCOM_XA_START;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_XA_START;
 //            Lex->m_sql_cmd= NEW_PTN Sql_cmd_xa_start(((xid)(yystack.valueAt (1))), ((xa_option_type)(yystack.valueAt (0))));
-//          };
+			}
+			;
 			break;
 
 		case 3132: /* xa: XA_SYM END xid opt_suspend */
 //  if (yyn == 3132)
-//    /* "sql_yacc.y":17990  */
-//          {
+		/* "sql_yacc.y":17990 */
+		{
 //            Lex->sql_command = SQLCOM_XA_END;
+			thd.lex.sqlCommand = SQLCommand.SQLCOM_XA_END;
 //            Lex->m_sql_cmd= NEW_PTN Sql_cmd_xa_end(((xid)(yystack.valueAt (1))), ((xa_option_type)(yystack.valueAt (0))));
-//          };
+		}
+			;
 			break;
 
 		case 3133: /* xa: XA_SYM PREPARE_SYM xid */
-//  if (yyn == 3133)
-//    /* "sql_yacc.y":17995  */
-//          {
+			if (yyn == 3133)
+			/* "sql_yacc.y":17995 */
+			{
 //            Lex->sql_command = SQLCOM_XA_PREPARE;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_XA_PREPARE;
 //            Lex->m_sql_cmd= NEW_PTN Sql_cmd_xa_prepare(((xid)(yystack.valueAt (0))));
-//          };
+			}
+			;
 			break;
 
 		case 3134: /* xa: XA_SYM COMMIT_SYM xid opt_one_phase */
-//  if (yyn == 3134)
-//    /* "sql_yacc.y":18000  */
-//          {
+			if (yyn == 3134)
+			/* "sql_yacc.y":18000 */
+			{
 //            Lex->sql_command = SQLCOM_XA_COMMIT;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_XA_COMMIT;
 //            Lex->m_sql_cmd= NEW_PTN Sql_cmd_xa_commit(((xid)(yystack.valueAt (1))), ((xa_option_type)(yystack.valueAt (0))));
-//          };
+			}
+			;
 			break;
 
 		case 3135: /* xa: XA_SYM ROLLBACK_SYM xid */
-//  if (yyn == 3135)
-//    /* "sql_yacc.y":18005  */
-//          {
+			if (yyn == 3135)
+			/* "sql_yacc.y":18005 */
+			{
 //            Lex->sql_command = SQLCOM_XA_ROLLBACK;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_XA_ROLLBACK;
 //            Lex->m_sql_cmd= NEW_PTN Sql_cmd_xa_rollback(((xid)(yystack.valueAt (0))));
-//          };
+			}
+			;
 			break;
 
 		case 3136: /* xa: XA_SYM RECOVER_SYM opt_convert_xid */
-//  if (yyn == 3136)
-//    /* "sql_yacc.y":18010  */
-//          {
+			if (yyn == 3136)
+			/* "sql_yacc.y":18010 */
+			{
 //            Lex->sql_command = SQLCOM_XA_RECOVER;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_XA_RECOVER;
 //            Lex->m_sql_cmd= NEW_PTN Sql_cmd_xa_recover(((is_not_empty)(yystack.valueAt (0))));
-//          };
+			}
+			;
 			break;
 
 		case 3137: /* opt_convert_xid: %empty */
@@ -25441,14 +25550,16 @@ public class MyParser implements Parser {
 			break;
 
 		case 3162: /* install_stmt: INSTALL_SYM PLUGIN_SYM ident SONAME_SYM TEXT_STRING_sys */
-//  if (yyn == 3162)
-//    /* "sql_yacc.y":18129  */
-//          {
+			if (yyn == 3162)
+			/* "sql_yacc.y":18129 */
+			{
 //            LEX *lex= Lex;
 //            lex->sql_command= SQLCOM_INSTALL_PLUGIN;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_INSTALL_PLUGIN;
 //            lex->m_sql_cmd= new (YYMEM_ROOT) Sql_cmd_install_plugin(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (2)))), ((lexer.lex_str)(yystack.valueAt (0))));
 //            yyval = nullptr;
-//          };
+			}
+			;
 			break;
 
 		case 3163: /* install_stmt: INSTALL_SYM COMPONENT_SYM TEXT_STRING_sys_list opt_install_set_value_list */
@@ -25460,23 +25571,27 @@ public class MyParser implements Parser {
 			break;
 
 		case 3164: /* uninstall: UNINSTALL_SYM PLUGIN_SYM ident */
-//  if (yyn == 3164)
-//    /* "sql_yacc.y":18143  */
-//          {
+			if (yyn == 3164)
+			/* "sql_yacc.y":18143 */
+			{
 //            LEX *lex= Lex;
 //            lex->sql_command= SQLCOM_UNINSTALL_PLUGIN;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_UNINSTALL_PLUGIN;
 //            lex->m_sql_cmd= new (YYMEM_ROOT) Sql_cmd_uninstall_plugin(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (0)))));
-//          };
+			}
+			;
 			break;
 
 		case 3165: /* uninstall: UNINSTALL_SYM COMPONENT_SYM TEXT_STRING_sys_list */
-//  if (yyn == 3165)
-//    /* "sql_yacc.y":18149  */
-//          {
+			if (yyn == 3165)
+			/* "sql_yacc.y":18149 */
+			{
 //            LEX *lex= Lex;
 //            lex->sql_command= SQLCOM_UNINSTALL_COMPONENT;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_UNINSTALL_COMPONENT;
 //            lex->m_sql_cmd= new (YYMEM_ROOT) Sql_cmd_uninstall_component(((lex_str_list)(yystack.valueAt (0))));
-//          };
+			}
+			;
 			break;
 
 		case 3166: /* TEXT_STRING_sys_list: TEXT_STRING_sys */
@@ -25500,34 +25615,39 @@ public class MyParser implements Parser {
 			break;
 
 		case 3168: /* import_stmt: IMPORT TABLE_SYM FROM TEXT_STRING_sys_list */
-//  if (yyn == 3168)
-//    /* "sql_yacc.y":18173  */
-//          {
+			if (yyn == 3168)
+			/* "sql_yacc.y":18173 */
+			{
 //            LEX *lex= Lex;
 //            lex->m_sql_cmd=
 //              new (YYTHD->mem_root) Sql_cmd_import_table(((lex_str_list)(yystack.valueAt (0))));
 //            if (lex->m_sql_cmd == nullptr)
 //              MYSQL_YYABORT;
 //            lex->sql_command= SQLCOM_IMPORT;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_IMPORT;
+			}
+			;
 			break;
 
 		case 3169: /* clone_stmt: CLONE_SYM LOCAL_SYM DATA_SYM DIRECTORY_SYM opt_equal TEXT_STRING_filesystem */
-//  if (yyn == 3169)
-//    /* "sql_yacc.y":18191  */
-//          {
+			if (yyn == 3169)
+			/* "sql_yacc.y":18191 */
+			{
 //            Lex->sql_command= SQLCOM_CLONE;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_CLONE;
 //            Lex->m_sql_cmd= NEW_PTN Sql_cmd_clone(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (0)))));
 //            if (Lex->m_sql_cmd == nullptr)
 //              MYSQL_YYABORT;
-//          };
+			}
+			;
 			break;
 
 		case 3170: /* clone_stmt: CLONE_SYM INSTANCE_SYM FROM user ':' ulong_num IDENTIFIED_SYM BY TEXT_STRING_sys opt_datadir_ssl */
-//  if (yyn == 3170)
-//    /* "sql_yacc.y":18201  */
-//          {
+			if (yyn == 3170)
+			/* "sql_yacc.y":18201 */
+			{
 //            Lex->sql_command= SQLCOM_CLONE;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_CLONE;
 //            /* Reject space characters around ':' */
 //            if (yystack.locationAt (4).raw.start - yystack.locationAt (6).raw.end != 1) {
 //              YYTHD->syntax_error_at(yystack.locationAt (5));
@@ -25541,7 +25661,8 @@ public class MyParser implements Parser {
 
 //            if (Lex->m_sql_cmd == nullptr)
 //              MYSQL_YYABORT;
-//          };
+			}
+			;
 			break;
 
 		case 3171: /* opt_datadir_ssl: opt_ssl */
