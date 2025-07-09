@@ -6,7 +6,6 @@ import java.util.TreeSet;
 import org.welyss.mysqlparser.AlterColumnInfo;
 import org.welyss.mysqlparser.AlterFlag;
 import org.welyss.mysqlparser.MySQLThread;
-import org.welyss.mysqlparser.SQLCommand;
 import org.welyss.mysqlparser.SQLInfo;
 import org.welyss.mysqlparser.items.TableIdent;
 import org.welyss.mysqlparser.items.Token;
@@ -85,7 +84,7 @@ public class SQLThread extends MySQLThread {
 			alterCmd = sql.substring(lex.alterPos, eof).trim();
 			lex.alterPos = null;
 		}
-		parsedSqls.add(new SQLInfo(sql.substring(foundSemicolon, eof), alterCmd));
+		parsedSqls.add(new SQLInfo(sql.substring(foundSemicolon, eof), alterCmd, lex.sqlCommand));
 	}
 
 	public SQLInfo getSQLResultAndReset(int lastPos) {
@@ -97,7 +96,7 @@ public class SQLThread extends MySQLThread {
 				if (ti.getTableStartPos() != null) ti.setTableStartPos(ti.getTableStartPos() - lastPos);
 			}
 		} else {
-			ret = new SQLInfo(sql.toString());
+			ret = new SQLInfo(sql.toString(), this.lex.sqlCommand);
 		}
 //		ParseItem result = new ParseItem(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, lex.alterInfo.flags, this.inWhere, alterCommand, lex.alterInfo.columns);
 //		success = null;

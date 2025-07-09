@@ -9,12 +9,13 @@ import org.junit.Test;
 import org.welyss.mysqlparser.MySQLParser;
 import org.welyss.mysqlparser.MySQLVersion;
 import org.welyss.mysqlparser.ParseResult;
+import org.welyss.mysqlparser.SQLCommand;
 
 public class MySQLParserUnitTest {
 	MySQLParser parser;
 
 	public MySQLParserUnitTest() throws IOException {
-		parser = new MySQLParser(MySQLVersion.v56);
+		parser = new MySQLParser(MySQLVersion.v84);
 //		parser.setDebugLevel(1);
 	}
 
@@ -25,6 +26,7 @@ public class MySQLParserUnitTest {
 //		String sql = "select id from acnt_account;";
 		ParseResult result = parser.parse(sql);
 		assertTrue(result.success());
+		assertTrue(result.getParsedSQLInfo().get(0).getSQLCommand().equals(SQLCommand.SQLCOM_SELECT));
 	}
 
 	@Test
@@ -185,5 +187,19 @@ public class MySQLParserUnitTest {
 		} else if(parser.version().equals(MySQLVersion.v84)) {
 			assertTrue(result.success());
 		}
+	}
+
+	@Test
+	public void case6() throws IOException {
+		String sql = "select 1;insert into `test` values(1,2,3,4);update t1 set a=123 where id = 1;delete from t2 where id =22;";
+//		String sql = "select _utf8 0xD0B0D0B1D0B2;";
+//		String sql = "select id from acnt_account;";
+		ParseResult result = parser.parse(sql);
+		assertTrue(result.success());
+		assertTrue(result.getParsedSQLInfo().size() == 4);
+		assertTrue(result.getParsedSQLInfo().get(0).getSQLCommand().equals(SQLCommand.SQLCOM_SELECT));
+		assertTrue(result.getParsedSQLInfo().get(1).getSQLCommand().equals(SQLCommand.SQLCOM_INSERT));
+		assertTrue(result.getParsedSQLInfo().get(2).getSQLCommand().equals(SQLCommand.SQLCOM_UPDATE));
+		assertTrue(result.getParsedSQLInfo().get(3).getSQLCommand().equals(SQLCommand.SQLCOM_DELETE));
 	}
 }

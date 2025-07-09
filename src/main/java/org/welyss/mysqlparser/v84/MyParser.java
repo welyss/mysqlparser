@@ -12405,12 +12405,14 @@ public class MyParser implements Parser {
 					 * alter_resource_group_stmt: ALTER RESOURCE_SYM GROUP_SYM ident opt_resource_group_vcpu_list opt_resource_group_priority opt_resource_group_enable_disable
 					 * opt_force
 					 */
-//  if (yyn == 1040)
-//    /* "sql_yacc.y":8336  */
-//          {
+			if (yyn == 1040)
+			/* "sql_yacc.y":8336 */
+			{
 //            yyval= NEW_PTN PT_alter_resource_group((yyloc), to_lex_cstring(((lexer.lex_str)(yystack.valueAt (4)))),
 //                                                ((resource_group_vcpu_list_type)(yystack.valueAt (3))), ((resource_group_priority_type)(yystack.valueAt (2))), ((resource_group_state_type)(yystack.valueAt (1))), ((resource_group_flag_type)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_RESOURCE_GROUP;
+			}
+			;
 			break;
 
 		case 1041: /* alter_user_command: ALTER USER if_exists */
@@ -14553,9 +14555,9 @@ public class MyParser implements Parser {
 					 * query_specification: SELECT_SYM select_options select_item_list into_clause opt_from_clause opt_where_clause opt_group_clause opt_having_clause
 					 * opt_window_clause opt_qualify_clause
 					 */
-//  if (yyn == 1311)
-//    /* "sql_yacc.y":9855  */
-//          {
+			if (yyn == 1311)
+			/* "sql_yacc.y":9855 */
+			{
 //            yyval= NEW_PTN PT_query_specification(
 //                                      (yyloc),
 //                                      ((lexer.optimizer_hints)(yystack.valueAt (9))),  // SELECT_SYM
@@ -14569,16 +14571,18 @@ public class MyParser implements Parser {
 //                                      ((windows)(yystack.valueAt (1))),  // windows
 //                                      ((item)(yystack.valueAt (0))), // qualify
 //                                      yystack.locationAt (5).raw.is_empty()); // implicit FROM
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SELECT;
+			}
+			;
 			break;
 
 		case 1312: /*
 					 * query_specification: SELECT_SYM select_options select_item_list opt_from_clause opt_where_clause opt_group_clause opt_having_clause opt_window_clause
 					 * opt_qualify_clause
 					 */
-//  if (yyn == 1312)
-//    /* "sql_yacc.y":9879  */
-//          {
+			if (yyn == 1312)
+			/* "sql_yacc.y":9879 */
+			{
 //            yyval= NEW_PTN PT_query_specification(
 //                                      (yyloc),
 //                                      ((lexer.optimizer_hints)(yystack.valueAt (8))),  // SELECT_SYM
@@ -14592,7 +14596,9 @@ public class MyParser implements Parser {
 //                                      ((windows)(yystack.valueAt (1))),  // windows
 //                                      ((item)(yystack.valueAt (0))),  // qualify
 //                                      yystack.locationAt (5).raw.is_empty()); // implicit FROM
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SELECT;
+			}
+			;
 			break;
 
 		case 1313: /* opt_from_clause: %empty */
@@ -18942,13 +18948,15 @@ public class MyParser implements Parser {
 			break;
 
 		case 1899: /* do_stmt: DO_SYM select_item_list */
-//  if (yyn == 1899)
-//    /* "sql_yacc.y":12713  */
-//          {
+			if (yyn == 1899)
+			/* "sql_yacc.y":12713 */
+			{
 //            yyval= NEW_PTN PT_select_stmt((yyloc), SQLCOM_DO,
 //                  NEW_PTN PT_query_expression((yyloc),
 //                    NEW_PTN PT_query_specification((yyloc), {}, ((item_list2)(yystack.valueAt (0))))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DO;
+			}
+			;
 			break;
 
 		case 1900: /* drop_table_stmt: DROP opt_temporary table_or_tables if_exists table_list opt_restrict */
@@ -19362,9 +19370,9 @@ public class MyParser implements Parser {
 					 * insert_stmt: INSERT_SYM insert_lock_option opt_ignore opt_INTO table_ident opt_use_partition insert_from_constructor opt_values_reference
 					 * opt_insert_update_list
 					 */
-//  if (yyn == 1933)
-//    /* "sql_yacc.y":13065  */
-//          {
+			if (yyn == 1933)
+			/* "sql_yacc.y":13065 */
+			{
 //            DBUG_EXECUTE_IF("bug29614521_simulate_oom",
 //                             DBUG_SET("+d,simulate_out_of_memory"););
 //            yyval= NEW_PTN PT_insert((yyloc), false, ((lexer.optimizer_hints)(yystack.valueAt (8))), ((lock_type)(yystack.valueAt (7))), ((is_not_empty)(yystack.valueAt (6))), ((table)(yystack.valueAt (4))), ((string_list)(yystack.valueAt (3))),
@@ -19374,15 +19382,17 @@ public class MyParser implements Parser {
 //                                  ((column_value_list_pair)(yystack.valueAt (0))).column_list, ((column_value_list_pair)(yystack.valueAt (0))).value_list);
 //            DBUG_EXECUTE_IF("bug29614521_simulate_oom",
 //                            DBUG_SET("-d,bug29614521_simulate_oom"););
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_INSERT;
+			}
+			;
 			break;
 
 		case 1934: /*
 					 * insert_stmt: INSERT_SYM insert_lock_option opt_ignore opt_INTO table_ident opt_use_partition SET_SYM update_list opt_values_reference opt_insert_update_list
 					 */
-//  if (yyn == 1934)
-//    /* "sql_yacc.y":13086  */
-//          {
+			if (yyn == 1934)
+			/* "sql_yacc.y":13086 */
+			{
 //            PT_insert_values_list *one_row= NEW_PTN PT_insert_values_list((yyloc), YYMEM_ROOT);
 //            if (one_row == nullptr || one_row->push_back(&((column_value_list_pair)(yystack.valueAt (2))).value_list->value))
 //              MYSQL_YYABORT; // OOM
@@ -19391,37 +19401,43 @@ public class MyParser implements Parser {
 //                                  nullptr,
 //                                  ((insert_update_values_reference)(yystack.valueAt (1))).table_alias, ((insert_update_values_reference)(yystack.valueAt (1))).column_list,
 //                                  ((column_value_list_pair)(yystack.valueAt (0))).column_list, ((column_value_list_pair)(yystack.valueAt (0))).value_list);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_INSERT;
+			}
+			;
 			break;
 
 		case 1935: /* insert_stmt: INSERT_SYM insert_lock_option opt_ignore opt_INTO table_ident opt_use_partition insert_query_expression opt_insert_update_list */
-//  if (yyn == 1935)
-//    /* "sql_yacc.y":13104  */
-//          {
+			if (yyn == 1935)
+			/* "sql_yacc.y":13104 */
+			{
 //            yyval= NEW_PTN PT_insert((yyloc), false, ((lexer.optimizer_hints)(yystack.valueAt (7))), ((lock_type)(yystack.valueAt (6))), ((is_not_empty)(yystack.valueAt (5))), ((table)(yystack.valueAt (3))), ((string_list)(yystack.valueAt (2))),
 //                                  ((insert_query_expression)(yystack.valueAt (1))).column_list, nullptr,
 //                                  ((insert_query_expression)(yystack.valueAt (1))).insert_query_expression,
 //                                  NULL_CSTR, nullptr,
 //                                  ((column_value_list_pair)(yystack.valueAt (0))).column_list, ((column_value_list_pair)(yystack.valueAt (0))).value_list);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_INSERT;
+			}
+			;
 			break;
 
 		case 1936: /* replace_stmt: REPLACE_SYM replace_lock_option opt_INTO table_ident opt_use_partition insert_from_constructor */
-//  if (yyn == 1936)
-//    /* "sql_yacc.y":13120  */
-//          {
+			if (yyn == 1936)
+			/* "sql_yacc.y":13120 */
+			{
 //            yyval= NEW_PTN PT_insert((yyloc), true, ((lexer.optimizer_hints)(yystack.valueAt (5))), ((lock_type)(yystack.valueAt (4))), false, ((table)(yystack.valueAt (2))), ((string_list)(yystack.valueAt (1))),
 //                                  ((column_row_value_list_pair)(yystack.valueAt (0))).column_list, ((column_row_value_list_pair)(yystack.valueAt (0))).row_value_list,
 //                                  nullptr,
 //                                  NULL_CSTR, nullptr,
 //                                  nullptr, nullptr);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_REPLACE;
+			}
+			;
 			break;
 
 		case 1937: /* replace_stmt: REPLACE_SYM replace_lock_option opt_INTO table_ident opt_use_partition SET_SYM update_list */
-//  if (yyn == 1937)
-//    /* "sql_yacc.y":13134  */
-//          {
+			if (yyn == 1937)
+			/* "sql_yacc.y":13134 */
+			{
 //            PT_insert_values_list *one_row= NEW_PTN PT_insert_values_list((yyloc), YYMEM_ROOT);
 //            if (one_row == nullptr || one_row->push_back(&((column_value_list_pair)(yystack.valueAt (0))).value_list->value))
 //              MYSQL_YYABORT; // OOM
@@ -19430,19 +19446,23 @@ public class MyParser implements Parser {
 //                                  nullptr,
 //                                  NULL_CSTR, nullptr,
 //                                  nullptr, nullptr);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_REPLACE;
+			}
+			;
 			break;
 
 		case 1938: /* replace_stmt: REPLACE_SYM replace_lock_option opt_INTO table_ident opt_use_partition insert_query_expression */
-//  if (yyn == 1938)
-//    /* "sql_yacc.y":13150  */
-//          {
+			if (yyn == 1938)
+			/* "sql_yacc.y":13150 */
+			{
 //            yyval= NEW_PTN PT_insert((yyloc), true, ((lexer.optimizer_hints)(yystack.valueAt (5))), ((lock_type)(yystack.valueAt (4))), false, ((table)(yystack.valueAt (2))), ((string_list)(yystack.valueAt (1))),
 //                                  ((insert_query_expression)(yystack.valueAt (0))).column_list, nullptr,
 //                                  ((insert_query_expression)(yystack.valueAt (0))).insert_query_expression,
 //                                  NULL_CSTR, nullptr,
 //                                  nullptr, nullptr);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_REPLACE;
+			}
+			;
 			break;
 
 		case 1939: /* insert_lock_option: %empty */
@@ -19728,12 +19748,14 @@ public class MyParser implements Parser {
 					 * update_stmt: opt_with_clause UPDATE_SYM opt_low_priority opt_ignore table_reference_list SET_SYM update_list opt_where_clause opt_order_clause
 					 * opt_simple_limit
 					 */
-//  if (yyn == 1980)
-//    /* "sql_yacc.y":13391  */
-//          {
+			if (yyn == 1980)
+			/* "sql_yacc.y":13391 */
+			{
 //            yyval= NEW_PTN PT_update((yyloc), ((with_clause)(yystack.valueAt (9))), ((lexer.optimizer_hints)(yystack.valueAt (8))), ((lock_type)(yystack.valueAt (7))), ((is_not_empty)(yystack.valueAt (6))), ((table_reference_list)(yystack.valueAt (5))), ((column_value_list_pair)(yystack.valueAt (3))).column_list, ((column_value_list_pair)(yystack.valueAt (3))).value_list,
 //                                  ((item)(yystack.valueAt (2))), ((order)(yystack.valueAt (1))), ((item)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_UPDATE;
+			}
+			;
 			break;
 
 		case 1981: /* opt_with_clause: %empty */
@@ -19797,27 +19819,33 @@ public class MyParser implements Parser {
 					 * delete_stmt: opt_with_clause DELETE_SYM opt_delete_options FROM table_ident opt_table_alias opt_use_partition opt_where_clause opt_order_clause
 					 * opt_simple_limit
 					 */
-//  if (yyn == 1988)
-//    /* "sql_yacc.y":13447  */
-//          {
+			if (yyn == 1988)
+			/* "sql_yacc.y":13447 */
+			{
 //            yyval= NEW_PTN PT_delete((yyloc), ((with_clause)(yystack.valueAt (9))), ((lexer.optimizer_hints)(yystack.valueAt (8))), ((num)(yystack.valueAt (7))), ((table)(yystack.valueAt (5))), ((lex_cstr)(yystack.valueAt (4))), ((string_list)(yystack.valueAt (3))), ((item)(yystack.valueAt (2))), ((order)(yystack.valueAt (1))), ((item)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DELETE;
+			}
+			;
 			break;
 
 		case 1989: /* delete_stmt: opt_with_clause DELETE_SYM opt_delete_options table_alias_ref_list FROM table_reference_list opt_where_clause */
-//  if (yyn == 1989)
-//    /* "sql_yacc.y":13457  */
-//          {
+			if (yyn == 1989)
+			/* "sql_yacc.y":13457 */
+			{
 //            yyval= NEW_PTN PT_delete((yyloc), ((with_clause)(yystack.valueAt (6))), ((lexer.optimizer_hints)(yystack.valueAt (5))), ((num)(yystack.valueAt (4))), ((table_ident_list)(yystack.valueAt (3))), ((table_reference_list)(yystack.valueAt (1))), ((item)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DELETE;
+			}
+			;
 			break;
 
 		case 1990: /* delete_stmt: opt_with_clause DELETE_SYM opt_delete_options FROM table_alias_ref_list USING table_reference_list opt_where_clause */
-//  if (yyn == 1990)
-//    /* "sql_yacc.y":13468  */
-//          {
+			if (yyn == 1990)
+			/* "sql_yacc.y":13468 */
+			{
 //            yyval= NEW_PTN PT_delete((yyloc), ((with_clause)(yystack.valueAt (7))), ((lexer.optimizer_hints)(yystack.valueAt (6))), ((num)(yystack.valueAt (5))), ((table_ident_list)(yystack.valueAt (3))), ((table_reference_list)(yystack.valueAt (1))), ((item)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DELETE;
+			}
+			;
 			break;
 
 		case 1993: /* opt_delete_options: %empty */
