@@ -11920,9 +11920,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 1008: /* alter_table_stmt: ALTER TABLE_SYM table_ident opt_alter_table_actions */
-//  if (yyn == 1008)
-//    /* "sql_yacc.y":7949  */
-//          {
+			if (yyn == 1008)
+			/* "sql_yacc.y":7949 */
+			{
 //            yyval= NEW_PTN PT_alter_table_stmt(
 //                  (yyloc),
 //                  YYMEM_ROOT,
@@ -11931,7 +11931,9 @@ public class MyParser implements Parser {
 //                  ((alter_list)(yystack.valueAt (0))).flags.algo.get_or_default(),
 //                  ((alter_list)(yystack.valueAt (0))).flags.lock.get_or_default(),
 //                  ((alter_list)(yystack.valueAt (0))).flags.validation.get_or_default());
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_TABLE;
+			}
+			;
 			break;
 
 		case 1009: /* alter_table_stmt: ALTER TABLE_SYM table_ident standalone_alter_table_action */
