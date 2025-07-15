@@ -4277,6 +4277,8 @@ public class MyParser implements Parser {
 //            /* Single query, not terminated. */
 //            YYLIP->found_semicolon= nullptr;
 				LexInputStream lip = thd.mParserState.mLip;
+				String sql = lip.sqlBuf.substring(lip.foundSemicolon);
+				thd.addSQL(sql);
 				lip.foundSemicolon = 0;
 			}
 			;
@@ -12349,9 +12351,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 1033: /* alter_user_stmt: alter_user_command user DEFAULT_SYM ROLE_SYM ALL */
-//  if (yyn == 1033)
-//    /* "sql_yacc.y":8279  */
-//          {
+			if (yyn == 1033)
+			/* "sql_yacc.y":8279 */
+			{
 //            List<LEX_USER> *users= new (YYMEM_ROOT) List<LEX_USER>;
 //            if (users == nullptr || users->push_back(((lex_user)(yystack.valueAt (3)))))
 //              MYSQL_YYABORT;
@@ -12361,13 +12363,15 @@ public class MyParser implements Parser {
 //                                                   users, role_list,
 //                                                   role_enum::ROLE_ALL);
 //              MAKE_CMD(tmp);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_USER_DEFAULT_ROLE;
+			}
+			;
 			break;
 
 		case 1034: /* alter_user_stmt: alter_user_command user DEFAULT_SYM ROLE_SYM NONE_SYM */
-//  if (yyn == 1034)
-//    /* "sql_yacc.y":8291  */
-//          {
+			if (yyn == 1034)
+			/* "sql_yacc.y":8291 */
+			{
 //            List<LEX_USER> *users= new (YYMEM_ROOT) List<LEX_USER>;
 //            if (users == nullptr || users->push_back(((lex_user)(yystack.valueAt (3)))))
 //              MYSQL_YYABORT;
@@ -12377,13 +12381,15 @@ public class MyParser implements Parser {
 //                                                   users, role_list,
 //                                                   role_enum::ROLE_NONE);
 //              MAKE_CMD(tmp);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_USER_DEFAULT_ROLE;
+			}
+			;
 			break;
 
 		case 1035: /* alter_user_stmt: alter_user_command user DEFAULT_SYM ROLE_SYM role_list */
-//  if (yyn == 1035)
-//    /* "sql_yacc.y":8303  */
-//          {
+			if (yyn == 1035)
+			/* "sql_yacc.y":8303 */
+			{
 //            List<LEX_USER> *users= new (YYMEM_ROOT) List<LEX_USER>;
 //            if (users == nullptr || users->push_back(((lex_user)(yystack.valueAt (3)))))
 //              MYSQL_YYABORT;
@@ -12392,7 +12398,9 @@ public class MyParser implements Parser {
 //                                                 users, ((user_list)(yystack.valueAt (0))),
 //                                                 role_enum::ROLE_NAME);
 //            MAKE_CMD(tmp);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_USER_DEFAULT_ROLE;
+			}
+			;
 			break;
 
 		case 1036: /* alter_user_stmt: alter_user_command user opt_user_registration */
@@ -13975,12 +13983,14 @@ public class MyParser implements Parser {
 			break;
 
 		case 1232: /* repair_table_stmt: REPAIR opt_no_write_to_binlog table_or_tables table_list opt_mi_repair_types */
-//  if (yyn == 1232)
-//    /* "sql_yacc.y":9365  */
-//          {
+			if (yyn == 1232)
+			/* "sql_yacc.y":9365 */
+			{
 //            yyval= NEW_PTN PT_repair_table_stmt((yyloc), YYMEM_ROOT, ((num)(yystack.valueAt (3))), ((table_list)(yystack.valueAt (1))),
 //                                             ((mi_type)(yystack.valueAt (0))).flags, ((mi_type)(yystack.valueAt (0))).sql_flags);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_REPAIR;
+			}
+			;
 			break;
 
 		case 1233: /* opt_mi_repair_types: %empty */
@@ -14206,11 +14216,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 1263: /* optimize_table_stmt: OPTIMIZE opt_no_write_to_binlog table_or_tables table_list */
-//  if (yyn == 1263)
-//    /* "sql_yacc.y":9522  */
-//          {
+			if (yyn == 1263)
+			/* "sql_yacc.y":9522 */
+			{
 //            yyval= NEW_PTN PT_optimize_table_stmt((yyloc), YYMEM_ROOT, ((num)(yystack.valueAt (2))), ((table_list)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_OPTIMIZE;
+			}
+			;
 			break;
 
 		case 1264: /* opt_no_write_to_binlog: %empty */
@@ -14290,20 +14302,24 @@ public class MyParser implements Parser {
 			break;
 
 		case 1275: /* keycache_stmt: CACHE_SYM INDEX_SYM keycache_list IN_SYM key_cache_name */
-//  if (yyn == 1275)
-//    /* "sql_yacc.y":9579  */
-//          {
+			if (yyn == 1275)
+			/* "sql_yacc.y":9579 */
+			{
 //            yyval= NEW_PTN PT_cache_index_stmt((yyloc), YYMEM_ROOT, ((keycache_list)(yystack.valueAt (2))), ((lex_cstr)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ASSIGN_TO_KEYCACHE;
+			}
+			;
 			break;
 
 		case 1276: /* keycache_stmt: CACHE_SYM INDEX_SYM table_ident adm_partition opt_cache_key_list IN_SYM key_cache_name */
-//  if (yyn == 1276)
-//    /* "sql_yacc.y":9584  */
-//          {
+			if (yyn == 1276)
+			/* "sql_yacc.y":9584 */
+			{
 //            yyval= NEW_PTN PT_cache_index_partitions_stmt((yyloc), YYMEM_ROOT,
 //                                                       ((table)(yystack.valueAt (4))), ((adm_partition)(yystack.valueAt (3))), ((key_usage_list)(yystack.valueAt (2))), ((lex_cstr)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ASSIGN_TO_KEYCACHE;
+			}
+			;
 			break;
 
 		case 1277: /* keycache_list: assign_to_keycache */
@@ -14347,19 +14363,23 @@ public class MyParser implements Parser {
 			break;
 
 		case 1282: /* preload_stmt: LOAD INDEX_SYM INTO CACHE_SYM table_ident adm_partition opt_cache_key_list opt_ignore_leaves */
-//  if (yyn == 1282)
-//    /* "sql_yacc.y":9620  */
-//          {
+			if (yyn == 1282)
+			/* "sql_yacc.y":9620 */
+			{
 //            yyval= NEW_PTN PT_load_index_partitions_stmt((yyloc), YYMEM_ROOT, ((table)(yystack.valueAt (3))),((adm_partition)(yystack.valueAt (2))), ((key_usage_list)(yystack.valueAt (1))), ((is_not_empty)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_PRELOAD_KEYS;
+			}
+			;
 			break;
 
 		case 1283: /* preload_stmt: LOAD INDEX_SYM INTO CACHE_SYM preload_list */
-//  if (yyn == 1283)
-//    /* "sql_yacc.y":9624  */
-//          {
+			if (yyn == 1283)
+			/* "sql_yacc.y":9624 */
+			{
 //            yyval= NEW_PTN PT_load_index_stmt((yyloc), YYMEM_ROOT, ((preload_list)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_PRELOAD_KEYS;
+			}
+			;
 			break;
 
 		case 1284: /* preload_list: preload_keys */
@@ -19014,13 +19034,15 @@ public class MyParser implements Parser {
 			break;
 
 		case 1901: /* drop_index_stmt: DROP INDEX_SYM ident ON_SYM table_ident opt_index_lock_and_algorithm */
-//  if (yyn == 1901)
-//    /* "sql_yacc.y":12746  */
-//          {
+			if (yyn == 1901)
+			/* "sql_yacc.y":12746 */
+			{
 //            yyval= NEW_PTN PT_drop_index_stmt((yyloc), YYMEM_ROOT, ((lexer.lex_str)(yystack.valueAt (3))).str, ((table)(yystack.valueAt (1))),
 //                                           ((opt_index_lock_and_algorithm)(yystack.valueAt (0))).algo.get_or_default(),
 //                                           ((opt_index_lock_and_algorithm)(yystack.valueAt (0))).lock.get_or_default());
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_INDEX;
+			}
+			;
 			break;
 
 		case 1902: /* drop_database_stmt: DROP DATABASE if_exists ident */
@@ -19107,11 +19129,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 1905: /* drop_resource_group_stmt: DROP RESOURCE_SYM GROUP_SYM ident opt_force */
-//  if (yyn == 1905)
-//    /* "sql_yacc.y":12826  */
-//          {
+			if (yyn == 1905)
+			/* "sql_yacc.y":12826 */
+			{
 //            yyval= NEW_PTN PT_drop_resource_group((yyloc), to_lex_cstring(((lexer.lex_str)(yystack.valueAt (1)))), ((resource_group_flag_type)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_RESOURCE_GROUP;
+			}
+			;
 			break;
 
 		case 1906: /* drop_procedure_stmt: DROP PROCEDURE_SYM if_exists sp_name */
@@ -19279,19 +19303,23 @@ public class MyParser implements Parser {
 			break;
 
 		case 1915: /* drop_srs_stmt: DROP SPATIAL_SYM REFERENCE_SYM SYSTEM_SYM if_exists real_ulonglong_num */
-//  if (yyn == 1915)
-//    /* "sql_yacc.y":12970  */
-//          {
+			if (yyn == 1915)
+			/* "sql_yacc.y":12970 */
+			{
 //            yyval= NEW_PTN PT_drop_srs((yyloc), ((ulonglong_number)(yystack.valueAt (0))), ((num)(yystack.valueAt (1))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_SRS;
+			}
+			;
 			break;
 
 		case 1916: /* drop_role_stmt: DROP ROLE_SYM if_exists role_list */
-//  if (yyn == 1916)
-//    /* "sql_yacc.y":12977  */
-//          {
+			if (yyn == 1916)
+			/* "sql_yacc.y":12977 */
+			{
 //            yyval= NEW_PTN PT_drop_role((yyloc), ((num)(yystack.valueAt (1))), ((user_list)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DROP_ROLE;
+			}
+			;
 			break;
 
 		case 1917: /* table_list: table_ident */
@@ -19909,11 +19937,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 1998: /* truncate_stmt: TRUNCATE_SYM opt_table table_ident */
-//  if (yyn == 1998)
-//    /* "sql_yacc.y":13491  */
-//          {
+			if (yyn == 1998)
+			/* "sql_yacc.y":13491 */
+			{
 //            yyval= NEW_PTN PT_truncate_table_stmt((yyloc), ((table)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_TRUNCATE;
+			}
+			;
 			break;
 
 		case 2001: /* opt_profile_defs: %empty */
@@ -20000,83 +20030,103 @@ public class MyParser implements Parser {
 			break;
 
 		case 2016: /* show_databases_stmt: SHOW DATABASES opt_wild_or_where */
-//  if (yyn == 2016)
-//    /* "sql_yacc.y":13538  */
-//           {
+			if (yyn == 2016)
+			/* "sql_yacc.y":13538 */
+			{
 //             yyval = NEW_PTN PT_show_databases((yyloc), ((wild_or_where)(yystack.valueAt (0))).wild, ((wild_or_where)(yystack.valueAt (0))).where);
-//           };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_DATABASES;
+			}
+			;
 			break;
 
 		case 2017: /* show_tables_stmt: SHOW opt_show_cmd_type TABLES opt_db opt_wild_or_where */
-//  if (yyn == 2017)
-//    /* "sql_yacc.y":13544  */
-//          {
+			if (yyn == 2017)
+			/* "sql_yacc.y":13544 */
+			{
 //            yyval = NEW_PTN PT_show_tables((yyloc), ((show_cmd_type)(yystack.valueAt (3))), ((simple_string)(yystack.valueAt (1))), ((wild_or_where)(yystack.valueAt (0))).wild, ((wild_or_where)(yystack.valueAt (0))).where);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_TABLES;
+			}
+			;
 			break;
 
 		case 2018: /* show_triggers_stmt: SHOW opt_full TRIGGERS_SYM opt_db opt_wild_or_where */
-//  if (yyn == 2018)
-//    /* "sql_yacc.y":13551  */
-//          {
+			if (yyn == 2018)
+			/* "sql_yacc.y":13551 */
+			{
 //            yyval = NEW_PTN PT_show_triggers((yyloc), ((is_not_empty)(yystack.valueAt (3))), ((simple_string)(yystack.valueAt (1))), ((wild_or_where)(yystack.valueAt (0))).wild, ((wild_or_where)(yystack.valueAt (0))).where);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_TRIGGERS;
+			}
+			;
 			break;
 
 		case 2019: /* show_events_stmt: SHOW EVENTS_SYM opt_db opt_wild_or_where */
-//  if (yyn == 2019)
-//    /* "sql_yacc.y":13558  */
-//          {
+			if (yyn == 2019)
+			/* "sql_yacc.y":13558 */
+			{
 //            yyval = NEW_PTN PT_show_events((yyloc), ((simple_string)(yystack.valueAt (1))), ((wild_or_where)(yystack.valueAt (0))).wild, ((wild_or_where)(yystack.valueAt (0))).where);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_EVENTS;
+			}
+			;
 			break;
 
 		case 2020: /* show_table_status_stmt: SHOW TABLE_SYM STATUS_SYM opt_db opt_wild_or_where */
-//  if (yyn == 2020)
-//    /* "sql_yacc.y":13565  */
-//          {
+			if (yyn == 2020)
+			/* "sql_yacc.y":13565 */
+			{
 //            yyval = NEW_PTN PT_show_table_status((yyloc), ((simple_string)(yystack.valueAt (1))), ((wild_or_where)(yystack.valueAt (0))).wild, ((wild_or_where)(yystack.valueAt (0))).where);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_TABLE_STATUS;
+			}
+			;
 			break;
 
 		case 2021: /* show_open_tables_stmt: SHOW OPEN_SYM TABLES opt_db opt_wild_or_where */
-//  if (yyn == 2021)
-//    /* "sql_yacc.y":13572  */
-//          {
+			if (yyn == 2021)
+			/* "sql_yacc.y":13572 */
+			{
 //             yyval = NEW_PTN PT_show_open_tables((yyloc), ((simple_string)(yystack.valueAt (1))), ((wild_or_where)(yystack.valueAt (0))).wild, ((wild_or_where)(yystack.valueAt (0))).where);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_OPEN_TABLES;
+			}
+			;
 			break;
 
 		case 2022: /* show_plugins_stmt: SHOW PLUGINS_SYM */
-//  if (yyn == 2022)
-//    /* "sql_yacc.y":13579  */
-//          {
+			if (yyn == 2022)
+			/* "sql_yacc.y":13579 */
+			{
 //            yyval = NEW_PTN PT_show_plugins((yyloc));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_PLUGINS;
+			}
+			;
 			break;
 
 		case 2023: /* show_engine_logs_stmt: SHOW ENGINE_SYM engine_or_all LOGS_SYM */
-//  if (yyn == 2023)
-//    /* "sql_yacc.y":13586  */
-//          {
+			if (yyn == 2023)
+			/* "sql_yacc.y":13586 */
+			{
 //            yyval = NEW_PTN PT_show_engine_logs((yyloc), ((lexer.lex_str)(yystack.valueAt (1))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_ENGINE_LOGS;
+			}
+			;
 			break;
 
 		case 2024: /* show_engine_mutex_stmt: SHOW ENGINE_SYM engine_or_all MUTEX_SYM */
-//  if (yyn == 2024)
-//    /* "sql_yacc.y":13593  */
-//          {
+			if (yyn == 2024)
+			/* "sql_yacc.y":13593 */
+			{
 //            yyval = NEW_PTN PT_show_engine_mutex((yyloc), ((lexer.lex_str)(yystack.valueAt (1))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_ENGINE_MUTEX;
+			}
+			;
 			break;
 
 		case 2025: /* show_engine_status_stmt: SHOW ENGINE_SYM engine_or_all STATUS_SYM */
-//  if (yyn == 2025)
-//    /* "sql_yacc.y":13600  */
-//          {
+			if (yyn == 2025)
+			/* "sql_yacc.y":13600 */
+			{
 //            yyval = NEW_PTN PT_show_engine_status((yyloc), ((lexer.lex_str)(yystack.valueAt (1))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_ENGINE_STATUS;
+			}
+			;
 			break;
 
 		case 2026: /* show_columns_stmt: SHOW opt_show_cmd_type COLUMNS from_or_in table_ident opt_db opt_wild_or_where */
@@ -20094,303 +20144,375 @@ public class MyParser implements Parser {
 			break;
 
 		case 2027: /* show_binary_logs_stmt: SHOW BINARY_SYM LOGS_SYM */
-//  if (yyn == 2027)
-//    /* "sql_yacc.y":13624  */
-//          {
+			if (yyn == 2027)
+			/* "sql_yacc.y":13624 */
+			{
 //            yyval = NEW_PTN PT_show_binlogs((yyloc));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_BINLOGS;
+			}
+			;
 			break;
 
 		case 2028: /* show_replicas_stmt: SHOW REPLICAS_SYM */
-//  if (yyn == 2028)
-//    /* "sql_yacc.y":13631  */
-//          {
+			if (yyn == 2028)
+			/* "sql_yacc.y":13631 */
+			{
 //            yyval = NEW_PTN PT_show_replicas((yyloc));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_REPLICAS;
+			}
+			;
 			break;
 
 		case 2029: /* show_binlog_events_stmt: SHOW BINLOG_SYM EVENTS_SYM opt_binlog_in binlog_from opt_limit_clause */
-//  if (yyn == 2029)
-//    /* "sql_yacc.y":13638  */
-//          {
+			if (yyn == 2029)
+			/* "sql_yacc.y":13638 */
+			{
 //            yyval = NEW_PTN PT_show_binlog_events((yyloc), ((lexer.lex_str)(yystack.valueAt (2))), ((limit_clause)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_BINLOG_EVENTS;
+			}
+			;
 			break;
 
 		case 2030: /* show_relaylog_events_stmt: SHOW RELAYLOG_SYM EVENTS_SYM opt_binlog_in binlog_from opt_limit_clause opt_channel */
-//  if (yyn == 2030)
-//    /* "sql_yacc.y":13646  */
-//          {
+			if (yyn == 2030)
+			/* "sql_yacc.y":13646 */
+			{
 //            yyval = NEW_PTN PT_show_relaylog_events((yyloc), ((lexer.lex_str)(yystack.valueAt (3))), ((limit_clause)(yystack.valueAt (1))), ((lex_cstr)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_RELAYLOG_EVENTS;
+			}
+			;
 			break;
 
 		case 2031: /* show_keys_stmt: SHOW opt_extended keys_or_index from_or_in table_ident opt_db opt_where_clause */
-//  if (yyn == 2031)
-//    /* "sql_yacc.y":13659  */
-//          {
+			if (yyn == 2031)
+			/* "sql_yacc.y":13659 */
+			{
 //            // TODO: error if table_ident is <db>.<table> and opt_db is set.
 //            if (((simple_string)(yystack.valueAt (1))))
 //              ((table)(yystack.valueAt (2)))->change_db(((simple_string)(yystack.valueAt (1))));
 
 //            yyval = NEW_PTN PT_show_keys((yyloc), ((is_not_empty)(yystack.valueAt (5))), ((table)(yystack.valueAt (2))), ((item)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_KEYS;
+			}
+			;
 			break;
 
 		case 2032: /* show_engines_stmt: SHOW opt_storage ENGINES_SYM */
-//  if (yyn == 2032)
-//    /* "sql_yacc.y":13670  */
-//          {
+			if (yyn == 2032)
+			/* "sql_yacc.y":13670 */
+			{
 //            yyval = NEW_PTN PT_show_engines((yyloc));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_STORAGE_ENGINES;
+			}
+			;
 			break;
 
 		case 2033: /* show_count_warnings_stmt: SHOW COUNT_SYM '(' '*' ')' WARNINGS */
-//  if (yyn == 2033)
-//    /* "sql_yacc.y":13677  */
-//          {
+			if (yyn == 2033)
+			/* "sql_yacc.y":13677 */
+			{
 //            yyval = NEW_PTN PT_show_count_warnings((yyloc));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SELECT;
+			}
+			;
 			break;
 
 		case 2034: /* show_count_errors_stmt: SHOW COUNT_SYM '(' '*' ')' ERRORS */
-//  if (yyn == 2034)
-//    /* "sql_yacc.y":13684  */
-//          {
+			if (yyn == 2034)
+			/* "sql_yacc.y":13684 */
+			{
 //            yyval = NEW_PTN PT_show_count_errors((yyloc));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SELECT;
+			}
+			;
 			break;
 
 		case 2035: /* show_warnings_stmt: SHOW WARNINGS opt_limit_clause */
-//  if (yyn == 2035)
-//    /* "sql_yacc.y":13691  */
-//          {
+			if (yyn == 2035)
+			/* "sql_yacc.y":13691 */
+			{
 //            yyval = NEW_PTN PT_show_warnings((yyloc), ((limit_clause)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_WARNS;
+			}
+			;
 			break;
 
 		case 2036: /* show_errors_stmt: SHOW ERRORS opt_limit_clause */
-//  if (yyn == 2036)
-//    /* "sql_yacc.y":13698  */
-//          {
+			if (yyn == 2036)
+			/* "sql_yacc.y":13698 */
+			{
 //            yyval = NEW_PTN PT_show_errors((yyloc), ((limit_clause)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_ERRORS;
+			}
+			;
 			break;
 
 		case 2037: /* show_profiles_stmt: SHOW PROFILES_SYM */
-//  if (yyn == 2037)
-//    /* "sql_yacc.y":13705  */
-//          {
+			if (yyn == 2037)
+			/* "sql_yacc.y":13705 */
+			{
 //            push_warning_printf(YYTHD, Sql_condition::SL_WARNING,
 //                                ER_WARN_DEPRECATED_SYNTAX,
 //                                ER_THD(YYTHD, ER_WARN_DEPRECATED_SYNTAX),
 //                                "SHOW PROFILES", "Performance Schema");
 //            yyval = NEW_PTN PT_show_profiles((yyloc));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_PROFILES;
+			}
+			;
 			break;
 
 		case 2038: /* show_profile_stmt: SHOW PROFILE_SYM opt_profile_defs opt_for_query opt_limit_clause */
-//  if (yyn == 2038)
-//    /* "sql_yacc.y":13716  */
-//          {
+			if (yyn == 2038)
+			/* "sql_yacc.y":13716 */
+			{
 //            yyval = NEW_PTN PT_show_profile((yyloc), ((ulong_num)(yystack.valueAt (2))), ((query_id)(yystack.valueAt (1))), ((limit_clause)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_PROFILE;
+			}
+			;
 			break;
 
 		case 2039: /* show_status_stmt: SHOW opt_var_type STATUS_SYM opt_wild_or_where */
-//  if (yyn == 2039)
-//    /* "sql_yacc.y":13723  */
-//          {
+			if (yyn == 2039)
+			/* "sql_yacc.y":13723 */
+			{
 //             yyval = NEW_PTN PT_show_status((yyloc), ((var_type)(yystack.valueAt (2))), ((wild_or_where)(yystack.valueAt (0))).wild, ((wild_or_where)(yystack.valueAt (0))).where);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_STATUS;
+			}
+			;
 			break;
 
 		case 2040: /* show_processlist_stmt: SHOW opt_full PROCESSLIST_SYM */
-//  if (yyn == 2040)
-//    /* "sql_yacc.y":13730  */
-//          {
+			if (yyn == 2040)
+			/* "sql_yacc.y":13730 */
+			{
 //            yyval = NEW_PTN PT_show_processlist((yyloc), ((is_not_empty)(yystack.valueAt (1))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_PROCESSLIST;
+			}
+			;
 			break;
 
 		case 2041: /* show_variables_stmt: SHOW opt_var_type VARIABLES opt_wild_or_where */
-//  if (yyn == 2041)
-//    /* "sql_yacc.y":13737  */
-//          {
+			if (yyn == 2041)
+			/* "sql_yacc.y":13737 */
+			{
 //            yyval = NEW_PTN PT_show_variables((yyloc), ((var_type)(yystack.valueAt (2))), ((wild_or_where)(yystack.valueAt (0))).wild, ((wild_or_where)(yystack.valueAt (0))).where);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_VARIABLES;
+			}
+			;
 			break;
 
 		case 2042: /* show_character_set_stmt: SHOW character_set opt_wild_or_where */
-//  if (yyn == 2042)
-//    /* "sql_yacc.y":13744  */
-//          {
+			if (yyn == 2042)
+			/* "sql_yacc.y":13744 */
+			{
 //            yyval = NEW_PTN PT_show_charsets((yyloc), ((wild_or_where)(yystack.valueAt (0))).wild, ((wild_or_where)(yystack.valueAt (0))).where);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CHARSETS;
+			}
+			;
 			break;
 
 		case 2043: /* show_collation_stmt: SHOW COLLATION_SYM opt_wild_or_where */
-//  if (yyn == 2043)
-//    /* "sql_yacc.y":13751  */
-//          {
+			if (yyn == 2043)
+			/* "sql_yacc.y":13751 */
+			{
 //            yyval = NEW_PTN PT_show_collations((yyloc), ((wild_or_where)(yystack.valueAt (0))).wild, ((wild_or_where)(yystack.valueAt (0))).where);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_COLLATIONS;
+			}
+			;
 			break;
 
 		case 2044: /* show_privileges_stmt: SHOW PRIVILEGES */
-//  if (yyn == 2044)
-//    /* "sql_yacc.y":13758  */
-//          {
+			if (yyn == 2044)
+			/* "sql_yacc.y":13758 */
+			{
 //            yyval = NEW_PTN PT_show_privileges((yyloc));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_PRIVILEGES;
+			}
+			;
 			break;
 
 		case 2045: /* show_grants_stmt: SHOW GRANTS */
-//  if (yyn == 2045)
-//    /* "sql_yacc.y":13765  */
-//          {
+			if (yyn == 2045)
+			/* "sql_yacc.y":13765 */
+			{
 //            yyval = NEW_PTN PT_show_grants((yyloc), nullptr, nullptr);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_GRANTS;
+			}
+			;
 			break;
 
 		case 2046: /* show_grants_stmt: SHOW GRANTS FOR_SYM user */
-//  if (yyn == 2046)
-//    /* "sql_yacc.y":13769  */
-//          {
+			if (yyn == 2046)
+			/* "sql_yacc.y":13769 */
+			{
 //            yyval = NEW_PTN PT_show_grants((yyloc), ((lex_user)(yystack.valueAt (0))), nullptr);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_GRANTS;
+			}
+			;
 			break;
 
 		case 2047: /* show_grants_stmt: SHOW GRANTS FOR_SYM user USING user_list */
-//  if (yyn == 2047)
-//    /* "sql_yacc.y":13773  */
-//          {
+			if (yyn == 2047)
+			/* "sql_yacc.y":13773 */
+			{
 //            yyval = NEW_PTN PT_show_grants((yyloc), ((lex_user)(yystack.valueAt (2))), ((user_list)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_GRANTS;
+			}
+			;
 			break;
 
 		case 2048: /* show_create_database_stmt: SHOW CREATE DATABASE opt_if_not_exists ident */
-//  if (yyn == 2048)
-//    /* "sql_yacc.y":13780  */
-//          {
+			if (yyn == 2048)
+			/* "sql_yacc.y":13780 */
+			{
 //            yyval = NEW_PTN PT_show_create_database((yyloc), ((is_not_empty)(yystack.valueAt (1))), ((lexer.lex_str)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE_DB;
+			}
+			;
 			break;
 
 		case 2049: /* show_create_table_stmt: SHOW CREATE TABLE_SYM table_ident */
-//  if (yyn == 2049)
-//    /* "sql_yacc.y":13787  */
-//          {
+			if (yyn == 2049)
+			/* "sql_yacc.y":13787 */
+			{
 //            yyval = NEW_PTN PT_show_create_table((yyloc), ((table)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE;
+			}
+			;
 			break;
 
 		case 2050: /* show_create_view_stmt: SHOW CREATE VIEW_SYM table_ident */
-//  if (yyn == 2050)
-//    /* "sql_yacc.y":13794  */
-//          {
+			if (yyn == 2050)
+			/* "sql_yacc.y":13794 */
+			{
 //            yyval = NEW_PTN PT_show_create_view((yyloc), ((table)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE;
+			}
+			;
 			break;
 
 		case 2051: /* show_binary_log_status_stmt: SHOW BINARY_SYM LOG_SYM STATUS_SYM */
-//  if (yyn == 2051)
-//    /* "sql_yacc.y":13801  */
-//          {
+			if (yyn == 2051)
+			/* "sql_yacc.y":13801 */
+			{
 //            yyval = NEW_PTN PT_show_binary_log_status((yyloc));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_BINLOG_STATUS;
+			}
+			;
 			break;
 
 		case 2052: /* show_replica_status_stmt: SHOW REPLICA_SYM STATUS_SYM opt_channel */
-//  if (yyn == 2052)
-//    /* "sql_yacc.y":13808  */
-//          {
+			if (yyn == 2052)
+			/* "sql_yacc.y":13808 */
+			{
 //            yyval = NEW_PTN PT_show_replica_status((yyloc), ((lex_cstr)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_REPLICA_STATUS;
+			}
+			;
 			break;
 
 		case 2053: /* show_create_procedure_stmt: SHOW CREATE PROCEDURE_SYM sp_name */
-//  if (yyn == 2053)
-//    /* "sql_yacc.y":13815  */
-//          {
+			if (yyn == 2053)
+			/* "sql_yacc.y":13815 */
+			{
 //            yyval = NEW_PTN PT_show_create_procedure((yyloc), ((spname)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE_PROC;
+			}
+			;
 			break;
 
 		case 2054: /* show_create_function_stmt: SHOW CREATE FUNCTION_SYM sp_name */
-//  if (yyn == 2054)
-//    /* "sql_yacc.y":13822  */
-//          {
+			if (yyn == 2054)
+			/* "sql_yacc.y":13822 */
+			{
 //            yyval = NEW_PTN PT_show_create_function((yyloc), ((spname)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE_FUNC;
+			}
+			;
 			break;
 
 		case 2055: /* show_create_trigger_stmt: SHOW CREATE TRIGGER_SYM sp_name */
-//  if (yyn == 2055)
-//    /* "sql_yacc.y":13829  */
-//          {
+			if (yyn == 2055)
+			/* "sql_yacc.y":13829 */
+			{
 //            yyval = NEW_PTN PT_show_create_trigger((yyloc), ((spname)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE_TRIGGER;
+			}
+			;
 			break;
 
 		case 2056: /* show_procedure_status_stmt: SHOW PROCEDURE_SYM STATUS_SYM opt_wild_or_where */
-//  if (yyn == 2056)
-//    /* "sql_yacc.y":13836  */
-//          {
+			if (yyn == 2056)
+			/* "sql_yacc.y":13836 */
+			{
 //            yyval = NEW_PTN PT_show_status_proc((yyloc), ((wild_or_where)(yystack.valueAt (0))).wild, ((wild_or_where)(yystack.valueAt (0))).where);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_STATUS_PROC;
+			}
+			;
 			break;
 
 		case 2057: /* show_function_status_stmt: SHOW FUNCTION_SYM STATUS_SYM opt_wild_or_where */
-//  if (yyn == 2057)
-//    /* "sql_yacc.y":13843  */
-//          {
+			if (yyn == 2057)
+			/* "sql_yacc.y":13843 */
+			{
 //            yyval = NEW_PTN PT_show_status_func((yyloc), ((wild_or_where)(yystack.valueAt (0))).wild, ((wild_or_where)(yystack.valueAt (0))).where);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_STATUS_FUNC;
+			}
+			;
 			break;
 
 		case 2058: /* show_procedure_code_stmt: SHOW PROCEDURE_SYM CODE_SYM sp_name */
-//  if (yyn == 2058)
-//    /* "sql_yacc.y":13850  */
-//          {
+			if (yyn == 2058)
+			/* "sql_yacc.y":13850 */
+			{
 //            yyval = NEW_PTN PT_show_procedure_code((yyloc), ((spname)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_PROC_CODE;
+			}
+			;
 			break;
 
 		case 2059: /* show_function_code_stmt: SHOW FUNCTION_SYM CODE_SYM sp_name */
-//  if (yyn == 2059)
-//    /* "sql_yacc.y":13857  */
-//          {
+			if (yyn == 2059)
+			/* "sql_yacc.y":13857 */
+			{
 //            yyval = NEW_PTN PT_show_function_code((yyloc), ((spname)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_FUNC_CODE;
+			}
+			;
 			break;
 
 		case 2060: /* show_create_event_stmt: SHOW CREATE EVENT_SYM sp_name */
-//  if (yyn == 2060)
-//    /* "sql_yacc.y":13864  */
-//          {
+			if (yyn == 2060)
+			/* "sql_yacc.y":13864 */
+			{
 //            yyval = NEW_PTN PT_show_create_event((yyloc), ((spname)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE_EVENT;
+			}
+			;
 			break;
 
 		case 2061: /* show_create_user_stmt: SHOW CREATE USER user */
-//  if (yyn == 2061)
-//    /* "sql_yacc.y":13871  */
-//          {
+			if (yyn == 2061)
+			/* "sql_yacc.y":13871 */
+			{
 //            yyval = NEW_PTN PT_show_create_user((yyloc), ((lex_user)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_CREATE_USER;
+			}
+			;
 			break;
 
 		case 2062: /* show_parse_tree_stmt: SHOW PARSE_TREE_SYM simple_statement */
-//  if (yyn == 2062)
-//    /* "sql_yacc.y":13878  */
-//          {
+			if (yyn == 2062)
+			/* "sql_yacc.y":13878 */
+			{
 //#ifndef WITH_SHOW_PARSE_TREE
 //            YYTHD->syntax_error_at(yystack.locationAt (1));
 //            MYSQL_YYABORT;
 //#endif
 //            yyval = NEW_PTN PT_show_parse_tree((yyloc), ((top_level_node)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SHOW_PARSE_TREE;
+			}
+			;
 			break;
 
 		case 2064: /* engine_or_all: ALL */
@@ -20571,12 +20693,14 @@ public class MyParser implements Parser {
 			break;
 
 		case 2093: /* explainable_stmt: FOR_SYM CONNECTION_SYM real_ulong_num */
-//  if (yyn == 2093)
-//    /* "sql_yacc.y":13988  */
-//          {
+			if (yyn == 2093)
+			/* "sql_yacc.y":13988 */
+			{
 //            yyval.statement = NEW_PTN PT_explain_for_connection((yyloc), static_cast<my_thread_id>(((ulong_num)(yystack.valueAt (0)))));
 //            yyval.schema_name_for_explain = NULL_CSTR;
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_EXPLAIN_OTHER;
+			}
+			;
 			break;
 
 		case 2096: /* opt_explain_format: %empty */
@@ -21106,9 +21230,9 @@ public class MyParser implements Parser {
 					 * INTO TABLE_SYM table_ident opt_use_partition opt_load_data_charset opt_compression_algorithm opt_xml_rows_identified_by opt_field_term opt_line_term
 					 * opt_ignore_lines opt_field_or_var_spec opt_load_data_set_spec opt_load_parallel opt_load_memory opt_load_algorithm
 					 */
-//  if (yyn == 2159)
-//    /* "sql_yacc.y":14397  */
-//          {
+			if (yyn == 2159)
+			/* "sql_yacc.y":14397 */
+			{
 //            yyval= NEW_PTN PT_load_table((yyloc), ((filetype)(yystack.valueAt (23))),  // data_or_xml
 //                                      ((lock_type)(yystack.valueAt (22))),  // load_data_lock
 //                                      ((is_not_empty)(yystack.valueAt (20))),  // opt_local
@@ -21132,7 +21256,9 @@ public class MyParser implements Parser {
 //                                      ((ulong_num)(yystack.valueAt (2))),  // opt_load_parallel
 //                                      ((ulonglong_number)(yystack.valueAt (1))),  // opt_load_memory
 //                                      ((is_not_empty)(yystack.valueAt (0)))); // opt_load_algorithm
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_LOAD;
+			}
+			;
 			break;
 
 		case 2160: /* data_or_xml: DATA_SYM */
@@ -22208,11 +22334,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 2778: /* set: SET_SYM start_option_value_list */
-//  if (yyn == 2778)
-//    /* "sql_yacc.y":15767  */
-//          {
+			if (yyn == 2778)
+			/* "sql_yacc.y":15767 */
+			{
 //            yyval= NEW_PTN PT_set((yyloc), yystack.locationAt (1), ((start_option_value_list)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SET_OPTION;
+			}
+			;
 			break;
 
 		case 2779: /* start_option_value_list: option_value_no_option_type option_value_list_continued */
@@ -22288,11 +22416,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 2786: /* set_role_stmt: SET_SYM ROLE_SYM role_list */
-//  if (yyn == 2786)
-//    /* "sql_yacc.y":15823  */
-//          {
+			if (yyn == 2786)
+			/* "sql_yacc.y":15823 */
+			{
 //            yyval= NEW_PTN PT_set_role((yyloc), ((user_list)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SET_ROLE;
+			}
+			;
 			break;
 
 		case 2787: /* set_role_stmt: SET_SYM ROLE_SYM NONE_SYM */
@@ -22318,30 +22448,36 @@ public class MyParser implements Parser {
 			break;
 
 		case 2789: /* set_role_stmt: SET_SYM DEFAULT_SYM ROLE_SYM role_list TO_SYM role_list */
-//  if (yyn == 2789)
-//    /* "sql_yacc.y":15837  */
-//          {
+			if (yyn == 2789)
+			/* "sql_yacc.y":15837 */
+			{
 //            yyval= NEW_PTN PT_alter_user_default_role((yyloc), false, ((user_list)(yystack.valueAt (0))), ((user_list)(yystack.valueAt (2))),
 //                                                    role_enum::ROLE_NAME);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_USER_DEFAULT_ROLE;
+			}
+			;
 			break;
 
 		case 2790: /* set_role_stmt: SET_SYM DEFAULT_SYM ROLE_SYM NONE_SYM TO_SYM role_list */
-//  if (yyn == 2790)
-//    /* "sql_yacc.y":15842  */
-//          {
+			if (yyn == 2790)
+			/* "sql_yacc.y":15842 */
+			{
 //            yyval= NEW_PTN PT_alter_user_default_role((yyloc), false, ((user_list)(yystack.valueAt (0))), nullptr,
 //                                                   role_enum::ROLE_NONE);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_USER_DEFAULT_ROLE;
+			}
+			;
 			break;
 
 		case 2791: /* set_role_stmt: SET_SYM DEFAULT_SYM ROLE_SYM ALL TO_SYM role_list */
-//  if (yyn == 2791)
-//    /* "sql_yacc.y":15847  */
-//          {
+			if (yyn == 2791)
+			/* "sql_yacc.y":15847 */
+			{
 //            yyval= NEW_PTN PT_alter_user_default_role((yyloc), false, ((user_list)(yystack.valueAt (0))), nullptr,
 //                                                   role_enum::ROLE_ALL);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_USER_DEFAULT_ROLE;
+			}
+			;
 			break;
 
 		case 2792: /* set_role_stmt: SET_SYM ROLE_SYM ALL opt_except_role_list */
@@ -22368,19 +22504,23 @@ public class MyParser implements Parser {
 			break;
 
 		case 2795: /* set_resource_group_stmt: SET_SYM RESOURCE_SYM GROUP_SYM ident */
-//  if (yyn == 2795)
-//    /* "sql_yacc.y":15865  */
-//          {
+			if (yyn == 2795)
+			/* "sql_yacc.y":15865 */
+			{
 //            yyval= NEW_PTN PT_set_resource_group((yyloc), to_lex_cstring(((lexer.lex_str)(yystack.valueAt (0)))), nullptr);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SET_RESOURCE_GROUP;
+			}
+			;
 			break;
 
 		case 2796: /* set_resource_group_stmt: SET_SYM RESOURCE_SYM GROUP_SYM ident FOR_SYM thread_id_list_options */
-//  if (yyn == 2796)
-//    /* "sql_yacc.y":15869  */
-//          {
+			if (yyn == 2796)
+			/* "sql_yacc.y":15869 */
+			{
 //            yyval= NEW_PTN PT_set_resource_group((yyloc), to_lex_cstring(((lexer.lex_str)(yystack.valueAt (2)))), ((thread_id_list_type)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_SET_RESOURCE_GROUP;
+			}
+			;
 			break;
 
 		case 2797: /* thread_id_list: real_ulong_num */
@@ -22978,11 +23118,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 2876: /* restart_server_stmt: RESTART_SYM */
-//  if (yyn == 2876)
-//    /* "sql_yacc.y":16229  */
-//          {
+			if (yyn == 2876)
+			/* "sql_yacc.y":16229 */
+			{
 //            yyval= NEW_PTN PT_restart_server();
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_RESTART_SERVER;
+			}
+			;
 			break;
 
 		case 2877: /* alter_instance_stmt: ALTER INSTANCE_SYM alter_instance_action */
@@ -23095,46 +23237,56 @@ public class MyParser implements Parser {
 			break;
 
 		case 2886: /* handler_stmt: HANDLER_SYM table_ident OPEN_SYM opt_table_alias */
-//  if (yyn == 2886)
-//    /* "sql_yacc.y":16313  */
-//          {
+			if (yyn == 2886)
+			/* "sql_yacc.y":16313 */
+			{
 //            yyval= NEW_PTN PT_handler_open(((table)(yystack.valueAt (2))), ((lex_cstr)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_OPEN;
+			}
+			;
 			break;
 
 		case 2887: /* handler_stmt: HANDLER_SYM ident CLOSE_SYM */
-//  if (yyn == 2887)
-//    /* "sql_yacc.y":16317  */
-//          {
+			if (yyn == 2887)
+			/* "sql_yacc.y":16317 */
+			{
 //            yyval= NEW_PTN PT_handler_close(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (1)))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_CLOSE;
+			}
+			;
 			break;
 
 		case 2888: /* handler_stmt: HANDLER_SYM ident READ_SYM handler_scan_function opt_where_clause opt_limit_clause */
-//  if (yyn == 2888)
-//    /* "sql_yacc.y":16326  */
-//          {
+			if (yyn == 2888)
+			/* "sql_yacc.y":16326 */
+			{
 //            yyval= NEW_PTN PT_handler_table_scan(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (4)))), ((ha_read_mode)(yystack.valueAt (2))), ((item)(yystack.valueAt (1))), ((limit_clause)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_READ;
+			}
+			;
 			break;
 
 		case 2889: /* handler_stmt: HANDLER_SYM ident READ_SYM ident handler_rkey_function opt_where_clause opt_limit_clause */
-//  if (yyn == 2889)
-//    /* "sql_yacc.y":16336  */
-//          {
+			if (yyn == 2889)
+			/* "sql_yacc.y":16336 */
+			{
 //            yyval= NEW_PTN PT_handler_index_scan(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (5)))),
 //                                              to_lex_cstring(((lexer.lex_str)(yystack.valueAt (3)))), ((ha_read_mode)(yystack.valueAt (2))), ((item)(yystack.valueAt (1))), ((limit_clause)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_READ;
+			}
+			;
 			break;
 
 		case 2890: /* handler_stmt: HANDLER_SYM ident READ_SYM ident handler_rkey_mode '(' values ')' opt_where_clause opt_limit_clause */
-//  if (yyn == 2890)
-//    /* "sql_yacc.y":16348  */
-//          {
+			if (yyn == 2890)
+			/* "sql_yacc.y":16348 */
+			{
 //            yyval= NEW_PTN PT_handler_index_range_scan(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (8)))),
 //                                                    to_lex_cstring(((lexer.lex_str)(yystack.valueAt (6)))),
 //                                                    ((ha_rkey_mode)(yystack.valueAt (5))), ((item_list2)(yystack.valueAt (3))), ((item)(yystack.valueAt (1))), ((limit_clause)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_READ;
+			}
+			;
 			break;
 
 		case 2891: /* handler_scan_function: FIRST_SYM */
@@ -23204,20 +23356,22 @@ public class MyParser implements Parser {
 			break;
 
 		case 2902: /* revoke: REVOKE if_exists role_or_privilege_list FROM user_list opt_ignore_unknown_user */
-//  if (yyn == 2902)
-//    /* "sql_yacc.y":16379  */
-//          {
+			if (yyn == 2902)
+			/* "sql_yacc.y":16379 */
+			{
 //            Lex->grant_if_exists = ((num)(yystack.valueAt (4)));
 //            Lex->ignore_unknown_user = ((num)(yystack.valueAt (0)));
 //            auto *tmp= NEW_PTN PT_revoke_roles((yyloc), ((role_or_privilege_list)(yystack.valueAt (3))), ((user_list)(yystack.valueAt (1))));
 //            MAKE_CMD(tmp);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_REVOKE_ROLE;
+			}
+			;
 			break;
 
 		case 2903: /* revoke: REVOKE if_exists role_or_privilege_list ON_SYM opt_acl_type grant_ident FROM user_list opt_ignore_unknown_user */
-//  if (yyn == 2903)
-//    /* "sql_yacc.y":16386  */
-//          {
+			if (yyn == 2903)
+			/* "sql_yacc.y":16386 */
+			{
 //            LEX *lex= Lex;
 //            lex->grant_if_exists = ((num)(yystack.valueAt (7)));
 //            Lex->ignore_unknown_user = ((num)(yystack.valueAt (0)));
@@ -23233,23 +23387,27 @@ public class MyParser implements Parser {
 //            lex->type= static_cast<ulong>(((acl_type)(yystack.valueAt (4))));
 //            lex->users_list= *((user_list)(yystack.valueAt (1)));
 //            MAKE_CMD_DCL_DUMMY();
-//          };
+				thd.lex.sqlCommand = (thd.lex.grant == AuthAcls.GLOBAL_ACLS) ? SQLCommand.SQLCOM_REVOKE_ALL : SQLCommand.SQLCOM_REVOKE;
+			}
+			;
 			break;
 
 		case 2904: /* $@55: %empty */
-//  if (yyn == 2904)
-//    /* "sql_yacc.y":16404  */
-//          {
+			if (yyn == 2904)
+			/* "sql_yacc.y":16404 */
+			{
 //            Lex->grant_if_exists = ((num)(yystack.valueAt (2)));
 //            Lex->all_privileges= 1;
 //            Lex->grant= GLOBAL_ACLS;
-//          };
+				thd.lex.grant = AuthAcls.GLOBAL_ACLS;
+			}
+			;
 			break;
 
 		case 2905: /* revoke: REVOKE if_exists ALL opt_privileges $@55 ON_SYM opt_acl_type grant_ident FROM user_list opt_ignore_unknown_user */
-//  if (yyn == 2905)
-//    /* "sql_yacc.y":16410  */
-//          {
+			if (yyn == 2905)
+			/* "sql_yacc.y":16410 */
+			{
 //            LEX *lex= Lex;
 //            lex->sql_command= (lex->grant == (GLOBAL_ACLS & ~GRANT_ACL)) ?
 //                                                            SQLCOM_REVOKE_ALL
@@ -23263,7 +23421,9 @@ public class MyParser implements Parser {
 //            lex->users_list= *((user_list)(yystack.valueAt (1)));
 //            lex->ignore_unknown_user = ((num)(yystack.valueAt (0)));
 //            MAKE_CMD_DCL_DUMMY();
-//          };
+				thd.lex.sqlCommand = (thd.lex.grant == (AuthAcls.GLOBAL_ACLS & ~AuthAcls.GRANT_ACL)) ? SQLCommand.SQLCOM_REVOKE_ALL : SQLCommand.SQLCOM_REVOKE;
+			}
+			;
 			break;
 
 		case 2906: /* revoke: REVOKE if_exists ALL opt_privileges ',' GRANT OPTION FROM user_list opt_ignore_unknown_user */
@@ -23298,12 +23458,14 @@ public class MyParser implements Parser {
 			break;
 
 		case 2908: /* grant: GRANT role_or_privilege_list TO_SYM user_list opt_with_admin_option */
-//  if (yyn == 2908)
-//    /* "sql_yacc.y":16448  */
-//          {
+			if (yyn == 2908)
+			/* "sql_yacc.y":16448 */
+			{
 //            auto *tmp= NEW_PTN PT_grant_roles((yyloc), ((role_or_privilege_list)(yystack.valueAt (3))), ((user_list)(yystack.valueAt (1))), ((is_not_empty)(yystack.valueAt (0))));
 //            MAKE_CMD(tmp);
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_GRANT_ROLE;
+			}
+			;
 			break;
 
 		case 2909: /* grant: GRANT role_or_privilege_list ON_SYM opt_acl_type grant_ident TO_SYM user_list grant_options opt_grant_as */
@@ -23329,12 +23491,14 @@ public class MyParser implements Parser {
 			break;
 
 		case 2910: /* $@56: %empty */
-//  if (yyn == 2910)
-//    /* "sql_yacc.y":16470  */
-//          {
+			if (yyn == 2910)
+			/* "sql_yacc.y":16470 */
+			{
 //            Lex->all_privileges= 1;
 //            Lex->grant= GLOBAL_ACLS;
-//          };
+				thd.lex.grant = AuthAcls.GLOBAL_ACLS;
+			}
+			;
 			break;
 
 		case 2911: /* grant: GRANT ALL opt_privileges $@56 ON_SYM opt_acl_type grant_ident TO_SYM user_list grant_options opt_grant_as */
@@ -23696,9 +23860,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 2964: /* grant_ident: '*' */
-//  if (yyn == 2964)
-//    /* "sql_yacc.y":16668  */
-//          {
+			if (yyn == 2964)
+			/* "sql_yacc.y":16668 */
+			{
 //            LEX *lex= Lex;
 //            size_t dummy;
 //            if (lex->copy_db_to(&lex->current_query_block()->db, &dummy))
@@ -23710,13 +23874,17 @@ public class MyParser implements Parser {
 //              my_error(ER_ILLEGAL_GRANT_FOR_TABLE, MYF(0));
 //              MYSQL_YYABORT;
 //            }
-//          };
+				if (thd.lex.grant == AuthAcls.GLOBAL_ACLS) {
+					thd.lex.grant = AuthAcls.DB_OP_ACLS;
+				}
+			}
+			;
 			break;
 
 		case 2965: /* grant_ident: schema '.' '*' */
-//  if (yyn == 2965)
-//    /* "sql_yacc.y":16682  */
-//          {
+			if (yyn == 2965)
+			/* "sql_yacc.y":16682 */
+			{
 //            LEX *lex= Lex;
 //            lex->current_query_block()->db = ((lexer.lex_str)(yystack.valueAt (2))).str;
 //            if (lex->grant == GLOBAL_ACLS)
@@ -23726,13 +23894,17 @@ public class MyParser implements Parser {
 //              my_error(ER_ILLEGAL_GRANT_FOR_TABLE, MYF(0));
 //              MYSQL_YYABORT;
 //            }
-//          };
+				if (thd.lex.grant == AuthAcls.GLOBAL_ACLS) {
+					thd.lex.grant = AuthAcls.DB_OP_ACLS;
+				}
+			}
+			;
 			break;
 
 		case 2966: /* grant_ident: '*' '.' '*' */
-//  if (yyn == 2966)
-//    /* "sql_yacc.y":16694  */
-//          {
+			if (yyn == 2966)
+			/* "sql_yacc.y":16694 */
+			{
 //            LEX *lex= Lex;
 //            lex->current_query_block()->db = nullptr;
 //            if (lex->grant == GLOBAL_ACLS)
@@ -23742,13 +23914,17 @@ public class MyParser implements Parser {
 //              my_error(ER_ILLEGAL_GRANT_FOR_TABLE, MYF(0));
 //              MYSQL_YYABORT;
 //            }
-//          };
+				if (thd.lex.grant == AuthAcls.GLOBAL_ACLS) {
+					thd.lex.grant = AuthAcls.GLOBAL_ACLS & ~AuthAcls.GRANT_ACL;
+				}
+			}
+			;
 			break;
 
 		case 2967: /* grant_ident: ident */
-//  if (yyn == 2967)
-//    /* "sql_yacc.y":16706  */
-//          {
+			if (yyn == 2967)
+			/* "sql_yacc.y":16706 */
+			{
 //            auto tmp = NEW_PTN Table_ident(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (0)))));
 //            if (tmp == nullptr)
 //              MYSQL_YYABORT;
@@ -23758,13 +23934,17 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT;
 //            if (lex->grant == GLOBAL_ACLS)
 //              lex->grant =  TABLE_OP_ACLS;
-//          };
+				if (thd.lex.grant == AuthAcls.GLOBAL_ACLS) {
+					thd.lex.grant = AuthAcls.TABLE_OP_ACLS;
+				}
+			}
+			;
 			break;
 
 		case 2968: /* grant_ident: schema '.' ident */
-//  if (yyn == 2968)
-//    /* "sql_yacc.y":16718  */
-//          {
+			if (yyn == 2968)
+			/* "sql_yacc.y":16718 */
+			{
 //            auto schema_name = YYCLIENT_NO_SCHEMA ? LEX_CSTRING{}
 //                                                  : to_lex_cstring(((lexer.lex_str)(yystack.valueAt (2))).str);
 //            auto tmp = NEW_PTN Table_ident(schema_name, to_lex_cstring(((lexer.lex_str)(yystack.valueAt (0)))));
@@ -23776,7 +23956,11 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT;
 //            if (lex->grant == GLOBAL_ACLS)
 //              lex->grant =  TABLE_OP_ACLS;
-//          };
+				if (thd.lex.grant == AuthAcls.GLOBAL_ACLS) {
+					thd.lex.grant = AuthAcls.TABLE_OP_ACLS;
+				}
+			}
+			;
 			break;
 
 		case 2969: /* user_list: user */
@@ -25625,11 +25809,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 3163: /* install_stmt: INSTALL_SYM COMPONENT_SYM TEXT_STRING_sys_list opt_install_set_value_list */
-//  if (yyn == 3163)
-//    /* "sql_yacc.y":18136  */
-//          {
+			if (yyn == 3163)
+			/* "sql_yacc.y":18136 */
+			{
 //            yyval = NEW_PTN PT_install_component((yyloc), YYTHD, ((lex_str_list)(yystack.valueAt (1))), ((install_component_set_list)(yystack.valueAt (0))));
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_INSTALL_COMPONENT;
+			}
+			;
 			break;
 
 		case 3164: /* uninstall: UNINSTALL_SYM PLUGIN_SYM ident */

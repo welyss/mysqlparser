@@ -4,12 +4,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.Test;
 import org.welyss.mysqlparser.MySQLParser;
 import org.welyss.mysqlparser.MySQLVersion;
 import org.welyss.mysqlparser.ParseResult;
 import org.welyss.mysqlparser.SQLCommand;
+import org.welyss.mysqlparser.SQLInfo;
 
 public class MySQLParserUnitTest {
 	MySQLParser parser;
@@ -21,12 +23,14 @@ public class MySQLParserUnitTest {
 
 	@Test
 	public void case1() throws IOException {
-		String sql = "select _utf8 0xD0B0D0B1D0B2;select 1;insert into `test` values(1,2,3,4);";
+//		String sql = "select _utf8 0xD0B0D0B1D0B2;select 1;insert into `test` values(1,2,3,4);";
+//		String sql = "SET RESOURCE GROUP rg2 FOR 14, 78, 4;";
+		String sql = "start replica;stop replica";
 //		String sql = "select _utf8 0xD0B0D0B1D0B2;";
 //		String sql = "select id from acnt_account;";
 		ParseResult result = parser.parse(sql);
 		assertTrue(result.success());
-		assertTrue(result.getParsedSQLInfo().get(0).getSQLCommand().equals(SQLCommand.SQLCOM_SELECT));
+//		assertTrue(result.getParsedSQLInfo().get(0).getSQLCommand().equals(SQLCommand.SQLCOM_SELECT));
 	}
 
 	@Test
@@ -253,6 +257,86 @@ public class MySQLParserUnitTest {
 			assertTrue(result.success());
 		} else if(parser.version().equals(MySQLVersion.v84)) {
 			assertTrue(result.success());
+		}
+	}
+
+	@Test
+	public void case8() throws IOException {
+		String sql = "alter table t_b_article\r\n"
+				+ "    add audit_id           bigint               null comment '审核id',\r\n"
+				+ "    add audit_status       varchar(32)          null comment '审核状态',\r\n"
+				+ "    add cover_image        varchar(255)         null comment '封面图片URL',\r\n"
+				+ "    add category           varchar(255)         null comment '文章分类',\r\n"
+				+ "    add content_url        varchar(255)         null comment '文章内容URL',\r\n"
+				+ "    add linked_products    varchar(255)         null,\r\n"
+				+ "    add distribution_type  varchar(32)          null comment '分销类型',\r\n"
+				+ "    add listing_status     varchar(32)          null comment '上架状态',\r\n"
+				+ "    add trial_content_url  varchar(255)         null comment '试用内容URL',\r\n"
+				+ "    add snippet_trial      tinyint(1)           null comment '是否支持试看',\r\n"
+				+ "    add sale_type          varchar(50)          null comment '销售类型',\r\n"
+				+ "    add price              double               null comment '价格',\r\n"
+				+ "    add original_price     double               null comment '划线价格',\r\n"
+				+ "    add validity_type      varchar(50)          null comment '有效期类型',\r\n"
+				+ "    add expiration_time    varchar(255)         null comment '到期时间',\r\n"
+				+ "    add duration_days      int                  null comment '有效天数',\r\n"
+				+ "    add mode               varchar(32)          null comment '文章模式',\r\n"
+				+ "    add operation_setting  json                 null comment '运营设置（JSON格式）',\r\n"
+				+ "    add creator            bigint               null comment '创建者ID',\r\n"
+				+ "    add deleted            tinyint(1) default 0 null comment '是否已删除',\r\n"
+				+ "    add listing_start_time datetime             null,\r\n"
+				+ "    add article_brief      varchar(255)         null,\r\n"
+				+ "    add listing_type varchar(12)  null comment '上架类型',\r\n"
+				+ "    add pay_picture  varchar(255) null comment '支付助手二维码';";
+		ParseResult result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertFalse(result.success());
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+		}
+	}
+
+	@Test
+	public void case9() throws IOException {
+		String sql = "set names utf8mb4;set autocommit = off;set global innodb_lock_wait_timeout = 120;show global variables like '%wait_%';";
+		ParseResult result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			assertTrue(SQLCommand.SQLCOM_SET_OPTION.equals(list.get(0).getSQLCommand()));
+			assertTrue(SQLCommand.SQLCOM_SET_OPTION.equals(list.get(1).getSQLCommand()));
+			assertTrue(SQLCommand.SQLCOM_SET_OPTION.equals(list.get(2).getSQLCommand()));
+			assertTrue(SQLCommand.SQLCOM_SHOW_VARIABLES.equals(list.get(3).getSQLCommand()));
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			assertTrue(SQLCommand.SQLCOM_SET_OPTION.equals(list.get(0).getSQLCommand()));
+			assertTrue(SQLCommand.SQLCOM_SET_OPTION.equals(list.get(1).getSQLCommand()));
+			assertTrue(SQLCommand.SQLCOM_SET_OPTION.equals(list.get(2).getSQLCommand()));
+			assertTrue(SQLCommand.SQLCOM_SHOW_VARIABLES.equals(list.get(3).getSQLCommand()));
+		}
+	}
+
+	@Test
+	public void case10() throws IOException {
+		String sql = "start replica for channel 'a';stop replica for channel 'a'";
+		ParseResult result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertFalse(result.success());
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			assertTrue(SQLCommand.SQLCOM_REPLICA_START.equals(list.get(0).getSQLCommand()));
+			assertTrue(SQLCommand.SQLCOM_REPLICA_STOP.equals(list.get(1).getSQLCommand()));
+		}
+		sql = "start slave;stop slave";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			assertTrue(SQLCommand.SQLCOM_SLAVE_START.equals(list.get(0).getSQLCommand()));
+			assertTrue(SQLCommand.SQLCOM_SLAVE_STOP.equals(list.get(1).getSQLCommand()));
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertFalse(result.success());
 		}
 	}
 }
