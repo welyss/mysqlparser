@@ -26,7 +26,8 @@ public class MySQLParserUnitTest {
 //		String sql = "select _utf8 0xD0B0D0B1D0B2;select 1;insert into `test` values(1,2,3,4);";
 //		String sql = "SET RESOURCE GROUP rg2 FOR 14, 78, 4;";
 //		String sql = "rename table db1.t1 to `db2`.`t2`;";
-		String sql = "lock tables changelog read;";
+//		String sql = "lock tables changelog read;";
+		String sql = "HANDLER wystest1 OPEN as wystest2;";
 //		String sql = "select _utf8 0xD0B0D0B1D0B2;";
 //		String sql = "select id from acnt_account;";
 		ParseResult result = parser.parse(sql);

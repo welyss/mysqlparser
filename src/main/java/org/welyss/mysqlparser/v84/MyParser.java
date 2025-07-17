@@ -18377,9 +18377,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 1810: /* opt_table_alias: opt_as ident */
-//  if (yyn == 1810)
-//    /* "sql_yacc.y":12298  */
-//                       { yyval = to_lex_cstring(((lexer.lex_str)(yystack.valueAt (0)))); };
+			if (yyn == 1810)
+			/* "sql_yacc.y":12298 */
+			{
+//				yyval = to_lex_cstring(((lexer.lex_str) (yystack.valueAt(0))));
+				yyval = yystack.valueAt(0);
+			}
+			;
 			break;
 
 		case 1813: /* opt_where_clause: %empty */
@@ -23280,6 +23284,7 @@ public class MyParser implements Parser {
 			{
 //            yyval= NEW_PTN PT_handler_open(((table)(yystack.valueAt (2))), ((lex_cstr)(yystack.valueAt (0))));
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_OPEN;
+				thd.addTableToList((TableIdent) yystack.valueAt(2), ((Token) yystack.valueAt(0)).lexStr.str, 0l, null, null);
 			}
 			;
 			break;
@@ -25076,7 +25081,7 @@ public class MyParser implements Parser {
 //                set_derived_column_names(static_cast<Create_col_name_list* >(rawmem));
 //            }
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_VIEW;
-				thd.addTableToList((TableIdent)yystack.valueAt(1), null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_IGNORE, MdlType.MDL_EXCLUSIVE);
+				thd.addTableToList((TableIdent) yystack.valueAt(1), null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_IGNORE, MdlType.MDL_EXCLUSIVE);
 			}
 			;
 			break;
@@ -25260,7 +25265,7 @@ public class MyParser implements Parser {
 
 //            Lex->m_sql_cmd= new (YYTHD->mem_root) Sql_cmd_create_trigger();
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_TRIGGER;
-				thd.addTableToList((TableIdent)yystack.valueAt(6), null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_READ_NO_INSERT, MdlType.MDL_SHARED_NO_WRITE);
+				thd.addTableToList((TableIdent) yystack.valueAt(6), null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_READ_NO_INSERT, MdlType.MDL_SHARED_NO_WRITE);
 			}
 			;
 			break;
