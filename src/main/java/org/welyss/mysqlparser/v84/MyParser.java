@@ -23076,7 +23076,7 @@ public class MyParser implements Parser {
 					/* LOCK TABLE ... READ */
 					mdlLockType = MdlType.MDL_SHARED_READ_ONLY;
 				}
-				thd.addTableToList((TableIdent)yystack.valueAt(2), ((Token)yystack.valueAt(1)).lexStr.str, 0, lockType, mdlLockType);
+				thd.addTableToList((TableIdent) yystack.valueAt(2), ((Token) yystack.valueAt(1)).lexStr.str, 0, lockType, mdlLockType);
 			}
 			;
 			break;
@@ -23974,7 +23974,7 @@ public class MyParser implements Parser {
 //              lex->grant =  TABLE_OP_ACLS;
 
 				TableIdent tmp = new TableIdent((Token) yystack.valueAt(0));
-
+				thd.addTableToList(tmp, null, SQLThread.TL_OPTION_UPDATING, null, null);
 				if (thd.lex.grant == AuthAcls.GLOBAL_ACLS) {
 					thd.lex.grant = AuthAcls.TABLE_OP_ACLS;
 				}
@@ -23998,6 +23998,7 @@ public class MyParser implements Parser {
 //            if (lex->grant == GLOBAL_ACLS)
 //              lex->grant =  TABLE_OP_ACLS;
 				TableIdent tmp = new TableIdent((Token) yystack.valueAt(2), (Token) yystack.valueAt(0));
+				thd.addTableToList(tmp, null, SQLThread.TL_OPTION_UPDATING, null, null);
 				if (thd.lex.grant == AuthAcls.GLOBAL_ACLS) {
 					thd.lex.grant = AuthAcls.TABLE_OP_ACLS;
 				}
@@ -25044,7 +25045,6 @@ public class MyParser implements Parser {
 //            THD *thd= YYTHD;
 //            LEX *lex= thd->lex;
 //            lex->sql_command= SQLCOM_CREATE_VIEW;
-				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_VIEW;
 //            /* first table in list is target VIEW name */
 //            if (!lex->query_block->add_table_to_list(thd, ((table)(yystack.valueAt (1))), nullptr,
 //                                                    TL_OPTION_UPDATING,
@@ -25075,6 +25075,8 @@ public class MyParser implements Parser {
 //              lex->query_tables->
 //                set_derived_column_names(static_cast<Create_col_name_list* >(rawmem));
 //            }
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_VIEW;
+				thd.addTableToList((TableIdent)yystack.valueAt(1), null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_IGNORE, MdlType.MDL_EXCLUSIVE);
 			}
 			;
 			break;
@@ -25240,7 +25242,6 @@ public class MyParser implements Parser {
 //            sp_finish_parsing(thd);
 
 //            lex->sql_command= SQLCOM_CREATE_TRIGGER;
-				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_TRIGGER;
 
 //            if (sp->is_not_allowed_in_function("trigger"))
 //              MYSQL_YYABORT;
@@ -25258,6 +25259,8 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT;
 
 //            Lex->m_sql_cmd= new (YYTHD->mem_root) Sql_cmd_create_trigger();
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_TRIGGER;
+				thd.addTableToList((TableIdent)yystack.valueAt(6), null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_READ_NO_INSERT, MdlType.MDL_SHARED_NO_WRITE);
 			}
 			;
 			break;
