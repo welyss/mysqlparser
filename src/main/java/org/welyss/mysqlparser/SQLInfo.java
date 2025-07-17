@@ -1,17 +1,23 @@
 package org.welyss.mysqlparser;
 
+import java.util.List;
+
+import org.welyss.mysqlparser.items.TableIdent;
+
 public class SQLInfo {
 	private String sql;
 	private String alterCommand;
 	private SQLCommand sqlCommand;
+	public List<TableIdent> tableIdents;
 
 	public SQLInfo(String sql) {
 		this.sql = sql;
 	}
 
-	public SQLInfo(String sql, SQLCommand sqlCommand) {
+	public SQLInfo(String sql, SQLCommand sqlCommand, List<TableIdent> tableIdents) {
 		this.sql = sql;
 		this.sqlCommand = sqlCommand;
+		this.tableIdents = tableIdents;
 	}
 
 	public SQLInfo(String sql, String alterCommand) {

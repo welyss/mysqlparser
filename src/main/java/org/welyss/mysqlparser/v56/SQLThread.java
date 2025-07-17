@@ -96,7 +96,8 @@ public class SQLThread extends MySQLThread {
 				if (ti.getTableStartPos() != null) ti.setTableStartPos(ti.getTableStartPos() - lastPos);
 			}
 		} else {
-			ret = new SQLInfo(sql.toString(), this.lex.sqlCommand);
+			ret = new SQLInfo(sql.toString(), this.lex.sqlCommand, this.lex.tables);
+			this.lex.tables = new ArrayList<TableIdent>();
 		}
 //		ParseItem result = new ParseItem(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, lex.alterInfo.flags, this.inWhere, alterCommand, lex.alterInfo.columns);
 //		success = null;

@@ -148,7 +148,8 @@ public class MyLexer implements Lexer, MySQLLexer {
 	@Override
 	public int yylex(MySQLThread mthd) throws IOException {
 		SQLThread thd = (SQLThread)mthd;
-		if (thd.mParserState.mLip.yylval == null) thd.mParserState.mLip.yylval = new LexerYystype();
+//		if (thd.mParserState.mLip.yylval == null) thd.mParserState.mLip.yylval = new LexerYystype();
+		thd.mParserState.mLip.yylval = new LexerYystype();
 
 		LexerYystype yylval = thd.mParserState.mLip.yylval;
 		// POS in mysql-8.4.5/src/sql/parse_location.h

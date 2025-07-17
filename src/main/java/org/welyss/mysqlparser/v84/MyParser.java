@@ -1,6 +1,7 @@
 package org.welyss.mysqlparser.v84;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +11,8 @@ import org.welyss.mysqlparser.ParseResult;
 import org.welyss.mysqlparser.Parser;
 import org.welyss.mysqlparser.SQLCommand;
 import org.welyss.mysqlparser.items.Position;
+import org.welyss.mysqlparser.items.TableIdent;
+import org.welyss.mysqlparser.items.Token;
 import org.welyss.mysqlparser.utils.MySQLParserUtils;
 
 /**
@@ -4138,7 +4141,7 @@ public class MyParser implements Parser {
 			return yydefgoto_[yysym - YYNTOKENS_];
 	}
 
-	private int yyaction(int yyn, YYStack yystack, int yylen, MySQLThread mThd) {
+	private int yyaction(int yyn, YYStack yystack, int yylen, MySQLThread mThd) throws SQLException {
 		SQLThread thd = (SQLThread) mThd;
 		/*
 		 * If YYLEN is nonzero, implement the default value of the action: '$$ = $1'. Otherwise, use the top of the stack.
@@ -14288,9 +14291,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 1274: /* table_to_table: table_ident TO_SYM table_ident */
-//  if (yyn == 1274)
-//    /* "sql_yacc.y":9566  */
-//          {
+			if (yyn == 1274)
+			/* "sql_yacc.y":9566 */
+			{
 //            LEX *lex=Lex;
 //            Query_block *sl= Select;
 //            if (!sl->add_table_to_list(lex->thd, ((table)(yystack.valueAt (2))),nullptr,TL_OPTION_UPDATING,
@@ -14298,7 +14301,10 @@ public class MyParser implements Parser {
 //                !sl->add_table_to_list(lex->thd, ((table)(yystack.valueAt (0))),nullptr,TL_OPTION_UPDATING,
 //                                       TL_IGNORE, MDL_EXCLUSIVE))
 //              MYSQL_YYABORT;
-//          };
+				thd.addTableToList(((TableIdent) (yystack.valueAt(2))), null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_IGNORE, MdlType.MDL_EXCLUSIVE);
+				thd.addTableToList(((TableIdent) (yystack.valueAt(0))), null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_IGNORE, MdlType.MDL_EXCLUSIVE);
+			}
+			;
 			break;
 
 		case 1275: /* keycache_stmt: CACHE_SYM INDEX_SYM keycache_list IN_SYM key_cache_name */
@@ -14698,15 +14704,16 @@ public class MyParser implements Parser {
 			break;
 
 		case 1321: /* explicit_table: TABLE_SYM table_ident */
-//  if (yyn == 1321)
-//    /* "sql_yacc.y":9934  */
-//          {
+			if (yyn == 1321)
+			/* "sql_yacc.y":9934 */
+			{
 //            yyval.init(YYMEM_ROOT);
 //            auto table= NEW_PTN
 //                PT_table_factor_table_ident((yyloc), ((table)(yystack.valueAt (0))), nullptr, NULL_CSTR, nullptr, nullptr);
 //            if (yyval.push_back(table))
 //              MYSQL_YYABORT; // OOM
-//          };
+			}
+			;
 			break;
 
 		case 1322: /* select_options: %empty */
@@ -21993,47 +22000,55 @@ public class MyParser implements Parser {
 			break;
 
 		case 2267: /* table_ident: ident */
-//  if (yyn == 2267)
-//    /* "sql_yacc.y":14914  */
-//          {
+			if (yyn == 2267)
+			/* "sql_yacc.y":14914 */
+			{
 //            yyval= NEW_PTN Table_ident(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (0)))));
 //            if (yyval == nullptr)
 //              MYSQL_YYABORT;
-//          };
+				yyval = new TableIdent((Token) yystack.valueAt(0));
+			}
+			;
 			break;
 
 		case 2268: /* table_ident: ident '.' ident */
-//  if (yyn == 2268)
-//    /* "sql_yacc.y":14920  */
-//          {
+			if (yyn == 2268)
+			/* "sql_yacc.y":14920 */
+			{
 //            auto schema_name = YYCLIENT_NO_SCHEMA ? LEX_CSTRING{}
 //                                                  : to_lex_cstring(((lexer.lex_str)(yystack.valueAt (2))).str);
 //            yyval= NEW_PTN Table_ident(schema_name, to_lex_cstring(((lexer.lex_str)(yystack.valueAt (0)))));
 //            if (yyval == nullptr)
 //              MYSQL_YYABORT;
-//          };
+				yyval = new TableIdent((Token) yystack.valueAt(2), (Token) yystack.valueAt(0));
+			}
+			;
 			break;
 
 		case 2269: /* table_ident_opt_wild: ident opt_wild */
-//  if (yyn == 2269)
-//    /* "sql_yacc.y":14931  */
-//          {
+			if (yyn == 2269)
+			/* "sql_yacc.y":14931 */
+			{
 //            yyval= NEW_PTN Table_ident(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (1)))));
 //            if (yyval == nullptr)
 //              MYSQL_YYABORT;
-//          };
+				yyval = new TableIdent((Token) yystack.valueAt(1));
+			}
+			;
 			break;
 
 		case 2270: /* table_ident_opt_wild: ident '.' ident opt_wild */
-//  if (yyn == 2270)
-//    /* "sql_yacc.y":14937  */
-//          {
+			if (yyn == 2270)
+			/* "sql_yacc.y":14937 */
+			{
 //            yyval= NEW_PTN Table_ident(YYTHD->get_protocol(),
 //                                    to_lex_cstring(((lexer.lex_str)(yystack.valueAt (3)))),
 //                                    to_lex_cstring(((lexer.lex_str)(yystack.valueAt (1)))), 0);
 //            if (yyval == nullptr)
 //              MYSQL_YYABORT;
-//          };
+				yyval = new TableIdent((Token) yystack.valueAt(3), (Token) yystack.valueAt(1));
+			}
+			;
 			break;
 
 		case 2271: /* IDENT_sys: IDENT */
@@ -23024,9 +23039,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 2868: /* table_lock: table_ident opt_table_alias lock_option */
-//  if (yyn == 2868)
-//    /* "sql_yacc.y":16163  */
-//          {
+			if (yyn == 2868)
+			/* "sql_yacc.y":16163 */
+			{
 //            thr_lock_type lock_type= (thr_lock_type) ((num)(yystack.valueAt (0)));
 //            enum_mdl_type mdl_lock_type;
 
@@ -23049,25 +23064,48 @@ public class MyParser implements Parser {
 //            if (!Select->add_table_to_list(YYTHD, ((table)(yystack.valueAt (2))), ((lex_cstr)(yystack.valueAt (1))).str, 0, lock_type,
 //                                           mdl_lock_type))
 //              MYSQL_YYABORT;
-//          };
+				ThrLockType lockType = (ThrLockType) yystack.valueAt(0);
+				MdlType mdlLockType;
+				if (lockType.intValue() >= ThrLockType.TL_WRITE_ALLOW_WRITE.intValue()) {
+					/* LOCK TABLE ... WRITE */
+					mdlLockType = MdlType.MDL_SHARED_NO_READ_WRITE;
+				} else if (lockType.intValue() == ThrLockType.TL_READ.intValue()) {
+					/* LOCK TABLE ... READ LOCAL */
+					mdlLockType = MdlType.MDL_SHARED_READ;
+				} else {
+					/* LOCK TABLE ... READ */
+					mdlLockType = MdlType.MDL_SHARED_READ_ONLY;
+				}
+				thd.addTableToList((TableIdent)yystack.valueAt(2), ((Token)yystack.valueAt(1)).lexStr.str, 0, lockType, mdlLockType);
+			}
+			;
 			break;
 
 		case 2869: /* lock_option: READ_SYM */
-//  if (yyn == 2869)
-//    /* "sql_yacc.y":16190  */
-//                                 { yyval= TL_READ_NO_INSERT; };
+			if (yyn == 2869)
+			/* "sql_yacc.y":16190 */
+			{
+				yyval = ThrLockType.TL_READ_NO_INSERT;
+			}
+			;
 			break;
 
 		case 2870: /* lock_option: WRITE_SYM */
-//  if (yyn == 2870)
-//    /* "sql_yacc.y":16191  */
-//                                 { yyval= TL_WRITE_DEFAULT; };
+			if (yyn == 2870)
+			/* "sql_yacc.y":16191 */
+			{
+				yyval = ThrLockType.TL_WRITE_DEFAULT;
+			}
+			;
 			break;
 
 		case 2871: /* lock_option: READ_SYM LOCAL_SYM */
-//  if (yyn == 2871)
-//    /* "sql_yacc.y":16192  */
-//                                 { yyval= TL_READ; };
+			if (yyn == 2871)
+			/* "sql_yacc.y":16192 */
+			{
+				yyval = ThrLockType.TL_READ;
+			}
+			;
 			break;
 
 		case 2872: /* $@54: %empty */
@@ -23934,6 +23972,9 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT;
 //            if (lex->grant == GLOBAL_ACLS)
 //              lex->grant =  TABLE_OP_ACLS;
+
+				TableIdent tmp = new TableIdent((Token) yystack.valueAt(0));
+
 				if (thd.lex.grant == AuthAcls.GLOBAL_ACLS) {
 					thd.lex.grant = AuthAcls.TABLE_OP_ACLS;
 				}
@@ -23956,6 +23997,7 @@ public class MyParser implements Parser {
 //              MYSQL_YYABORT;
 //            if (lex->grant == GLOBAL_ACLS)
 //              lex->grant =  TABLE_OP_ACLS;
+				TableIdent tmp = new TableIdent((Token) yystack.valueAt(2), (Token) yystack.valueAt(0));
 				if (thd.lex.grant == AuthAcls.GLOBAL_ACLS) {
 					thd.lex.grant = AuthAcls.TABLE_OP_ACLS;
 				}
@@ -26257,13 +26299,19 @@ public class MyParser implements Parser {
 			`-----------------------------*/
 			case YYREDUCE:
 				yylen = yyr2_[yyn];
-				label = yyaction(yyn, yystack, yylen, thd);
-				yystate = yystack.stateAt(0);
-				break;
+				try {
+					label = yyaction(yyn, yystack, yylen, thd);
+					yystate = yystack.stateAt(0);
+					break;
+				} catch (SQLException e) {
+					yylexer.yyerror(thd, yylloc, e.getMessage());
+					label = YYERROR;
+					break;
+				}
 
-			/*------------------------------------.
-			| yyerrlab -- here on detecting error |
-			`------------------------------------*/
+				/*------------------------------------.
+				| yyerrlab -- here on detecting error |
+				`------------------------------------*/
 			case YYERRLAB:
 				/* If not already recovering from an error, report this error. */
 				if (yyerrstatus_ == 0) {

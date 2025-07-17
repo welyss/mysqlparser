@@ -25,7 +25,8 @@ public class MySQLParserUnitTest {
 	public void case1() throws IOException {
 //		String sql = "select _utf8 0xD0B0D0B1D0B2;select 1;insert into `test` values(1,2,3,4);";
 //		String sql = "SET RESOURCE GROUP rg2 FOR 14, 78, 4;";
-		String sql = "start replica;stop replica";
+//		String sql = "rename table db1.t1 to `db2`.`t2`;";
+		String sql = "lock tables changelog read;";
 //		String sql = "select _utf8 0xD0B0D0B1D0B2;";
 //		String sql = "select id from acnt_account;";
 		ParseResult result = parser.parse(sql);
@@ -318,7 +319,7 @@ public class MySQLParserUnitTest {
 
 	@Test
 	public void case10() throws IOException {
-		String sql = "start replica for channel 'a';stop replica for channel 'a'";
+		String sql = "start replica for channel 'a';START REPLICA UNTIL SQL_AFTER_MTS_GAPS;stop replica for channel 'a'";
 		ParseResult result = parser.parse(sql);
 		if (parser.version().equals(MySQLVersion.v56)) {
 			assertFalse(result.success());
@@ -326,7 +327,8 @@ public class MySQLParserUnitTest {
 			assertTrue(result.success());
 			List<SQLInfo> list = result.getParsedSQLInfo();
 			assertTrue(SQLCommand.SQLCOM_REPLICA_START.equals(list.get(0).getSQLCommand()));
-			assertTrue(SQLCommand.SQLCOM_REPLICA_STOP.equals(list.get(1).getSQLCommand()));
+			assertTrue(SQLCommand.SQLCOM_REPLICA_START.equals(list.get(1).getSQLCommand()));
+			assertTrue(SQLCommand.SQLCOM_REPLICA_STOP.equals(list.get(2).getSQLCommand()));
 		}
 		sql = "start slave;stop slave";
 		result = parser.parse(sql);

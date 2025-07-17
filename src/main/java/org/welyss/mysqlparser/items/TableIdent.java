@@ -1,8 +1,10 @@
 package org.welyss.mysqlparser.items;
 
-public class TableIdent extends LexerYystype {
+public class TableIdent extends Token {
 	Token dbArg;
 	Token tableArg;
+	boolean sel;
+	String tableFunction;
 
 	public TableIdent(Token dbArg, Token tableArg) {
 		this.dbArg = dbArg;
@@ -26,7 +28,8 @@ public class TableIdent extends LexerYystype {
 	}
 
 	public void setDbStartPos(int pos) {
-		if (dbArg != null) dbArg.lexStr.pos = pos;
+		if (dbArg != null)
+			dbArg.lexStr.pos = pos;
 	}
 
 	public Integer getTableStartPos() {
@@ -34,6 +37,15 @@ public class TableIdent extends LexerYystype {
 	}
 
 	public void setTableStartPos(int pos) {
-		if (tableArg != null) tableArg.lexStr.pos = pos;
+		if (tableArg != null)
+			tableArg.lexStr.pos = pos;
+	}
+
+	public boolean isDerivedTable() {
+		return sel;
+	}
+
+	public boolean isTableFunction() {
+		return (tableFunction != null);
 	}
 }
