@@ -411,41 +411,39 @@ public class MySQLParserUnitTest {
 
 	@Test
 	public void case12() throws IOException {
-//		String sql = "DELETE t1, t2 FROM db1.ta t1 INNER JOIN db2.tb t2 INNER JOIN db3.tc t3 WHERE t1.id=t2.id AND t2.id=t3.id;";
-//		ParseResult result = parser.parse(sql);
-//		if (parser.version().equals(MySQLVersion.v56)) {
-//			assertTrue(result.success());
-//			List<SQLInfo> list = result.getParsedSQLInfo();
-//			SQLInfo row = list.get(0);
-//			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_DELETE_MULTI));
-//			TableIdent ti1 = row.getTableIdents().get(0);
-//			assertTrue("db1".equals(ti1.getDb()));
-//			assertTrue("ta".equals(ti1.getTable()));
-//			TableIdent ti2 = row.getTableIdents().get(1);
-//			assertTrue("db2".equals(ti2.getDb()));
-//			assertTrue("tb".equals(ti2.getTable()));
-//			TableIdent ti3 = row.getTableIdents().get(2);
-//			assertTrue("db3".equals(ti3.getDb()));
-//			assertTrue("tc".equals(ti3.getTable()));
-//		} else if(parser.version().equals(MySQLVersion.v84)) {
-//			assertTrue(result.success());
-//			List<SQLInfo> list = result.getParsedSQLInfo();
-//			SQLInfo row = list.get(0);
-//			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_DELETE_MULTI));
-//			TableIdent ti1 = row.getTableIdents().get(0);
-//			assertTrue("db1".equals(ti1.getDb()));
-//			assertTrue("ta".equals(ti1.getTable()));
-//			TableIdent ti2 = row.getTableIdents().get(1);
-//			assertTrue("db2".equals(ti2.getDb()));
-//			assertTrue("tb".equals(ti2.getTable()));
-//			TableIdent ti3 = row.getTableIdents().get(2);
-//			assertTrue("db3".equals(ti3.getDb()));
-//			assertTrue("tc".equals(ti3.getTable()));
-//		}
-		String sql = "DELETE FROM t1, t2 USING t1 INNER JOIN t2 INNER JOIN t3 WHERE t1.id=t2.id AND t2.id=t3.id;";
+		String sql = "DELETE t1, t2 FROM db1.ta t1 INNER JOIN db2.tb t2 INNER JOIN db3.tc t3 WHERE t1.id=t2.id AND t2.id=t3.id;";
 		ParseResult result = parser.parse(sql);
-//		sql = "DELETE FROM t1, t2 USING t1 INNER JOIN t2 INNER JOIN t3 WHERE t1.id=t2.id AND t2.id=t3.id;";
-//		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_DELETE_MULTI));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertTrue("db1".equals(ti1.getDb()));
+			assertTrue("ta".equals(ti1.getTable()));
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertTrue("db2".equals(ti2.getDb()));
+			assertTrue("tb".equals(ti2.getTable()));
+			TableIdent ti3 = row.getTableIdents().get(2);
+			assertTrue("db3".equals(ti3.getDb()));
+			assertTrue("tc".equals(ti3.getTable()));
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_DELETE_MULTI));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertTrue("db1".equals(ti1.getDb()));
+			assertTrue("ta".equals(ti1.getTable()));
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertTrue("db2".equals(ti2.getDb()));
+			assertTrue("tb".equals(ti2.getTable()));
+			TableIdent ti3 = row.getTableIdents().get(2);
+			assertTrue("db3".equals(ti3.getDb()));
+			assertTrue("tc".equals(ti3.getTable()));
+		}
+		sql = "DELETE FROM t1, t2 USING t1 INNER JOIN t2 INNER JOIN t3 WHERE t1.id=t2.id AND t2.id=t3.id;";
+		result = parser.parse(sql);
 		if (parser.version().equals(MySQLVersion.v56)) {
 			assertTrue(result.success());
 			List<SQLInfo> list = result.getParsedSQLInfo();
