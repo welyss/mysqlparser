@@ -2,9 +2,12 @@ package org.welyss.mysqlparser.v84;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.welyss.mysqlparser.Lex;
 import org.welyss.mysqlparser.MySQLLexer;
 import org.welyss.mysqlparser.MySQLThread;
 import org.welyss.mysqlparser.ParseResult;
@@ -14664,9 +14667,12 @@ public class MyParser implements Parser {
 			break;
 
 		case 1315: /* from_clause: FROM from_tables */
-//  if (yyn == 1315)
-//    /* "sql_yacc.y":9902  */
-//                           { yyval= ((table_reference_list)(yystack.valueAt (0))); };
+			if (yyn == 1315)
+			/* "sql_yacc.y":9902 */
+			{
+//	  yyval= ((table_reference_list)(yystack.valueAt (0)));
+			}
+			;
 			break;
 
 		case 1316: /* from_tables: DUAL_SYM */
@@ -14676,23 +14682,25 @@ public class MyParser implements Parser {
 			break;
 
 		case 1318: /* table_reference_list: table_reference */
-//  if (yyn == 1318)
-//    /* "sql_yacc.y":9912  */
-//          {
+			if (yyn == 1318)
+			/* "sql_yacc.y":9912 */
+			{
 //            yyval.init(YYMEM_ROOT);
 //            if (yyval.push_back(((table_reference)(yystack.valueAt (0)))))
 //              MYSQL_YYABORT; // OOM
-//          };
+			}
+			;
 			break;
 
 		case 1319: /* table_reference_list: table_reference_list ',' table_reference */
-//  if (yyn == 1319)
-//    /* "sql_yacc.y":9918  */
-//          {
+			if (yyn == 1319)
+			/* "sql_yacc.y":9918 */
+			{
 //            yyval= ((table_reference_list)(yystack.valueAt (2)));
 //            if (yyval.push_back(((table_reference)(yystack.valueAt (0)))))
 //              MYSQL_YYABORT; // OOM
-//          };
+			}
+			;
 			break;
 
 		case 1320: /* table_value_constructor: VALUES values_row_list */
@@ -14712,6 +14720,7 @@ public class MyParser implements Parser {
 //                PT_table_factor_table_ident((yyloc), ((table)(yystack.valueAt (0))), nullptr, NULL_CSTR, nullptr, nullptr);
 //            if (yyval.push_back(table))
 //              MYSQL_YYABORT; // OOM
+				thd.addTableToList((TableIdent) yystack.valueAt(0), null, 0, null, null);
 			}
 			;
 			break;
@@ -17635,21 +17644,28 @@ public class MyParser implements Parser {
 			break;
 
 		case 1698: /* table_reference: table_factor */
-//  if (yyn == 1698)
-//    /* "sql_yacc.y":11757  */
-//                       { yyval= ((table_reference)(yystack.valueAt (0))); };
+			if (yyn == 1698)
+			/* "sql_yacc.y":11757 */
+			{
+//	  yyval= ((table_reference)(yystack.valueAt (0)));
+				thd.lex.tableReferenceList.add((TableIdent) yystack.valueAt(0));
+			}
+			;
 			break;
 
 		case 1699: /* table_reference: joined_table */
-//  if (yyn == 1699)
-//    /* "sql_yacc.y":11758  */
-//                       { yyval= ((join_table)(yystack.valueAt (0))); };
+			if (yyn == 1699)
+			/* "sql_yacc.y":11758 */
+			{
+//	  yyval= ((join_table)(yystack.valueAt (0)));
+			}
+			;
 			break;
 
 		case 1700: /* table_reference: '{' OJ_SYM esc_table_reference '}' */
-//  if (yyn == 1700)
-//    /* "sql_yacc.y":11760  */
-//          {
+			if (yyn == 1700)
+			/* "sql_yacc.y":11760 */
+			{
 //            /*
 //              The ODBC escape syntax for Outer Join.
 
@@ -17657,7 +17673,8 @@ public class MyParser implements Parser {
 //              not only the '{LEFT | RIGHT} [OUTER] JOIN' syntax.
 //            */
 //            yyval = ((table_reference)(yystack.valueAt (1)));
-//          };
+			}
+			;
 			break;
 
 		case 1701: /* esc_table_reference: table_factor */
@@ -17673,56 +17690,62 @@ public class MyParser implements Parser {
 			break;
 
 		case 1703: /* joined_table: table_reference inner_join_type table_reference ON_SYM expr */
-//  if (yyn == 1703)
-//    /* "sql_yacc.y":11855  */
-//          {
+			if (yyn == 1703)
+			/* "sql_yacc.y":11855 */
+			{
 //            yyval= NEW_PTN PT_joined_table_on((yyloc), ((table_reference)(yystack.valueAt (4))), yystack.locationAt (3), ((join_type)(yystack.valueAt (3))), ((table_reference)(yystack.valueAt (2))), ((item)(yystack.valueAt (0))));
-//          };
+			}
+			;
 			break;
 
 		case 1704: /* joined_table: table_reference inner_join_type table_reference USING '(' using_list ')' */
-//  if (yyn == 1704)
-//    /* "sql_yacc.y":11860  */
-//          {
+			if (yyn == 1704)
+			/* "sql_yacc.y":11860 */
+			{
 //            yyval= NEW_PTN PT_joined_table_using((yyloc), ((table_reference)(yystack.valueAt (6))), yystack.locationAt (5), ((join_type)(yystack.valueAt (5))), ((table_reference)(yystack.valueAt (4))), ((string_list)(yystack.valueAt (1))));
-//          };
+			}
+			;
 			break;
 
 		case 1705: /* joined_table: table_reference outer_join_type table_reference ON_SYM expr */
-//  if (yyn == 1705)
-//    /* "sql_yacc.y":11864  */
-//          {
+			if (yyn == 1705)
+			/* "sql_yacc.y":11864 */
+			{
 //            yyval= NEW_PTN PT_joined_table_on((yyloc), ((table_reference)(yystack.valueAt (4))), yystack.locationAt (3), ((join_type)(yystack.valueAt (3))), ((table_reference)(yystack.valueAt (2))), ((item)(yystack.valueAt (0))));
-//          };
+			}
+			;
 			break;
 
 		case 1706: /* joined_table: table_reference outer_join_type table_reference USING '(' using_list ')' */
-//  if (yyn == 1706)
-//    /* "sql_yacc.y":11868  */
-//          {
+			if (yyn == 1706)
+			/* "sql_yacc.y":11868 */
+			{
 //            yyval= NEW_PTN PT_joined_table_using((yyloc), ((table_reference)(yystack.valueAt (6))), yystack.locationAt (5), ((join_type)(yystack.valueAt (5))), ((table_reference)(yystack.valueAt (4))), ((string_list)(yystack.valueAt (1))));
-//          };
+			}
+			;
 			break;
 
 		case 1707: /* joined_table: table_reference inner_join_type table_reference */
-//  if (yyn == 1707)
-//    /* "sql_yacc.y":11873  */
-//          {
+			if (yyn == 1707)
+			/* "sql_yacc.y":11873 */
+			{
 //            auto this_cross_join= NEW_PTN PT_cross_join((yyloc), ((table_reference)(yystack.valueAt (2))), yystack.locationAt (1), ((join_type)(yystack.valueAt (1))), nullptr);
 
 //            if (((table_reference)(yystack.valueAt (0))) == nullptr)
 //              MYSQL_YYABORT; // OOM
 
 //            yyval= ((table_reference)(yystack.valueAt (0)))->add_cross_join(this_cross_join);
-//          };
+			}
+			;
 			break;
 
 		case 1708: /* joined_table: table_reference natural_join_type table_factor */
-//  if (yyn == 1708)
-//    /* "sql_yacc.y":11882  */
-//          {
+			if (yyn == 1708)
+			/* "sql_yacc.y":11882 */
+			{
 //            yyval= NEW_PTN PT_joined_table_using((yyloc), ((table_reference)(yystack.valueAt (2))), yystack.locationAt (1), ((join_type)(yystack.valueAt (1))), ((table_reference)(yystack.valueAt (0))));
-//          };
+			}
+			;
 			break;
 
 		case 1709: /* natural_join_type: NATURAL opt_inner JOIN_SYM */
@@ -17794,27 +17817,39 @@ public class MyParser implements Parser {
 			break;
 
 		case 1727: /* table_factor: derived_table */
-//  if (yyn == 1727)
-//    /* "sql_yacc.y":11955  */
-//                        { yyval = ((derived_table)(yystack.valueAt (0))); };
+			if (yyn == 1727)
+			/* "sql_yacc.y":11955 */
+			{
+//	  yyval = ((derived_table)(yystack.valueAt (0)));
+			}
+			;
 			break;
 
 		case 1728: /* table_factor: joined_table_parens */
-//  if (yyn == 1728)
-//    /* "sql_yacc.y":11957  */
-//          { yyval= NEW_PTN PT_table_factor_joined_table((yyloc), ((join_table)(yystack.valueAt (0)))); };
+			if (yyn == 1728)
+			/* "sql_yacc.y":11957 */
+			{
+//	  yyval= NEW_PTN PT_table_factor_joined_table((yyloc), ((join_table)(yystack.valueAt (0))));
+			}
+			;
 			break;
 
 		case 1729: /* table_factor: table_reference_list_parens */
-//  if (yyn == 1729)
-//    /* "sql_yacc.y":11959  */
-//          { yyval= NEW_PTN PT_table_reference_list_parens((yyloc), ((table_reference_list)(yystack.valueAt (0)))); };
+			if (yyn == 1729)
+			/* "sql_yacc.y":11959 */
+			{
+//	  yyval= NEW_PTN PT_table_reference_list_parens((yyloc), ((table_reference_list)(yystack.valueAt (0))));
+			}
+			;
 			break;
 
 		case 1730: /* table_factor: table_function */
-//  if (yyn == 1730)
-//    /* "sql_yacc.y":11960  */
-//                         { yyval = ((table_reference)(yystack.valueAt (0))); };
+			if (yyn == 1730)
+			/* "sql_yacc.y":11960 */
+			{
+//	  yyval = ((table_reference)(yystack.valueAt (0)));
+			}
+			;
 			break;
 
 		case 1731: /* table_reference_list_parens: '(' table_reference_list_parens ')' */
@@ -17846,11 +17881,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 1735: /* single_table: table_ident opt_use_partition opt_table_alias opt_key_definition opt_tablesample_clause */
-//  if (yyn == 1735)
-//    /* "sql_yacc.y":11980  */
-//          {
+			if (yyn == 1735)
+			/* "sql_yacc.y":11980 */
+			{
 //            yyval= NEW_PTN PT_table_factor_table_ident((yyloc), ((table)(yystack.valueAt (4))), ((string_list)(yystack.valueAt (3))), ((lex_cstr)(yystack.valueAt (2))), ((key_usage_list)(yystack.valueAt (1))), ((tablesample)(yystack.valueAt (0))));
-//          };
+				thd.addTableToList((TableIdent) yystack.valueAt(4), ((Token) yystack.valueAt(2)).lexStr.str, 0, null, null);
+			}
+			;
 			break;
 
 		case 1736: /* joined_table_parens: '(' joined_table_parens ')' */
@@ -19354,23 +19391,31 @@ public class MyParser implements Parser {
 			break;
 
 		case 1919: /* table_alias_ref_list: table_ident_opt_wild */
-//  if (yyn == 1919)
-//    /* "sql_yacc.y":12999  */
-//          {
+			if (yyn == 1919)
+			/* "sql_yacc.y":12999 */
+			{
 //            yyval.init(YYMEM_ROOT);
 //            if (yyval.push_back(((table_ident)(yystack.valueAt (0)))))
 //              MYSQL_YYABORT; // OOM
-//          };
+				List<TableIdent> tableList = new ArrayList<TableIdent>();
+				tableList.add((TableIdent) yystack.valueAt(0));
+				yyval = tableList;
+			}
+			;
 			break;
 
 		case 1920: /* table_alias_ref_list: table_alias_ref_list ',' table_ident_opt_wild */
-//  if (yyn == 1920)
-//    /* "sql_yacc.y":13005  */
-//          {
+			if (yyn == 1920)
+			/* "sql_yacc.y":13005 */
+			{
 //            yyval= ((table_ident_list)(yystack.valueAt (2)));
 //            if (yyval.push_back(((table_ident)(yystack.valueAt (0)))))
 //              MYSQL_YYABORT; // OOM
-//          };
+				@SuppressWarnings("unchecked")
+				List<TableIdent> tableList = (List<TableIdent>) yyval;
+				tableList.add((TableIdent) yystack.valueAt(0));
+			}
+			;
 			break;
 
 		case 1921: /* if_exists: %empty */
@@ -19893,6 +19938,13 @@ public class MyParser implements Parser {
 			{
 //            yyval= NEW_PTN PT_delete((yyloc), ((with_clause)(yystack.valueAt (9))), ((lexer.optimizer_hints)(yystack.valueAt (8))), ((num)(yystack.valueAt (7))), ((table)(yystack.valueAt (5))), ((lex_cstr)(yystack.valueAt (4))), ((string_list)(yystack.valueAt (3))), ((item)(yystack.valueAt (2))), ((order)(yystack.valueAt (1))), ((item)(yystack.valueAt (0))));
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_DELETE;
+//				long tableOpts = SQLThread.TL_OPTION_UPDATING;
+//				int optDeleteOptions = (int) yystack.valueAt(7);
+//				ThrLockType lockType = (optDeleteOptions & DeleteOption.DELETE_LOW_PRIORITY.intValue()) == DeleteOption.DELETE_LOW_PRIORITY.intValue() ? ThrLockType.TL_WRITE_LOW_PRIORITY
+//						: ThrLockType.TL_WRITE_DEFAULT;
+//				MdlType mdlType = (optDeleteOptions & DeleteOption.DELETE_LOW_PRIORITY.intValue()) == DeleteOption.DELETE_LOW_PRIORITY.intValue() ? MdlType.MDL_SHARED_WRITE_LOW_PRIO
+//						: MdlType.MDL_SHARED_WRITE;
+//				thd.addTableToList((TableIdent) yystack.valueAt(5), ((Token) yystack.valueAt(4)).lexStr.str, tableOpts, lockType, mdlType);
 			}
 			;
 			break;
@@ -19902,7 +19954,20 @@ public class MyParser implements Parser {
 			/* "sql_yacc.y":13457 */
 			{
 //            yyval= NEW_PTN PT_delete((yyloc), ((with_clause)(yystack.valueAt (6))), ((lexer.optimizer_hints)(yystack.valueAt (5))), ((num)(yystack.valueAt (4))), ((table_ident_list)(yystack.valueAt (3))), ((table_reference_list)(yystack.valueAt (1))), ((item)(yystack.valueAt (0))));
-				thd.lex.sqlCommand = SQLCommand.SQLCOM_DELETE;
+				Lex mLex = thd.lex;
+				mLex.sqlCommand = SQLCommand.SQLCOM_DELETE_MULTI;
+//				long tableOpts = SQLThread.TL_OPTION_UPDATING | SQLThread.TL_OPTION_ALIAS;
+//				int optDeleteOptions = (int) yystack.valueAt(4);
+//				ThrLockType lockType = (optDeleteOptions & DeleteOption.DELETE_LOW_PRIORITY.intValue()) == DeleteOption.DELETE_LOW_PRIORITY.intValue() ? ThrLockType.TL_WRITE_LOW_PRIORITY
+//						: ThrLockType.TL_WRITE_DEFAULT;
+//				MdlType mdlType = (optDeleteOptions & DeleteOption.DELETE_LOW_PRIORITY.intValue()) == DeleteOption.DELETE_LOW_PRIORITY.intValue() ? MdlType.MDL_SHARED_WRITE_LOW_PRIO
+//						: MdlType.MDL_SHARED_WRITE;
+////				@SuppressWarnings("unchecked")
+////				List<TableIdent> tableAliasRefList = (List<TableIdent>)yystack.valueAt(3);
+//				for (int i = 0; i < mLex.tableReferenceList.size(); i++) {
+//					TableIdent ti = mLex.tableReferenceList.get(i);
+//					thd.addTableToList(ti, null, tableOpts, lockType, mdlType);
+//				}
 			}
 			;
 			break;
@@ -19912,39 +19977,56 @@ public class MyParser implements Parser {
 			/* "sql_yacc.y":13468 */
 			{
 //            yyval= NEW_PTN PT_delete((yyloc), ((with_clause)(yystack.valueAt (7))), ((lexer.optimizer_hints)(yystack.valueAt (6))), ((num)(yystack.valueAt (5))), ((table_ident_list)(yystack.valueAt (3))), ((table_reference_list)(yystack.valueAt (1))), ((item)(yystack.valueAt (0))));
-				thd.lex.sqlCommand = SQLCommand.SQLCOM_DELETE;
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_DELETE_MULTI;
 			}
 			;
 			break;
 
 		case 1993: /* opt_delete_options: %empty */
-//  if (yyn == 1993)
-//    /* "sql_yacc.y":13479  */
-//                 { yyval= 0; };
+			if (yyn == 1993)
+			/* "sql_yacc.y":13479 */
+			{
+				yyval = 0;
+			}
+			;
 			break;
 
 		case 1994: /* opt_delete_options: opt_delete_option opt_delete_options */
-//  if (yyn == 1994)
-//    /* "sql_yacc.y":13480  */
-//                                               { yyval= ((opt_delete_option)(yystack.valueAt (1))) | ((num)(yystack.valueAt (0))); };
+			if (yyn == 1994)
+			/* "sql_yacc.y":13480 */
+			{
+				Object testDelOpts = yystack.valueAt(0);
+				int optDeleteOptions = testDelOpts.getClass() == DeleteOption.class ? ((DeleteOption) testDelOpts).intValue() : (int) testDelOpts;
+				yyval = ((DeleteOption) yystack.valueAt(1)).intValue() | optDeleteOptions;
+			}
+			;
 			break;
 
 		case 1995: /* opt_delete_option: QUICK */
-//  if (yyn == 1995)
-//    /* "sql_yacc.y":13484  */
-//                       { yyval= DELETE_QUICK; };
+			if (yyn == 1995)
+			/* "sql_yacc.y":13484 */
+			{
+				yyval = DeleteOption.DELETE_QUICK;
+			}
+			;
 			break;
 
 		case 1996: /* opt_delete_option: LOW_PRIORITY */
-//  if (yyn == 1996)
-//    /* "sql_yacc.y":13485  */
-//                       { yyval= DELETE_LOW_PRIORITY; };
+			if (yyn == 1996)
+			/* "sql_yacc.y":13485 */
+			{
+				yyval = DeleteOption.DELETE_LOW_PRIORITY;
+			}
+			;
 			break;
 
 		case 1997: /* opt_delete_option: IGNORE_SYM */
-//  if (yyn == 1997)
-//    /* "sql_yacc.y":13486  */
-//                       { yyval= DELETE_IGNORE; };
+			if (yyn == 1997)
+			/* "sql_yacc.y":13486 */
+			{
+				yyval = DeleteOption.DELETE_IGNORE;
+			}
+			;
 			break;
 
 		case 1998: /* truncate_stmt: TRUNCATE_SYM opt_table table_ident */
@@ -22198,9 +22280,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 2282: /* ident: IDENT_sys */
-//  if (yyn == 2282)
-//    /* "sql_yacc.y":15081  */
-//                       { yyval=((lexer.lex_str)(yystack.valueAt (0))); };
+			if (yyn == 2282)
+			/* "sql_yacc.y":15081 */
+			{
+//	  yyval=((lexer.lex_str)(yystack.valueAt (0)));
+				yyval = yystack.valueAt(0);
+			}
+			;
 			break;
 
 		case 2283: /* ident: ident_keyword */
@@ -23295,6 +23381,7 @@ public class MyParser implements Parser {
 			{
 //            yyval= NEW_PTN PT_handler_close(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (1)))));
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_CLOSE;
+				thd.addTableToList(new TableIdent(new Token(yylen, ((Token) yystack.valueAt(1)).lexStr.str)), null, 0l, null, null);
 			}
 			;
 			break;
@@ -23305,6 +23392,7 @@ public class MyParser implements Parser {
 			{
 //            yyval= NEW_PTN PT_handler_table_scan(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (4)))), ((ha_read_mode)(yystack.valueAt (2))), ((item)(yystack.valueAt (1))), ((limit_clause)(yystack.valueAt (0))));
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_READ;
+				thd.addTableToList(new TableIdent(new Token(yylen, ((Token) yystack.valueAt(4)).lexStr.str)), null, 0l, null, null);
 			}
 			;
 			break;
@@ -23316,6 +23404,7 @@ public class MyParser implements Parser {
 //            yyval= NEW_PTN PT_handler_index_scan(to_lex_cstring(((lexer.lex_str)(yystack.valueAt (5)))),
 //                                              to_lex_cstring(((lexer.lex_str)(yystack.valueAt (3)))), ((ha_read_mode)(yystack.valueAt (2))), ((item)(yystack.valueAt (1))), ((limit_clause)(yystack.valueAt (0))));
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_READ;
+				thd.addTableToList(new TableIdent(new Token(yylen, ((Token) yystack.valueAt(5)).lexStr.str)), null, 0l, null, null);
 			}
 			;
 			break;
@@ -23328,6 +23417,7 @@ public class MyParser implements Parser {
 //                                                    to_lex_cstring(((lexer.lex_str)(yystack.valueAt (6)))),
 //                                                    ((ha_rkey_mode)(yystack.valueAt (5))), ((item_list2)(yystack.valueAt (3))), ((item)(yystack.valueAt (1))), ((limit_clause)(yystack.valueAt (0))));
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_READ;
+				thd.addTableToList(new TableIdent(new Token(yylen, ((Token) yystack.valueAt(8)).lexStr.str)), null, 0l, null, null);
 			}
 			;
 			break;

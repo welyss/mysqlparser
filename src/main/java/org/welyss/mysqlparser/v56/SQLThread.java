@@ -84,7 +84,8 @@ public class SQLThread extends MySQLThread {
 			alterCmd = sql.substring(lex.alterPos, eof).trim();
 			lex.alterPos = null;
 		}
-		parsedSqls.add(new SQLInfo(sql.substring(foundSemicolon, eof), alterCmd, lex.sqlCommand));
+		parsedSqls.add(new SQLInfo(sql.substring(foundSemicolon, eof), lex.sqlCommand, lex.tables));
+		lex.tables = new ArrayList<TableIdent>();
 	}
 
 	public SQLInfo getSQLResultAndReset(int lastPos) {

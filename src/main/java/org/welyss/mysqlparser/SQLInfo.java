@@ -8,7 +8,7 @@ public class SQLInfo {
 	private String sql;
 	private String alterCommand;
 	private SQLCommand sqlCommand;
-	public List<TableIdent> tableIdents;
+	private List<TableIdent> tableIdents;
 
 	public SQLInfo(String sql) {
 		this.sql = sql;
@@ -18,17 +18,6 @@ public class SQLInfo {
 		this.sql = sql;
 		this.sqlCommand = sqlCommand;
 		this.tableIdents = tableIdents;
-	}
-
-	public SQLInfo(String sql, String alterCommand) {
-		this.sql = sql;
-		this.alterCommand = alterCommand;
-	}
-
-	public SQLInfo(String sql, String alterCommand, SQLCommand sqlCommand) {
-		this.sql = sql;
-		this.alterCommand = alterCommand;
-		this.sqlCommand = sqlCommand;
 	}
 
 	public String getSQL() {
@@ -53,5 +42,13 @@ public class SQLInfo {
 
 	public void setSQLCommand(SQLCommand sqlCommand) {
 		this.sqlCommand = sqlCommand;
+	}
+
+	public List<TableIdent> getTableIdents() {
+		return tableIdents;
+	}
+
+	public void setTableIdents(List<TableIdent> tableIdents) {
+		this.tableIdents = tableIdents;
 	}
 }

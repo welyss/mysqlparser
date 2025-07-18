@@ -12,6 +12,7 @@ public class Lex {
 	public CreateInfo createInfo;
 	public List<SelectLex> allSelectsList;
 	public List<TableIdent> tables;
+	public List<TableIdent> tableReferenceList;
 	public long grant;
 	public int allPrivileges;
 	public Integer alterPos;
@@ -22,5 +23,6 @@ public class Lex {
 		alterInfo = new AlterInfo();
 		allSelectsList = new ArrayList<SelectLex>();
 		tables = new ArrayList<TableIdent>();
+		tableReferenceList = new ArrayList<TableIdent>();
 	}
 }

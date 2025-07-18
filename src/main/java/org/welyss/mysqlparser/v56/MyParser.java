@@ -16225,7 +16225,7 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 10827 of "sql_yacc.y" */
 			{
-				if (!(MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(5 - (2)), (Token) (yystack.valueAt(5 - (4))), (Token) (yystack.valueAt(5 - (3))))))
+				if (!(MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(5 - (2)), (Token) (yystack.valueAt(6)), (Token) (yystack.valueAt(5 - (3))))))
 					return YYABORT;
 				// Select->add_joined_table(yyval);
 			}
@@ -18126,8 +18126,8 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 11960 of "sql_yacc.y" */
 			{
-				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(1 - (1)), null, null))
-					return YYABORT;
+//				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(1 - (1)), null, null))
+//					return YYABORT;
 			}
 			;
 			break;
@@ -18695,16 +18695,17 @@ public class MyParser implements Parser {
 		// break;
 		//
 		//
-		// case 1708:
-		// if (yyn == 1708)
-		// /* Line 350 of lalr1.java */
-		// /* Line 12300 of "sql_yacc.y" */
-		// {
+		 case 1708:
+		 if (yyn == 1708)
+		 /* Line 350 of lalr1.java */
+		 /* Line 12300 of "sql_yacc.y" */
+		 {
 		// mysql_init_multi_delete(Lex);
 		// YYPS->m_lock_type= TL_READ_DEFAULT;
 		// YYPS->m_mdl_type= MDL_SHARED_READ;
-		// };
-		// break;
+			thd.lex.sqlCommand = SQLCommand.SQLCOM_DELETE_MULTI;
+		 };
+		 break;
 		//
 		//
 		// case 1709:
@@ -18718,16 +18719,17 @@ public class MyParser implements Parser {
 		// break;
 		//
 		//
-		// case 1710:
-		// if (yyn == 1710)
-		// /* Line 350 of lalr1.java */
-		// /* Line 12311 of "sql_yacc.y" */
-		// {
+		 case 1710:
+		 if (yyn == 1710)
+		 /* Line 350 of lalr1.java */
+		 /* Line 12311 of "sql_yacc.y" */
+		 {
 		// mysql_init_multi_delete(Lex);
 		// YYPS->m_lock_type= TL_READ_DEFAULT;
 		// YYPS->m_mdl_type= MDL_SHARED_READ;
-		// };
-		// break;
+			thd.lex.sqlCommand = SQLCommand.SQLCOM_DELETE_MULTI;
+		 };
+		 break;
 		//
 		//
 		// case 1711:
@@ -18745,9 +18747,9 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 12330 of "sql_yacc.y" */
 			{
-				TableIdent ti = new TableIdent(((Token) yystack.valueAt(2 - (1))));
-				if (!MyParserProcessor.addTableToList(thd, ti, null, null))
-					return YYABORT;
+//				TableIdent ti = new TableIdent(((Token) yystack.valueAt(2 - (1))));
+//				if (!MyParserProcessor.addTableToList(thd, ti, null, null))
+//					return YYABORT;
 			}
 			;
 			break;
@@ -18757,9 +18759,9 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 12343 of "sql_yacc.y" */
 			{
-				TableIdent ti = new TableIdent(((Token) yystack.valueAt(4 - (1))), ((Token) (yystack.valueAt(4 - (3)))));
-				if (!MyParserProcessor.addTableToList(thd, ti, null, null))
-					return YYABORT;
+//				TableIdent ti = new TableIdent(((Token) yystack.valueAt(4 - (1))), ((Token) (yystack.valueAt(4 - (3)))));
+//				if (!MyParserProcessor.addTableToList(thd, ti, null, null))
+//					return YYABORT;
 			}
 			;
 			break;
@@ -25606,7 +25608,7 @@ public class MyParser implements Parser {
 				// return YYABORT;
 				// }
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_HA_OPEN;
-				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(4 - (2)))), ((Token) (yystack.valueAt(4 - (4)))), null))
+				if (!MyParserProcessor.addTableToList(thd, (TableIdent)yystack.valueAt(4 - (2)), ((Token) (yystack.valueAt(4 - (4)))), null))
 					return YYABORT;
 				// lex->m_sql_cmd= new (thd->mem_root) Sql_cmd_handler_open();
 				// if (lex->m_sql_cmd == NULL)
