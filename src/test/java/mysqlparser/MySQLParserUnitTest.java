@@ -28,7 +28,9 @@ public class MySQLParserUnitTest {
 //		String sql = "SET RESOURCE GROUP rg2 FOR 14, 78, 4;";
 //		String sql = "rename table db1.t1 to `db2`.`t2`;";
 //		String sql = "lock tables changelog read;";
-		String sql = "DELETE t1, t2 FROM ta t1 INNER JOIN tb t2 INNER JOIN tc t3 WHERE t1.id=t2.id AND t2.id=t3.id;";
+//		String sql = "INSERT INTO t1 (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;";
+//		String sql = "replace INTO t1 (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;";
+		String sql = "INSERT INTO t1 (a,b,c) select * from t2 where name = '123';";
 //		String sql = "DELETE FROM t1, t2 USING t1 INNER JOIN t2 INNER JOIN t3 WHERE t1.id=t2.id AND t2.id=t3.id;";
 //		String sql = "select _utf8 0xD0B0D0B1D0B2;";
 //		String sql = "select id from acnt_account;";
@@ -466,6 +468,50 @@ public class MySQLParserUnitTest {
 			assertTrue("t2".equals(ti2.getTable()));
 			TableIdent ti3 = list.get(0).getTableIdents().get(2);
 			assertTrue("t3".equals(ti3.getTable()));
+		}
+		sql = "INSERT INTO acdb.t1 (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_INSERT));
+			TableIdent ti1 = list.get(0).getTableIdents().get(0);
+			assertTrue("acdb".equals(ti1.getDb()));
+			assertTrue("t1".equals(ti1.getTable()));
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_INSERT));
+			TableIdent ti1 = list.get(0).getTableIdents().get(0);
+			assertTrue("acdb".equals(ti1.getDb()));
+			assertTrue("t1".equals(ti1.getTable()));
+		}
+		sql = "INSERT INTO a.t1 (a,b,c) select * from b.t2 where name = '123';";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_INSERT_SELECT));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertTrue("a".equals(ti1.getDb()));
+			assertTrue("t1".equals(ti1.getTable()));
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertTrue("b".equals(ti2.getDb()));
+			assertTrue("t2".equals(ti2.getTable()));
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_INSERT_SELECT));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertTrue("a".equals(ti1.getDb()));
+			assertTrue("t1".equals(ti1.getTable()));
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertTrue("b".equals(ti2.getDb()));
+			assertTrue("t2".equals(ti2.getTable()));
 		}
 	}
 }

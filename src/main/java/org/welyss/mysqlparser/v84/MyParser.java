@@ -17885,7 +17885,7 @@ public class MyParser implements Parser {
 			/* "sql_yacc.y":11980 */
 			{
 //            yyval= NEW_PTN PT_table_factor_table_ident((yyloc), ((table)(yystack.valueAt (4))), ((string_list)(yystack.valueAt (3))), ((lex_cstr)(yystack.valueAt (2))), ((key_usage_list)(yystack.valueAt (1))), ((tablesample)(yystack.valueAt (0))));
-				thd.addTableToList((TableIdent) yystack.valueAt(4), ((Token) yystack.valueAt(2)).lexStr.str, 0, null, null);
+//				thd.addTableToList((TableIdent) yystack.valueAt(4), ((Token) yystack.valueAt(2)).lexStr.str, 0, null, null);
 			}
 			;
 			break;
@@ -19496,7 +19496,7 @@ public class MyParser implements Parser {
 //                                  ((column_value_list_pair)(yystack.valueAt (0))).column_list, ((column_value_list_pair)(yystack.valueAt (0))).value_list);
 //            DBUG_EXECUTE_IF("bug29614521_simulate_oom",
 //                            DBUG_SET("-d,bug29614521_simulate_oom"););
-				thd.lex.sqlCommand = SQLCommand.SQLCOM_INSERT;
+				ptInsert(thd, false, false, (TableIdent) yystack.valueAt(4));
 			}
 			;
 			break;
@@ -19515,7 +19515,7 @@ public class MyParser implements Parser {
 //                                  nullptr,
 //                                  ((insert_update_values_reference)(yystack.valueAt (1))).table_alias, ((insert_update_values_reference)(yystack.valueAt (1))).column_list,
 //                                  ((column_value_list_pair)(yystack.valueAt (0))).column_list, ((column_value_list_pair)(yystack.valueAt (0))).value_list);
-				thd.lex.sqlCommand = SQLCommand.SQLCOM_INSERT;
+				ptInsert(thd, false, false, (TableIdent) yystack.valueAt(5));
 			}
 			;
 			break;
@@ -19529,7 +19529,7 @@ public class MyParser implements Parser {
 //                                  ((insert_query_expression)(yystack.valueAt (1))).insert_query_expression,
 //                                  NULL_CSTR, nullptr,
 //                                  ((column_value_list_pair)(yystack.valueAt (0))).column_list, ((column_value_list_pair)(yystack.valueAt (0))).value_list);
-				thd.lex.sqlCommand = SQLCommand.SQLCOM_INSERT;
+				ptInsert(thd, false, true, (TableIdent) yystack.valueAt(3));
 			}
 			;
 			break;
@@ -19543,7 +19543,7 @@ public class MyParser implements Parser {
 //                                  nullptr,
 //                                  NULL_CSTR, nullptr,
 //                                  nullptr, nullptr);
-				thd.lex.sqlCommand = SQLCommand.SQLCOM_REPLACE;
+				ptInsert(thd, true, false, (TableIdent) yystack.valueAt(2));
 			}
 			;
 			break;
@@ -19560,7 +19560,7 @@ public class MyParser implements Parser {
 //                                  nullptr,
 //                                  NULL_CSTR, nullptr,
 //                                  nullptr, nullptr);
-				thd.lex.sqlCommand = SQLCommand.SQLCOM_REPLACE;
+				ptInsert(thd, true, false, (TableIdent) yystack.valueAt(3));
 			}
 			;
 			break;
@@ -19574,7 +19574,7 @@ public class MyParser implements Parser {
 //                                  ((insert_query_expression)(yystack.valueAt (0))).insert_query_expression,
 //                                  NULL_CSTR, nullptr,
 //                                  nullptr, nullptr);
-				thd.lex.sqlCommand = SQLCommand.SQLCOM_REPLACE;
+				ptInsert(thd, true, true, (TableIdent) yystack.valueAt(2));
 			}
 			;
 			break;
@@ -19962,8 +19962,8 @@ public class MyParser implements Parser {
 //						: ThrLockType.TL_WRITE_DEFAULT;
 //				MdlType mdlType = (optDeleteOptions & DeleteOption.DELETE_LOW_PRIORITY.intValue()) == DeleteOption.DELETE_LOW_PRIORITY.intValue() ? MdlType.MDL_SHARED_WRITE_LOW_PRIO
 //						: MdlType.MDL_SHARED_WRITE;
-////				@SuppressWarnings("unchecked")
-////				List<TableIdent> tableAliasRefList = (List<TableIdent>)yystack.valueAt(3);
+//				@SuppressWarnings("unchecked")
+//				List<TableIdent> tableAliasRefList = (List<TableIdent>)yystack.valueAt(3);
 //				for (int i = 0; i < mLex.tableReferenceList.size(); i++) {
 //					TableIdent ti = mLex.tableReferenceList.get(i);
 //					thd.addTableToList(ti, null, tableOpts, lockType, mdlType);
@@ -22093,6 +22093,7 @@ public class MyParser implements Parser {
 //            if (yyval == nullptr)
 //              MYSQL_YYABORT;
 				yyval = new TableIdent((Token) yystack.valueAt(0));
+				thd.addTableToList((TableIdent) yyval, null, 0, null, null);
 			}
 			;
 			break;
@@ -22107,6 +22108,7 @@ public class MyParser implements Parser {
 //            if (yyval == nullptr)
 //              MYSQL_YYABORT;
 				yyval = new TableIdent((Token) yystack.valueAt(2), (Token) yystack.valueAt(0));
+				thd.addTableToList((TableIdent) yyval, null, 0, null, null);
 			}
 			;
 			break;
@@ -26671,6 +26673,17 @@ public class MyParser implements Parser {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(s + " {} {} ({})", yytype < YYNTOKENS_ ? "token" : "nterm", SymbolKind.yytname_[yytype], yyvalue == null ? "(null)" : yyvalue.toString());
 		}
+	}
+
+	private void ptInsert(SQLThread thd, boolean isReplace, boolean hasQueryBlock, TableIdent tableIdent) throws SQLException {
+		SQLCommand sqlCommand;
+		if (isReplace) {
+			sqlCommand = hasQueryBlock ? SQLCommand.SQLCOM_REPLACE_SELECT : SQLCommand.SQLCOM_REPLACE;
+		} else {
+			sqlCommand = hasQueryBlock ? SQLCommand.SQLCOM_INSERT_SELECT : SQLCommand.SQLCOM_INSERT;
+		}
+		thd.lex.sqlCommand = sqlCommand;
+//		thd.addTableToList(tableIdent, null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_READ_DEFAULT, MdlType.MDL_SHARED_READ);
 	}
 
 	public ParseResult parse(String sql) {
