@@ -4144,6 +4144,7 @@ public class MyParser implements Parser {
 			return yydefgoto_[yysym - YYNTOKENS_];
 	}
 
+	@SuppressWarnings("unchecked")
 	private int yyaction(int yyn, YYStack yystack, int yylen, MySQLThread mThd) throws SQLException {
 		SQLThread thd = (SQLThread) mThd;
 		/*
@@ -14505,11 +14506,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 1299: /* query_expression: query_expression_body opt_order_clause opt_limit_clause */
-//  if (yyn == 1299)
-//    /* "sql_yacc.y":9773  */
-//          {
+			if (yyn == 1299)
+			/* "sql_yacc.y":9773 */
+			{
 //            yyval = NEW_PTN PT_query_expression((yyloc), ((query_expression_body_opt_parens)(yystack.valueAt (2))).body, ((order)(yystack.valueAt (1))), ((limit_clause)(yystack.valueAt (0))));
-//          };
+				yyval = yystack.valueAt(2);
+			}
+			;
 			break;
 
 		case 1300: /* query_expression: with_clause query_expression_body opt_order_clause opt_limit_clause */
@@ -14521,11 +14524,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 1301: /* query_expression_body: query_primary */
-//  if (yyn == 1301)
-//    /* "sql_yacc.y":9787  */
-//          {
+			if (yyn == 1301)
+			/* "sql_yacc.y":9787 */
+			{
 //            yyval = {((query_primary)(yystack.valueAt (0))), false};
-//          };
+				yyval = yystack.valueAt(0);
+			}
+			;
 			break;
 
 		case 1302: /* query_expression_body: query_expression_parens */
@@ -14572,20 +14577,25 @@ public class MyParser implements Parser {
 			break;
 
 		case 1307: /* query_expression_parens: '(' query_expression_with_opt_locking_clauses ')' */
-//  if (yyn == 1307)
-//    /* "sql_yacc.y":9817  */
-//          { yyval = ((query_expression_body)(yystack.valueAt (1)));
+			if (yyn == 1307)
+			/* "sql_yacc.y":9817 */
+			{
+//	  		yyval = ((query_expression_body)(yystack.valueAt (1)));
 //            if (yyval != nullptr) yyval->m_pos = (yyloc);
-//          };
+				yyval = yystack.valueAt(1);
+			}
+			;
 			break;
 
 		case 1308: /* query_primary: query_specification */
-//  if (yyn == 1308)
-//    /* "sql_yacc.y":9824  */
-//          {
+			if (yyn == 1308)
+			/* "sql_yacc.y":9824 */
+			{
 //            // Bison doesn't get polymorphism.
 //            yyval= ((query_primary)(yystack.valueAt (0)));
-//          };
+				yyval = yystack.valueAt(0);
+			}
+			;
 			break;
 
 		case 1309: /* query_primary: table_value_constructor */
@@ -14656,6 +14666,10 @@ public class MyParser implements Parser {
 //                                      ((item)(yystack.valueAt (0))),  // qualify
 //                                      yystack.locationAt (5).raw.is_empty()); // implicit FROM
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SELECT;
+//				thd.lex.selectLex.tableList = new ArrayList<TableIdent>();
+				List<TableIdent> tableReferenceList = (List<TableIdent>) yystack.valueAt(5);
+//				thd.lex.selectLex.tableList.addAll(tableReferenceList);
+				yyval = tableReferenceList;
 			}
 			;
 			break;
@@ -14671,6 +14685,7 @@ public class MyParser implements Parser {
 			/* "sql_yacc.y":9902 */
 			{
 //	  yyval= ((table_reference_list)(yystack.valueAt (0)));
+				yyval = yystack.valueAt(0);
 			}
 			;
 			break;
@@ -14688,6 +14703,9 @@ public class MyParser implements Parser {
 //            yyval.init(YYMEM_ROOT);
 //            if (yyval.push_back(((table_reference)(yystack.valueAt (0)))))
 //              MYSQL_YYABORT; // OOM
+				List<TableIdent> tableReferenceList = new ArrayList<TableIdent>();
+				tableReferenceList.add((TableIdent) yystack.valueAt(0));
+				yyval = tableReferenceList;
 			}
 			;
 			break;
@@ -14699,6 +14717,14 @@ public class MyParser implements Parser {
 //            yyval= ((table_reference_list)(yystack.valueAt (2)));
 //            if (yyval.push_back(((table_reference)(yystack.valueAt (0)))))
 //              MYSQL_YYABORT; // OOM
+				List<TableIdent> tableReferenceList = (List<TableIdent>) yystack.valueAt(2);
+				Object tableReference = yystack.valueAt(0);
+				if (tableReference.getClass().equals(TableIdent.class)) {
+					tableReferenceList.add((TableIdent) tableReference);
+				} else {
+					tableReferenceList.addAll((List<TableIdent>) tableReference);
+				}
+				yyval = tableReferenceList;
 			}
 			;
 			break;
@@ -17855,19 +17881,23 @@ public class MyParser implements Parser {
 			break;
 
 		case 1731: /* table_reference_list_parens: '(' table_reference_list_parens ')' */
-//  if (yyn == 1731)
-//    /* "sql_yacc.y":11964  */
-//                                              { yyval= ((table_reference_list)(yystack.valueAt (1))); };
+			if (yyn == 1731)
+			/* "sql_yacc.y":11964 */
+			{
+//	  yyval= ((table_reference_list)(yystack.valueAt (1)));
+			}
+			;
 			break;
 
 		case 1732: /* table_reference_list_parens: '(' table_reference_list ',' table_reference ')' */
-//  if (yyn == 1732)
-//    /* "sql_yacc.y":11966  */
-//          {
+			if (yyn == 1732)
+			/* "sql_yacc.y":11966 */
+			{
 //            yyval= ((table_reference_list)(yystack.valueAt (3)));
 //            if (yyval.push_back(((table_reference)(yystack.valueAt (1)))))
 //              MYSQL_YYABORT; // OOM
-//          };
+			}
+			;
 			break;
 
 		case 1733: /* single_table_parens: '(' single_table_parens ')' */
@@ -19413,7 +19443,6 @@ public class MyParser implements Parser {
 //            yyval= ((table_ident_list)(yystack.valueAt (2)));
 //            if (yyval.push_back(((table_ident)(yystack.valueAt (0)))))
 //              MYSQL_YYABORT; // OOM
-				@SuppressWarnings("unchecked")
 				List<TableIdent> tableList = (List<TableIdent>) yyval;
 				tableList.add((TableIdent) yystack.valueAt(0));
 			}
@@ -19716,9 +19745,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 1956: /* query_expression_with_opt_locking_clauses: query_expression */
-//  if (yyn == 1956)
-//    /* "sql_yacc.y":13253  */
-//                                                { yyval = ((query_expression)(yystack.valueAt (0))); };
+			if (yyn == 1956)
+			/* "sql_yacc.y":13253 */
+			{
+//	  yyval = ((query_expression)(yystack.valueAt (0)));
+				yyval = yystack.valueAt(0);
+			}
+			;
 			break;
 
 		case 1957: /* query_expression_with_opt_locking_clauses: query_expression locking_clause_list */
@@ -19869,7 +19902,12 @@ public class MyParser implements Parser {
 			{
 //            yyval= NEW_PTN PT_update((yyloc), ((with_clause)(yystack.valueAt (9))), ((lexer.optimizer_hints)(yystack.valueAt (8))), ((lock_type)(yystack.valueAt (7))), ((is_not_empty)(yystack.valueAt (6))), ((table_reference_list)(yystack.valueAt (5))), ((column_value_list_pair)(yystack.valueAt (3))).column_list, ((column_value_list_pair)(yystack.valueAt (3))).value_list,
 //                                  ((item)(yystack.valueAt (2))), ((order)(yystack.valueAt (1))), ((item)(yystack.valueAt (0))));
-				thd.lex.sqlCommand = SQLCommand.SQLCOM_UPDATE;
+				List<TableIdent> TableReferenceList = (List<TableIdent>) yystack.valueAt(5);
+				if (TableReferenceList.size() > 1) {
+					thd.lex.sqlCommand = SQLCommand.SQLCOM_UPDATE_MULTI;
+				} else {
+					thd.lex.sqlCommand = SQLCommand.SQLCOM_UPDATE;
+				}
 			}
 			;
 			break;
@@ -19964,7 +20002,6 @@ public class MyParser implements Parser {
 //						: ThrLockType.TL_WRITE_DEFAULT;
 //				MdlType mdlType = (optDeleteOptions & DeleteOption.DELETE_LOW_PRIORITY.intValue()) == DeleteOption.DELETE_LOW_PRIORITY.intValue() ? MdlType.MDL_SHARED_WRITE_LOW_PRIO
 //						: MdlType.MDL_SHARED_WRITE;
-//				@SuppressWarnings("unchecked")
 //				List<TableIdent> tableAliasRefList = (List<TableIdent>)yystack.valueAt(3);
 //				for (int i = 0; i < mLex.tableReferenceList.size(); i++) {
 //					TableIdent ti = mLex.tableReferenceList.get(i);
@@ -24965,11 +25002,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 3064: /* subquery: query_expression_parens */
-//  if (yyn == 3064)
-//    /* "sql_yacc.y":17345  */
-//          {
+			if (yyn == 3064)
+			/* "sql_yacc.y":17345 */
+			{
 //            yyval= NEW_PTN PT_subquery((yyloc), ((query_expression_body)(yystack.valueAt (0))));
-//          };
+				yyval = yystack.valueAt(0);
+			}
+			;
 			break;
 
 		case 3065: /* query_spec_option: STRAIGHT_JOIN */

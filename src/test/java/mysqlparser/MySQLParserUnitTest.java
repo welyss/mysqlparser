@@ -30,7 +30,9 @@ public class MySQLParserUnitTest {
 //		String sql = "lock tables changelog read;";
 //		String sql = "INSERT INTO t1 (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;";
 //		String sql = "replace INTO t1 (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;";
-		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, (SELECT id FROM items2 WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
+		String sql = "UPDATE acdb.t SET id = id + 1 WHERE t.id=1 ORDER BY id DESC;";
+//		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, (SELECT id FROM items2 WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
+//		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
 //		String sql = "UPDATE items, (SELECT id FROM items2 WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
 //		String sql = "DELETE FROM t1, t2 USING t1 INNER JOIN t2 INNER JOIN t3 WHERE t1.id=t2.id AND t2.id=t3.id;";
 //		String sql = "select _utf8 0xD0B0D0B1D0B2;";
@@ -519,6 +521,50 @@ public class MySQLParserUnitTest {
 			TableIdent ti3 = row.getTableIdents().get(2);
 			assertTrue("b".equals(ti3.getDb()));
 			assertTrue("t3".equals(ti3.getTable()));
+		}
+		sql = "UPDATE /*+ NO_MERGE(discounted) */ `acdb`.`items`, (SELECT id FROM `bkdb`.`items2` WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_UPDATE_MULTI));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertTrue("acdb".equals(ti1.getDb()));
+			assertTrue("items".equals(ti1.getTable()));
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertTrue("bkdb".equals(ti2.getDb()));
+			assertTrue("items2".equals(ti2.getTable()));
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_UPDATE_MULTI));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertTrue("acdb".equals(ti1.getDb()));
+			assertTrue("items".equals(ti1.getTable()));
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertTrue("bkdb".equals(ti2.getDb()));
+			assertTrue("items2".equals(ti2.getTable()));
+		}
+		sql = "UPDATE acdb.t SET id = id + 1 WHERE t.id=1 ORDER BY id DESC;";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_UPDATE));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertTrue("acdb".equals(ti1.getDb()));
+			assertTrue("t".equals(ti1.getTable()));
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_UPDATE));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertTrue("acdb".equals(ti1.getDb()));
+			assertTrue("t".equals(ti1.getTable()));
 		}
 	}
 }
