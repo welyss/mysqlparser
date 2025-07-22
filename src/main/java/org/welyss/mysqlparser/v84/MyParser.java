@@ -17648,7 +17648,9 @@ public class MyParser implements Parser {
 			/* "sql_yacc.y":11757 */
 			{
 //	  yyval= ((table_reference)(yystack.valueAt (0)));
-				thd.lex.tableReferenceList.add((TableIdent) yystack.valueAt(0));
+				if (yystack.valueAt(0).getClass().equals(TableIdent.class)) {
+					thd.lex.tableReferenceList.add((TableIdent) yystack.valueAt(0));
+				}
 			}
 			;
 			break;

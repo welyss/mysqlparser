@@ -21,6 +21,10 @@ public class HintScanner {
 
 	public HintScanner(SQLThread thd, int linenoArg, int buf, int len, SQLDigestState digestStateArg) {
 		this.thd = thd;
+		lineno = linenoArg;
+		inputBuf = buf;
+		inputBufEnd = len;
+		ptr = inputBuf + 3;// skip "/*+"
 		isAnsiQuotes = SystemVariables.isModeOn(SystemVariables.MODE_ANSI_QUOTES);
 	}
 
@@ -34,7 +38,8 @@ public class HintScanner {
 		int whitespaces = 0;
 		for (;;) {
 			startToken();
-			switch (peekClass()) {
+			HintLexCharClasses charClass = peekClass();
+			switch (charClass) {
 			case HINT_CHR_NL:
 				skipNewline();
 				whitespaces++;
@@ -56,7 +61,10 @@ public class HintScanner {
 			case HINT_CHR_DOUBLEQUOTE:
 				return scanQuoted(HintLexCharClasses.HINT_CHR_DOUBLEQUOTE);
 			case HINT_CHR_ASTERISK:
-				if (peekClass2() == HintLexCharClasses.HINT_CHR_SLASH) {
+				HintLexCharClasses peekClass2 = peekClass2();
+				if (peekClass2 == HintLexCharClasses.HINT_CHR_SLASH) {
+					yytext = thd.mParserState.mLip.sqlBuf.substring(inputBuf+3, ptr).trim();
+					yyleng = yytext.length();
 					ptr += 2; // skip "*/"
 					inputBufEnd = ptr;
 					return SQLHintsLexer.HINT_CLOSE;
@@ -246,8 +254,10 @@ public class HintScanner {
 	 * function strmake from /src/mysys/my_alloc.cc, /src/sql/sql_class.h
 	 */
 	private int scanIdentOrKeyword() {
+		int start = ptr;
 		for (;;) {
-			switch (peekClass()) {
+			HintLexCharClasses charClass = peekClass();
+			switch (charClass) {
 			case HINT_CHR_IDENT:
 			case HINT_CHR_DIGIT:
 				skipByte();
@@ -256,7 +266,8 @@ public class HintScanner {
 				return scanIdent();
 			case HINT_CHR_EOF:
 			default:
-				Symbol symbol = LexHash.getHashSymbol(yytext, false);
+				yytext = thd.mParserState.mLip.sqlBuf.substring(start, ptr);
+				Symbol symbol = LexHash.getHashSymbol(yytext, false, true);
 				if (symbol != null) // keyword
 				{
 					/*
@@ -340,8 +351,12 @@ public class HintScanner {
 	}
 
 	public char peekByte() {
-//		    assert(!eof());
-		return (char) ptr;
+		return peekByte(0);
+	}
+
+	public char peekByte(int n) {
+//	    assert(!eof());
+		return thd.mParserState.mLip.sqlBuf.charAt(ptr + n);
 	}
 
 	private HintLexCharClasses peekClass() {
@@ -349,7 +364,7 @@ public class HintScanner {
 	}
 
 	private HintLexCharClasses peekClass2() {
-		return ptr + 1 >= inputBufEnd ? HintLexCharClasses.HINT_CHR_EOF : LexStateMapsSt.hintMap[ptr + 1];
+		return ptr + 1 >= inputBufEnd ? HintLexCharClasses.HINT_CHR_EOF : LexStateMapsSt.hintMap[peekByte(1)];
 	}
 
 	private int scanFractionDigits() {

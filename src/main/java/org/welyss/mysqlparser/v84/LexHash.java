@@ -846,7 +846,7 @@ public class LexHash {
 		symbols.put("NO_DERIVED_CONDITION_PUSHDOWN", new Symbol("NO_DERIVED_CONDITION_PUSHDOWN", Symbol.NO_DERIVED_CONDITION_PUSHDOWN_HINT, Symbol.SG_HINTS));
 	}
 
-	public static Symbol getHashSymbol(String token, boolean function) {
+	public static Symbol getHashSymbol(String token, boolean function, boolean hint) {
 		Symbol result = null;
 		Symbol symbol = symbols.get(token.toUpperCase());
 		if (symbol != null) {
@@ -854,6 +854,11 @@ public class LexHash {
 			if (function) {
 				// "sql_keywords_and_funcs": SG_MAIN_PARSER
 				if ((Symbol.SG_MAIN_PARSER & symbol.group) == symbol.group) {
+					result = symbol;
+				}
+			} else if (hint) {
+				// "hint_keywords": SG_HINTS
+				if ((Symbol.SG_HINTS & symbol.group) == symbol.group) {
 					result = symbol;
 				}
 			} else {

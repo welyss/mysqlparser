@@ -241,8 +241,8 @@ public class LexInputStream {
 	}
 
 	/** Get the end of the raw query buffer. */
-	char getEndOfQuery() {
-		return sqlBuf.charAt(mEndOfQuery);
+	int getEndOfQuery() {
+		return mEndOfQuery;
 	}
 
 	/** Mark the stream position as the start of a new token. */

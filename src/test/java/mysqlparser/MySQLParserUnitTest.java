@@ -30,7 +30,8 @@ public class MySQLParserUnitTest {
 //		String sql = "lock tables changelog read;";
 //		String sql = "INSERT INTO t1 (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;";
 //		String sql = "replace INTO t1 (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;";
-		String sql = "INSERT INTO t1 (a,b,c) select * from t2 where name = '123';";
+		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, (SELECT id FROM items2 WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
+//		String sql = "UPDATE items, (SELECT id FROM items2 WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
 //		String sql = "DELETE FROM t1, t2 USING t1 INNER JOIN t2 INNER JOIN t3 WHERE t1.id=t2.id AND t2.id=t3.id;";
 //		String sql = "select _utf8 0xD0B0D0B1D0B2;";
 //		String sql = "select id from acnt_account;";
@@ -488,7 +489,7 @@ public class MySQLParserUnitTest {
 			assertTrue("acdb".equals(ti1.getDb()));
 			assertTrue("t1".equals(ti1.getTable()));
 		}
-		sql = "INSERT INTO a.t1 (a,b,c) select * from b.t2 where name = '123';";
+		sql = "INSERT INTO a.t1 (a,b,c) select * from b.t2 x join b.t3 y on x.id = y.id where name = '123';";
 		result = parser.parse(sql);
 		if (parser.version().equals(MySQLVersion.v56)) {
 			assertTrue(result.success());
@@ -501,6 +502,9 @@ public class MySQLParserUnitTest {
 			TableIdent ti2 = row.getTableIdents().get(1);
 			assertTrue("b".equals(ti2.getDb()));
 			assertTrue("t2".equals(ti2.getTable()));
+			TableIdent ti3 = row.getTableIdents().get(2);
+			assertTrue("b".equals(ti3.getDb()));
+			assertTrue("t3".equals(ti3.getTable()));
 		} else if(parser.version().equals(MySQLVersion.v84)) {
 			assertTrue(result.success());
 			List<SQLInfo> list = result.getParsedSQLInfo();
@@ -512,6 +516,9 @@ public class MySQLParserUnitTest {
 			TableIdent ti2 = row.getTableIdents().get(1);
 			assertTrue("b".equals(ti2.getDb()));
 			assertTrue("t2".equals(ti2.getTable()));
+			TableIdent ti3 = row.getTableIdents().get(2);
+			assertTrue("b".equals(ti3.getDb()));
+			assertTrue("t3".equals(ti3.getTable()));
 		}
 	}
 }

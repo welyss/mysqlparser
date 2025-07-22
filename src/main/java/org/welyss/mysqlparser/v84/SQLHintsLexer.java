@@ -9,16 +9,22 @@ public class SQLHintsLexer implements Lexer {
 	public HintScanner scanner;
 	public LexerYystype yylval;
 
+	public SQLHintsLexer(HintScanner scanner) {
+		this.scanner = scanner;
+	}
+
 	@Override
 	public Object getLVal() {
-		// TODO Auto-generated method stub
-		return null;
+		return yylval;
 	}
 
 	@Override
 	public void yyerror(String msg) {
-		// TODO Auto-generated method stub
-
+//		SQLThread thd = (SQLThread)mThd;
+//		LexInputStream lip = thd.mParserState.mLip;
+//		thd.msg = String.format("You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '%s' at line %d",
+//				lip.sqlBuf.substring(lip.mTokEnd, lip.mEndOfQuery), lip.yylineno);
+//		LOGGER.error("{}, Location: {}, {}.", msg, loc.begin.offset, loc.end.offset);
 	}
 
 	@Override

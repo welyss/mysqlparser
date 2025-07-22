@@ -390,7 +390,7 @@ public class SQLHintsParser {
 		this.thd = thd;
 		this.scanner = scanner;
 		this.ret = ret;
-		this.yylexer = new SQLHintsLexer();
+		this.yylexer = new SQLHintsLexer(scanner);
 	}
 
 	private int yynerrs = 0;

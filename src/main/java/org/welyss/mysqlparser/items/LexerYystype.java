@@ -12,6 +12,7 @@ public class LexerYystype extends Token {
 		keyword = null;
 		optimizerHints = null;
 		charset = null;
+		hintString = new LexString();
 	}
 
 	public LexerYystype(LexString lexStr, LexSymbol keyword) {
@@ -19,6 +20,7 @@ public class LexerYystype extends Token {
 		this.lexStr = lexStr;
 		optimizerHints = null;
 		charset = null;
+		hintString = new LexString();
 	}
 
 	public LexerYystype reset() {
@@ -26,6 +28,7 @@ public class LexerYystype extends Token {
 		optimizerHints = null;
 		charset = null;
 		lexStr = null;
+		hintString = new LexString();
 		return this;
 	}
 }

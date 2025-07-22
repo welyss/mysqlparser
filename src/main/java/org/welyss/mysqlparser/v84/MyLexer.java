@@ -980,7 +980,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 	private int findKeyword(LexInputStream lip, int len, boolean function) {
 //		  int tok = lip.getTokStart();
 		String tokStr = lip.sqlBuf.substring(lip.getTokStart(), lip.getTokStart() + len);
-		Symbol symbol = LexHash.getHashSymbol(tokStr, function);
+		Symbol symbol = LexHash.getHashSymbol(tokStr, function, false);
 //		  Integer symbol = (symbolInstance == null ? null : symbolInstance.tok);
 
 		if (symbol != null) {
