@@ -14703,8 +14703,9 @@ public class MyParser implements Parser {
 //            yyval.init(YYMEM_ROOT);
 //            if (yyval.push_back(((table_reference)(yystack.valueAt (0)))))
 //              MYSQL_YYABORT; // OOM
+				Object tableReference = yystack.valueAt(0);
 				List<TableIdent> tableReferenceList = new ArrayList<TableIdent>();
-				tableReferenceList.add((TableIdent) yystack.valueAt(0));
+				tableReferenceList.add((TableIdent) tableReference);
 				yyval = tableReferenceList;
 			}
 			;
@@ -17935,9 +17936,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 1738: /* derived_table: table_subquery opt_table_alias opt_derived_column_list */
-//  if (yyn == 1738)
-//    /* "sql_yacc.y":11992  */
-//          {
+			if (yyn == 1738)
+			/* "sql_yacc.y":11992 */
+			{
 //            /*
 //              The alias is actually not optional at all, but being MySQL we
 //              are friendly and give an informative error message instead of
@@ -17948,25 +17949,29 @@ public class MyParser implements Parser {
 //                         ER_THD(YYTHD, ER_DERIVED_MUST_HAVE_ALIAS), MYF(0));
 
 //            yyval= NEW_PTN PT_derived_table((yyloc), false, ((subquery)(yystack.valueAt (2))), ((lex_cstr)(yystack.valueAt (1))), &((simple_ident_list)(yystack.valueAt (0))));
-//          };
+				yyval = yystack.valueAt(2);
+			}
+			;
 			break;
 
 		case 1739: /* derived_table: LATERAL_SYM table_subquery opt_table_alias opt_derived_column_list */
-//  if (yyn == 1739)
-//    /* "sql_yacc.y":12005  */
-//          {
+			if (yyn == 1739)
+			/* "sql_yacc.y":12005 */
+			{
 //            if (((lex_cstr)(yystack.valueAt (1))).str == nullptr)
 //              my_message(ER_DERIVED_MUST_HAVE_ALIAS,
 //                         ER_THD(YYTHD, ER_DERIVED_MUST_HAVE_ALIAS), MYF(0));
 
 //            yyval= NEW_PTN PT_derived_table((yyloc), true, ((subquery)(yystack.valueAt (2))), ((lex_cstr)(yystack.valueAt (1))), &((simple_ident_list)(yystack.valueAt (0))));
-//          };
+				yyval = yystack.valueAt(2);
+			}
+			;
 			break;
 
 		case 1740: /* table_function: JSON_TABLE_SYM '(' expr ',' text_literal columns_clause ')' opt_table_alias */
-//  if (yyn == 1740)
-//    /* "sql_yacc.y":12017  */
-//          {
+			if (yyn == 1740)
+			/* "sql_yacc.y":12017 */
+			{
 //            // Alias isn't optional, follow derived's behavior
 //            if (((lex_cstr)(yystack.valueAt (0))) == NULL_CSTR)
 //            {
@@ -17976,7 +17981,9 @@ public class MyParser implements Parser {
 //            }
 
 //            yyval= NEW_PTN PT_table_factor_function((yyloc), ((item)(yystack.valueAt (5))), ((text_literal)(yystack.valueAt (3))), ((jtc_list)(yystack.valueAt (2))), to_lex_string(((lex_cstr)(yystack.valueAt (0)))));
-//          };
+				yyval = new TableIdent((Token) yystack.valueAt(0));
+			}
+			;
 			break;
 
 		case 1741: /* columns_clause: COLUMNS '(' columns_list ')' */
