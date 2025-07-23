@@ -32,27 +32,7 @@ public class MySQLParserUnitTest {
 //		String sql = "replace INTO t1 (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;";
 //		String sql = "UPDATE acdb.t SET id = id + 1 WHERE t.id=1 ORDER BY id DESC;";
 //		String sql = "SELECT * FROM JSON_TABLE( '[{\"a\":\"3\"},{\"a\":2},{\"b\":1},{\"a\":0},{\"a\":[1,2]}]', \"$[*]\" COLUMNS( rowid FOR ORDINALITY, ac VARCHAR(100) PATH \"$.a\" DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR, aj JSON PATH \"$.a\" DEFAULT '{\"x\": 333}' ON EMPTY, bx INT EXISTS PATH \"$.b\" ) ) AS tt;";
-		String sql = "SELECT\r\n"
-				+ "  salesperson.name,\r\n"
-				+ "  max_sale.amount,\r\n"
-				+ "  max_sale_customer.customer_name\r\n"
-				+ "FROM\r\n"
-				+ "  salesperson,\r\n"
-				+ "  -- calculate maximum size, cache it in transient derived table max_sale\r\n"
-				+ "  LATERAL\r\n"
-				+ "  (SELECT MAX(amount) AS amount\r\n"
-				+ "    FROM all_sales\r\n"
-				+ "    WHERE all_sales.salesperson_id = salesperson.id)\r\n"
-				+ "  AS max_sale,\r\n"
-				+ "  -- find customer, reusing cached maximum size\r\n"
-				+ "  LATERAL\r\n"
-				+ "  (SELECT customer_name\r\n"
-				+ "    FROM all_sales\r\n"
-				+ "    WHERE all_sales.salesperson_id = salesperson.id\r\n"
-				+ "    AND all_sales.amount =\r\n"
-				+ "        -- the cached maximum size\r\n"
-				+ "        max_sale.amount)\r\n"
-				+ "  AS max_sale_customer;";
+		String sql = "CREATE INDEX id_index ON t1 (id) COMMENT 'MERGE_THRESHOLD=40';";
 //		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, (SELECT id FROM items2 WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
 //		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
 //		String sql = "UPDATE items, (SELECT id FROM items2 WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
@@ -587,6 +567,44 @@ public class MySQLParserUnitTest {
 			TableIdent ti1 = row.getTableIdents().get(0);
 			assertTrue("acdb".equals(ti1.getDb()));
 			assertTrue("t".equals(ti1.getTable()));
+		}
+	}
+
+	@Test
+	public void case13() throws IOException {
+		String sql = "SELECT * FROM JSON_TABLE( '[{\"a\":\"3\"},{\"a\":2},{\"b\":1},{\"a\":0},{\"a\":[1,2]}]', \"$[*]\" COLUMNS( rowid FOR ORDINALITY, ac VARCHAR(100) PATH \"$.a\" DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR, aj JSON PATH \"$.a\" DEFAULT '{\"x\": 333}' ON EMPTY, bx INT EXISTS PATH \"$.b\" ) ) AS tt;";
+		ParseResult result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertFalse(result.success());
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+		}
+		sql = "SELECT\r\n"
+				+ "  salesperson.name,\r\n"
+				+ "  max_sale.amount,\r\n"
+				+ "  max_sale_customer.customer_name\r\n"
+				+ "FROM\r\n"
+				+ "  salesperson,\r\n"
+				+ "  -- calculate maximum size, cache it in transient derived table max_sale\r\n"
+				+ "  LATERAL\r\n"
+				+ "  (SELECT MAX(amount) AS amount\r\n"
+				+ "    FROM all_sales\r\n"
+				+ "    WHERE all_sales.salesperson_id = salesperson.id)\r\n"
+				+ "  AS max_sale,\r\n"
+				+ "  -- find customer, reusing cached maximum size\r\n"
+				+ "  LATERAL\r\n"
+				+ "  (SELECT customer_name\r\n"
+				+ "    FROM all_sales\r\n"
+				+ "    WHERE all_sales.salesperson_id = salesperson.id\r\n"
+				+ "    AND all_sales.amount =\r\n"
+				+ "        -- the cached maximum size\r\n"
+				+ "        max_sale.amount)\r\n"
+				+ "  AS max_sale_customer;";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertFalse(result.success());
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
 		}
 	}
 }

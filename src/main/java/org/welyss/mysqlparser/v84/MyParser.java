@@ -14666,10 +14666,11 @@ public class MyParser implements Parser {
 //                                      ((item)(yystack.valueAt (0))),  // qualify
 //                                      yystack.locationAt (5).raw.is_empty()); // implicit FROM
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SELECT;
-//				thd.lex.selectLex.tableList = new ArrayList<TableIdent>();
-				List<TableIdent> tableReferenceList = (List<TableIdent>) yystack.valueAt(5);
-//				thd.lex.selectLex.tableList.addAll(tableReferenceList);
-				yyval = tableReferenceList;
+				Object testObj = yystack.valueAt(5);
+				if(testObj instanceof List) {
+					List<TableIdent> tableReferenceList = (List<TableIdent>) testObj;
+					yyval = tableReferenceList;
+				}
 			}
 			;
 			break;

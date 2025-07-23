@@ -5,10 +5,12 @@ import java.util.Map;
 
 public class LexHash {
 	public static Map<String, Symbol> symbols;
+	private static Map<String, Symbol> hintSymbols;
 
 	static {
 		// Initialize symbols map
 		symbols = new HashMap<String, Symbol>();
+
 		/*
 		 * Insert new SQL keywords after that commentary (by alphabetical order):
 		 */
@@ -799,72 +801,73 @@ public class LexHash {
 		symbols.put("VARIANCE", new Symbol("VARIANCE", Symbol.VARIANCE_SYM, Symbol.SG_FUNCTIONS));
 		symbols.put("VAR_POP", new Symbol("VAR_POP", Symbol.VARIANCE_SYM, Symbol.SG_FUNCTIONS));
 		symbols.put("VAR_SAMP", new Symbol("VAR_SAMP", Symbol.VAR_SAMP_SYM, Symbol.SG_FUNCTIONS));
+
+		hintSymbols = new HashMap<String, Symbol>();
 		/*
 		 * Insert new optimizer hint keywords after that commentary:
 		 */
-		symbols.put("BKA", new Symbol("BKA", Symbol.BKA_HINT, Symbol.SG_HINTS));
-		symbols.put("BNL", new Symbol("BNL", Symbol.BNL_HINT, Symbol.SG_HINTS));
-		symbols.put("DUPSWEEDOUT", new Symbol("DUPSWEEDOUT", Symbol.DUPSWEEDOUT_HINT, Symbol.SG_HINTS));
-		symbols.put("FIRSTMATCH", new Symbol("FIRSTMATCH", Symbol.FIRSTMATCH_HINT, Symbol.SG_HINTS));
-		symbols.put("INTOEXISTS", new Symbol("INTOEXISTS", Symbol.INTOEXISTS_HINT, Symbol.SG_HINTS));
-		symbols.put("LOOSESCAN", new Symbol("LOOSESCAN", Symbol.LOOSESCAN_HINT, Symbol.SG_HINTS));
-		symbols.put("MATERIALIZATION", new Symbol("MATERIALIZATION", Symbol.MATERIALIZATION_HINT, Symbol.SG_HINTS));
-		symbols.put("MAX_EXECUTION_TIME", new Symbol("MAX_EXECUTION_TIME", Symbol.MAX_EXECUTION_TIME_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_BKA", new Symbol("NO_BKA", Symbol.NO_BKA_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_BNL", new Symbol("NO_BNL", Symbol.NO_BNL_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_ICP", new Symbol("NO_ICP", Symbol.NO_ICP_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_MRR", new Symbol("NO_MRR", Symbol.NO_MRR_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_RANGE_OPTIMIZATION", new Symbol("NO_RANGE_OPTIMIZATION", Symbol.NO_RANGE_OPTIMIZATION_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_SEMIJOIN", new Symbol("NO_SEMIJOIN", Symbol.NO_SEMIJOIN_HINT, Symbol.SG_HINTS));
-		symbols.put("MRR", new Symbol("MRR", Symbol.MRR_HINT, Symbol.SG_HINTS));
-		symbols.put("QB_NAME", new Symbol("QB_NAME", Symbol.QB_NAME_HINT, Symbol.SG_HINTS));
-		symbols.put("SEMIJOIN", new Symbol("SEMIJOIN", Symbol.SEMIJOIN_HINT, Symbol.SG_HINTS));
-		symbols.put("SET_VAR", new Symbol("SET_VAR", Symbol.SET_VAR_HINT, Symbol.SG_HINTS));
-		symbols.put("SUBQUERY", new Symbol("SUBQUERY", Symbol.SUBQUERY_HINT, Symbol.SG_HINTS));
-		symbols.put("MERGE", new Symbol("MERGE", Symbol.DERIVED_MERGE_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_MERGE", new Symbol("NO_MERGE", Symbol.NO_DERIVED_MERGE_HINT, Symbol.SG_HINTS));
-		symbols.put("JOIN_PREFIX", new Symbol("JOIN_PREFIX", Symbol.JOIN_PREFIX_HINT, Symbol.SG_HINTS));
-		symbols.put("JOIN_SUFFIX", new Symbol("JOIN_SUFFIX", Symbol.JOIN_SUFFIX_HINT, Symbol.SG_HINTS));
-		symbols.put("JOIN_ORDER", new Symbol("JOIN_ORDER", Symbol.JOIN_ORDER_HINT, Symbol.SG_HINTS));
-		symbols.put("JOIN_FIXED_ORDER", new Symbol("JOIN_FIXED_ORDER", Symbol.JOIN_FIXED_ORDER_HINT, Symbol.SG_HINTS));
-		symbols.put("INDEX_MERGE", new Symbol("INDEX_MERGE", Symbol.INDEX_MERGE_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_INDEX_MERGE", new Symbol("NO_INDEX_MERGE", Symbol.NO_INDEX_MERGE_HINT, Symbol.SG_HINTS));
-		symbols.put("RESOURCE_GROUP", new Symbol("RESOURCE_GROUP", Symbol.RESOURCE_GROUP_HINT, Symbol.SG_HINTS));
-		symbols.put("SKIP_SCAN", new Symbol("SKIP_SCAN", Symbol.SKIP_SCAN_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_SKIP_SCAN", new Symbol("NO_SKIP_SCAN", Symbol.NO_SKIP_SCAN_HINT, Symbol.SG_HINTS));
-		symbols.put("HASH_JOIN", new Symbol("HASH_JOIN", Symbol.HASH_JOIN_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_HASH_JOIN", new Symbol("NO_HASH_JOIN", Symbol.NO_HASH_JOIN_HINT, Symbol.SG_HINTS));
-		symbols.put("INDEX", new Symbol("INDEX", Symbol.INDEX_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_INDEX", new Symbol("NO_INDEX", Symbol.NO_INDEX_HINT, Symbol.SG_HINTS));
-		symbols.put("JOIN_INDEX", new Symbol("JOIN_INDEX", Symbol.JOIN_INDEX_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_JOIN_INDEX", new Symbol("NO_JOIN_INDEX", Symbol.NO_JOIN_INDEX_HINT, Symbol.SG_HINTS));
-		symbols.put("GROUP_INDEX", new Symbol("GROUP_INDEX", Symbol.GROUP_INDEX_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_GROUP_INDEX", new Symbol("NO_GROUP_INDEX", Symbol.NO_GROUP_INDEX_HINT, Symbol.SG_HINTS));
-		symbols.put("ORDER_INDEX", new Symbol("ORDER_INDEX", Symbol.ORDER_INDEX_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_ORDER_INDEX", new Symbol("NO_ORDER_INDEX", Symbol.NO_ORDER_INDEX_HINT, Symbol.SG_HINTS));
-		symbols.put("DERIVED_CONDITION_PUSHDOWN", new Symbol("DERIVED_CONDITION_PUSHDOWN", Symbol.DERIVED_CONDITION_PUSHDOWN_HINT, Symbol.SG_HINTS));
-		symbols.put("NO_DERIVED_CONDITION_PUSHDOWN", new Symbol("NO_DERIVED_CONDITION_PUSHDOWN", Symbol.NO_DERIVED_CONDITION_PUSHDOWN_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("BKA", new Symbol("BKA", Symbol.BKA_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("BNL", new Symbol("BNL", Symbol.BNL_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("DUPSWEEDOUT", new Symbol("DUPSWEEDOUT", Symbol.DUPSWEEDOUT_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("FIRSTMATCH", new Symbol("FIRSTMATCH", Symbol.FIRSTMATCH_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("INTOEXISTS", new Symbol("INTOEXISTS", Symbol.INTOEXISTS_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("LOOSESCAN", new Symbol("LOOSESCAN", Symbol.LOOSESCAN_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("MATERIALIZATION", new Symbol("MATERIALIZATION", Symbol.MATERIALIZATION_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("MAX_EXECUTION_TIME", new Symbol("MAX_EXECUTION_TIME", Symbol.MAX_EXECUTION_TIME_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_BKA", new Symbol("NO_BKA", Symbol.NO_BKA_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_BNL", new Symbol("NO_BNL", Symbol.NO_BNL_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_ICP", new Symbol("NO_ICP", Symbol.NO_ICP_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_MRR", new Symbol("NO_MRR", Symbol.NO_MRR_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_RANGE_OPTIMIZATION", new Symbol("NO_RANGE_OPTIMIZATION", Symbol.NO_RANGE_OPTIMIZATION_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_SEMIJOIN", new Symbol("NO_SEMIJOIN", Symbol.NO_SEMIJOIN_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("MRR", new Symbol("MRR", Symbol.MRR_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("QB_NAME", new Symbol("QB_NAME", Symbol.QB_NAME_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("SEMIJOIN", new Symbol("SEMIJOIN", Symbol.SEMIJOIN_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("SET_VAR", new Symbol("SET_VAR", Symbol.SET_VAR_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("SUBQUERY", new Symbol("SUBQUERY", Symbol.SUBQUERY_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("MERGE", new Symbol("MERGE", Symbol.DERIVED_MERGE_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_MERGE", new Symbol("NO_MERGE", Symbol.NO_DERIVED_MERGE_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("JOIN_PREFIX", new Symbol("JOIN_PREFIX", Symbol.JOIN_PREFIX_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("JOIN_SUFFIX", new Symbol("JOIN_SUFFIX", Symbol.JOIN_SUFFIX_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("JOIN_ORDER", new Symbol("JOIN_ORDER", Symbol.JOIN_ORDER_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("JOIN_FIXED_ORDER", new Symbol("JOIN_FIXED_ORDER", Symbol.JOIN_FIXED_ORDER_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("INDEX_MERGE", new Symbol("INDEX_MERGE", Symbol.INDEX_MERGE_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_INDEX_MERGE", new Symbol("NO_INDEX_MERGE", Symbol.NO_INDEX_MERGE_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("RESOURCE_GROUP", new Symbol("RESOURCE_GROUP", Symbol.RESOURCE_GROUP_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("SKIP_SCAN", new Symbol("SKIP_SCAN", Symbol.SKIP_SCAN_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_SKIP_SCAN", new Symbol("NO_SKIP_SCAN", Symbol.NO_SKIP_SCAN_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("HASH_JOIN", new Symbol("HASH_JOIN", Symbol.HASH_JOIN_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_HASH_JOIN", new Symbol("NO_HASH_JOIN", Symbol.NO_HASH_JOIN_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("INDEX", new Symbol("INDEX", Symbol.INDEX_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_INDEX", new Symbol("NO_INDEX", Symbol.NO_INDEX_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("JOIN_INDEX", new Symbol("JOIN_INDEX", Symbol.JOIN_INDEX_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_JOIN_INDEX", new Symbol("NO_JOIN_INDEX", Symbol.NO_JOIN_INDEX_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("GROUP_INDEX", new Symbol("GROUP_INDEX", Symbol.GROUP_INDEX_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_GROUP_INDEX", new Symbol("NO_GROUP_INDEX", Symbol.NO_GROUP_INDEX_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("ORDER_INDEX", new Symbol("ORDER_INDEX", Symbol.ORDER_INDEX_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_ORDER_INDEX", new Symbol("NO_ORDER_INDEX", Symbol.NO_ORDER_INDEX_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("DERIVED_CONDITION_PUSHDOWN", new Symbol("DERIVED_CONDITION_PUSHDOWN", Symbol.DERIVED_CONDITION_PUSHDOWN_HINT, Symbol.SG_HINTS));
+		hintSymbols.put("NO_DERIVED_CONDITION_PUSHDOWN", new Symbol("NO_DERIVED_CONDITION_PUSHDOWN", Symbol.NO_DERIVED_CONDITION_PUSHDOWN_HINT, Symbol.SG_HINTS));
 	}
 
 	public static Symbol getHashSymbol(String token, boolean function, boolean hint) {
 		Symbol result = null;
-		Symbol symbol = symbols.get(token.toUpperCase());
-		if (symbol != null) {
-			//
-			if (function) {
-				// "sql_keywords_and_funcs": SG_MAIN_PARSER
-				if ((Symbol.SG_MAIN_PARSER & symbol.group) == symbol.group) {
-					result = symbol;
-				}
-			} else if (hint) {
-				// "hint_keywords": SG_HINTS
-				if ((Symbol.SG_HINTS & symbol.group) == symbol.group) {
-					result = symbol;
-				}
-			} else {
-				// "sql_keywords": SG_KEYWORDS | SG_HINTABLE_KEYWORDS
-				if (((Symbol.SG_KEYWORDS & symbol.group) == symbol.group) || ((Symbol.SG_HINTABLE_KEYWORDS & symbol.group) == symbol.group)) {
-					result = symbol;
+		String keyword = token.toUpperCase();
+		if (hint) {
+			result = hintSymbols.get(keyword);
+		} else {
+			Symbol symbol = symbols.get(keyword);
+			if (symbol != null) {
+				if (function) {
+					// "sql_keywords_and_funcs": SG_MAIN_PARSER
+					if ((Symbol.SG_MAIN_PARSER & symbol.group) == symbol.group) {
+						result = symbol;
+					}
+				} else {
+					// "sql_keywords": SG_KEYWORDS | SG_HINTABLE_KEYWORDS
+					if (((Symbol.SG_KEYWORDS & symbol.group) == symbol.group) || ((Symbol.SG_HINTABLE_KEYWORDS & symbol.group) == symbol.group)) {
+						result = symbol;
+					}
 				}
 			}
 		}
