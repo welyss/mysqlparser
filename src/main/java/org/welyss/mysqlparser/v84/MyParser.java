@@ -11970,9 +11970,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 1009: /* alter_table_stmt: ALTER TABLE_SYM table_ident standalone_alter_table_action */
-//  if (yyn == 1009)
-//    /* "sql_yacc.y":7960  */
-//          {
+			if (yyn == 1009)
+			/* "sql_yacc.y":7960 */
+			{
 //            yyval= NEW_PTN PT_alter_table_standalone_stmt(
 //                  (yyloc),
 //                  YYMEM_ROOT,
@@ -11981,7 +11981,9 @@ public class MyParser implements Parser {
 //                  ((standalone_alter_table_action)(yystack.valueAt (0))).flags.algo.get_or_default(),
 //                  ((standalone_alter_table_action)(yystack.valueAt (0))).flags.lock.get_or_default(),
 //                  ((standalone_alter_table_action)(yystack.valueAt (0))).flags.validation.get_or_default());
-//          };
+				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_TABLE;
+			}
+			;
 			break;
 
 		case 1010: /* $@37: %empty */
@@ -14667,7 +14669,7 @@ public class MyParser implements Parser {
 //                                      yystack.locationAt (5).raw.is_empty()); // implicit FROM
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_SELECT;
 				Object testObj = yystack.valueAt(5);
-				if(testObj instanceof List) {
+				if (testObj instanceof List) {
 					List<TableIdent> tableReferenceList = (List<TableIdent>) testObj;
 					yyval = tableReferenceList;
 				}
@@ -18540,9 +18542,9 @@ public class MyParser implements Parser {
 			break;
 
 		case 1824: /* common_table_expr: ident opt_derived_column_list AS table_subquery */
-//  if (yyn == 1824)
-//    /* "sql_yacc.y":12359  */
-//          {
+			if (yyn == 1824)
+			/* "sql_yacc.y":12359 */
+			{
 //            LEX_STRING subq_text;
 //            subq_text.length= yystack.locationAt (0).cpp.length();
 //            subq_text.str= YYTHD->strmake(yystack.locationAt (0).cpp.start, subq_text.length);
@@ -18553,7 +18555,9 @@ public class MyParser implements Parser {
 //                                             ((subquery)(yystack.valueAt (0))), &((simple_ident_list)(yystack.valueAt (2))), YYTHD->mem_root);
 //            if (yyval == nullptr)
 //              MYSQL_YYABORT;   /* purecov: inspected */
-//          };
+				System.out.println();
+			}
+			;
 			break;
 
 		case 1825: /* opt_derived_column_list: %empty */

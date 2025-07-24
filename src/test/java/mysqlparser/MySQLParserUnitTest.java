@@ -1,6 +1,7 @@
 package mysqlparser;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
@@ -32,7 +33,12 @@ public class MySQLParserUnitTest {
 //		String sql = "replace INTO t1 (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;";
 //		String sql = "UPDATE acdb.t SET id = id + 1 WHERE t.id=1 ORDER BY id DESC;";
 //		String sql = "SELECT * FROM JSON_TABLE( '[{\"a\":\"3\"},{\"a\":2},{\"b\":1},{\"a\":0},{\"a\":[1,2]}]', \"$[*]\" COLUMNS( rowid FOR ORDINALITY, ac VARCHAR(100) PATH \"$.a\" DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR, aj JSON PATH \"$.a\" DEFAULT '{\"x\": 333}' ON EMPTY, bx INT EXISTS PATH \"$.b\" ) ) AS tt;";
-		String sql = "CREATE INDEX id_index ON t1 (id) COMMENT 'MERGE_THRESHOLD=40';";
+//		String sql = "SELECT * FROM acdb";
+//		String sql = "show index in t1;show full columns in t4;";
+//		String sql = "ALTER TABLE pt EXCHANGE PARTITION p WITH TABLE nt;";
+//		String sql = "drop index idx_1 on t4;";
+		String sql = "LOAD INDEX INTO CACHE t1, t2 IGNORE LEAVES;";
+//		String sql = "LOAD DATA INFILE '/tmp/test.txt' INTO TABLE test IGNORE 1 LINES;";
 //		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, (SELECT id FROM items2 WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
 //		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
 //		String sql = "UPDATE items, (SELECT id FROM items2 WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
@@ -325,6 +331,23 @@ public class MySQLParserUnitTest {
 			assertTrue(SQLCommand.SQLCOM_SET_OPTION.equals(list.get(2).getSQLCommand()));
 			assertTrue(SQLCommand.SQLCOM_SHOW_VARIABLES.equals(list.get(3).getSQLCommand()));
 		}
+		sql = "show index in t1;show full columns in t4;";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			assertTrue(SQLCommand.SQLCOM_SHOW_KEYS.equals(list.get(0).getSQLCommand()));
+			assertTrue(SQLCommand.SQLCOM_SHOW_FIELDS.equals(list.get(1).getSQLCommand()));
+			assertTrue(list.get(0).getTableIdents().get(0).getTable().equals("t1"));
+			assertEquals(list.get(1).getTableIdents().get(0).getTable(), "t4");
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			assertTrue(SQLCommand.SQLCOM_SHOW_KEYS.equals(list.get(0).getSQLCommand()));
+			assertTrue(SQLCommand.SQLCOM_SHOW_FIELDS.equals(list.get(1).getSQLCommand()));
+			assertTrue(list.get(0).getTableIdents().get(0).getTable().equals("t1"));
+			assertEquals(list.get(1).getTableIdents().get(0).getTable(), "t4");
+		}
 	}
 
 	@Test
@@ -605,6 +628,72 @@ public class MySQLParserUnitTest {
 			assertFalse(result.success());
 		} else if(parser.version().equals(MySQLVersion.v84)) {
 			assertTrue(result.success());
+		}
+	}
+
+	@Test
+	public void case14() throws IOException {
+		String sql = "CACHE INDEX t1, t2, t3 IN hot_cache;CACHE INDEX pt PARTITION (p1, p3) IN kc_slow;LOAD INDEX INTO CACHE t1, t2 IGNORE LEAVES;";
+		ParseResult result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_ASSIGN_TO_KEYCACHE));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			TableIdent ti2 = row.getTableIdents().get(1);
+			TableIdent ti3 = row.getTableIdents().get(2);
+			assertTrue("t1".equals(ti1.getTable()));
+			assertTrue("t2".equals(ti2.getTable()));
+			assertTrue("t3".equals(ti3.getTable()));
+			row = list.get(1);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_ASSIGN_TO_KEYCACHE));
+			ti1 = row.getTableIdents().get(0);
+			assertTrue("pt".equals(ti1.getTable()));
+			row = list.get(2);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_PRELOAD_KEYS));
+			ti1 = row.getTableIdents().get(0);
+			ti2 = row.getTableIdents().get(1);
+			assertTrue("t1".equals(ti1.getTable()));
+			assertTrue("t2".equals(ti2.getTable()));
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_ASSIGN_TO_KEYCACHE));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			TableIdent ti2 = row.getTableIdents().get(1);
+			TableIdent ti3 = row.getTableIdents().get(2);
+			assertTrue("t1".equals(ti1.getTable()));
+			assertTrue("t2".equals(ti2.getTable()));
+			assertTrue("t3".equals(ti3.getTable()));
+			row = list.get(1);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_ASSIGN_TO_KEYCACHE));
+			ti1 = row.getTableIdents().get(0);
+			assertTrue("pt".equals(ti1.getTable()));
+			row = list.get(2);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_PRELOAD_KEYS));
+			ti1 = row.getTableIdents().get(0);
+			ti2 = row.getTableIdents().get(1);
+			assertTrue("t1".equals(ti1.getTable()));
+			assertTrue("t2".equals(ti2.getTable()));
+		}
+		sql = "LOAD DATA INFILE '/tmp/test.txt' INTO TABLE test IGNORE 1 LINES;";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_LOAD));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertEquals("test", ti1.getTable());
+		} else if(parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_LOAD));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertEquals("test", ti1.getTable());
 		}
 	}
 }

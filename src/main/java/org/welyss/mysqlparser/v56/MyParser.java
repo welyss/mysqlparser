@@ -20225,7 +20225,7 @@ public class MyParser implements Parser {
 			/* Line 13106 of "sql_yacc.y" */
 			{
 				// LEX *lex=Lex;
-				if (!MyParserProcessor.addTableToList(thd, new TableIdent(((Token) yystack.valueAt(13 - (12)))), null, ((Token) (yystack.valueAt(13 - (13))))))
+				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(13 - (12)), null, ((Token) (yystack.valueAt(13 - (13))))))
 					return YYABORT;
 				// lex->field_list.empty();
 				// lex->update_list.empty();
