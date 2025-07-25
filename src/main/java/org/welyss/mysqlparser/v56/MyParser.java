@@ -2643,11 +2643,11 @@ public class MyParser implements Parser {
 		// break;
 		//
 		//
-		// case 174:
-		// if (yyn == 174)
-		// /* Line 350 of lalr1.java */
-		// /* Line 2772 of "sql_yacc.y" */
-		// {
+		 case 174:
+		 if (yyn == 174)
+		 /* Line 350 of lalr1.java */
+		 /* Line 2772 of "sql_yacc.y" */
+		 {
 		// if (!((lex_str)(yystack.valueAt (3-(1)))).str ||
 		// (check_and_convert_db_name(&((lex_str)(yystack.valueAt (3-(1)))),
 		// FALSE) != IDENT_NAME_OK))
@@ -2661,15 +2661,15 @@ public class MyParser implements Parser {
 		// if (yyval == NULL)
 		// return YYABORT;
 		// yyval->init_qname(YYTHD);
-		// };
-		// break;
+		 };
+		 break;
 		//
 		//
-		// case 175:
-		// if (yyn == 175)
-		// /* Line 350 of lalr1.java */
-		// /* Line 2786 of "sql_yacc.y" */
-		// {
+		 case 175:
+		 if (yyn == 175)
+		 /* Line 350 of lalr1.java */
+		 /* Line 2786 of "sql_yacc.y" */
+		 {
 		// THD *thd= YYTHD;
 		// LEX *lex= thd->lex;
 		// LEX_STRING db;
@@ -2683,8 +2683,8 @@ public class MyParser implements Parser {
 		// if (yyval == NULL)
 		// return YYABORT;
 		// yyval->init_qname(thd);
-		// };
-		// break;
+		 };
+		 break;
 		//
 		//
 		// case 176:
@@ -12154,8 +12154,8 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 8525 of "sql_yacc.y" */
 			{
-				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(2 - (1)), null, null))
-					return YYABORT;
+//				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(2 - (1)), null, null))
+//					return YYABORT;
 			}
 			;
 			break;
@@ -12213,8 +12213,8 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 8571 of "sql_yacc.y" */
 			{
-				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(3 - (1)), null, null))
-					return YYABORT;
+//				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(3 - (1)), null, null))
+//					return YYABORT;
 			}
 			;
 			break;
@@ -16225,8 +16225,8 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 10827 of "sql_yacc.y" */
 			{
-				if (!(MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(5 - (2)), (Token) (yystack.valueAt(6)), (Token) (yystack.valueAt(5 - (3))))))
-					return YYABORT;
+//				if (!(MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(5 - (2)), (Token) (yystack.valueAt(6)), (Token) (yystack.valueAt(5 - (3))))))
+//					return YYABORT;
 				// Select->add_joined_table(yyval);
 			}
 			;
@@ -18104,8 +18104,8 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 11931 of "sql_yacc.y" */
 			{
-				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(1 - (1)), null, null))
-					return YYABORT;
+//				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(1 - (1)), null, null))
+//					return YYABORT;
 			}
 			;
 			break;
@@ -18115,8 +18115,8 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 11942 of "sql_yacc.y" */
 			{
-				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(2 - (1)), null, ((Token) (yystack.valueAt(2 - (2))))))
-					return YYABORT;
+//				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(2 - (1)), null, ((Token) (yystack.valueAt(2 - (2))))))
+//					return YYABORT;
 			}
 			;
 			break;
@@ -21443,7 +21443,9 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 13881 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(((Token) (yystack.valueAt(1 - (1)))));
+				TableIdent tableIdent = new TableIdent(((Token) (yystack.valueAt(1 - (1)))));
+				yyval = tableIdent;
+				MyParserProcessor.addTableToList(thd, tableIdent, null, null);
 			}
 			;
 			break;
@@ -21453,7 +21455,9 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 13887 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(((Token) (yystack.valueAt(3 - (1)))), ((Token) (yystack.valueAt(3 - (3)))));
+				TableIdent tableIdent = new TableIdent(((Token) (yystack.valueAt(3 - (1)))), ((Token) (yystack.valueAt(3 - (3)))));
+				yyval = tableIdent;
+				MyParserProcessor.addTableToList(thd, tableIdent, null, null);
 			}
 			;
 			break;
@@ -21464,7 +21468,9 @@ public class MyParser implements Parser {
 			/* Line 13893 of "sql_yacc.y" */
 			{
 				/* For Delphi */
-				yyval = new TableIdent(((Token) (yystack.valueAt(2 - (2)))));
+				TableIdent tableIdent = new TableIdent(((Token) (yystack.valueAt(2 - (2)))));
+				yyval = tableIdent;
+				MyParserProcessor.addTableToList(thd, tableIdent, null, null);
 			}
 			;
 			break;
@@ -21474,7 +21480,9 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 13903 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(((Token) (yystack.valueAt(2 - (1)))));
+				TableIdent tableIdent = new TableIdent(((Token) (yystack.valueAt(2 - (1)))));
+				yyval = tableIdent;
+//				MyParserProcessor.addTableToList(thd, tableIdent, null, null);
 			}
 			;
 			break;
@@ -21484,7 +21492,9 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 13909 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(((Token) (yystack.valueAt(4 - (1)))), ((Token) (yystack.valueAt(4 - (3)))));
+				TableIdent tableIdent = new TableIdent(((Token) (yystack.valueAt(4 - (1)))), ((Token) (yystack.valueAt(4 - (3)))));
+				yyval = tableIdent;
+				MyParserProcessor.addTableToList(thd, tableIdent, null, null);
 			}
 			;
 			break;
@@ -21494,7 +21504,9 @@ public class MyParser implements Parser {
 			/* Line 350 of lalr1.java */
 			/* Line 13918 of "sql_yacc.y" */
 			{
-				yyval = new TableIdent(new Token(0, LexConstants.ANY_DB, 0), ((Token) yystack.valueAt(1 - (1))));
+				TableIdent tableIdent = new TableIdent(new Token(0, LexConstants.ANY_DB, 0), ((Token) yystack.valueAt(1 - (1))));
+				yyval = tableIdent;
+				MyParserProcessor.addTableToList(thd, tableIdent, null, null);
 			}
 			;
 			break;
@@ -27382,8 +27394,8 @@ public class MyParser implements Parser {
 				// LEX *lex= thd->lex;
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_VIEW;
 				// /* first table in list is target VIEW name */
-				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(3 - (3)), null, null))
-					return YYABORT;
+//				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(3 - (3)), null, null))
+//					return YYABORT;
 				// lex->query_tables->open_strategy= TABLE_LIST::OPEN_STUB;
 			}
 			;
@@ -27628,8 +27640,8 @@ public class MyParser implements Parser {
 				// sp_proc_stmt alternatives are not saving/restoring LEX, so
 				// lex->query_tables can be wiped out.
 				// */
-				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(16 - (9)), null, null))
-					return YYABORT;
+//				if (!MyParserProcessor.addTableToList(thd, (TableIdent) yystack.valueAt(16 - (9)), null, null))
+//					return YYABORT;
 			}
 			;
 			break;
@@ -28648,7 +28660,9 @@ public class MyParser implements Parser {
 		SQLThread thd = new SQLThread(sql);
 		MyParseResult result = new MyParseResult();
 		thd.success = myParse(thd);
-		result.parsedSQLInfo.add(thd.getSQLResultAndReset(0));
+		if (thd.success) {
+			result.parsedSQLInfo.add(thd.getSQLResultAndReset(0));
+		}
 		while (thd.success && thd.foundSemicolon > 0 && !myLexer.lip.eof(thd)) {
 			int lastPos = thd.mPtr;
 			thd.nextState = MyLexStates.MY_LEX_START;

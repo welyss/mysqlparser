@@ -25226,7 +25226,7 @@ public class MyParser implements Parser {
 //                set_derived_column_names(static_cast<Create_col_name_list* >(rawmem));
 //            }
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_VIEW;
-				thd.addTableToList((TableIdent) yystack.valueAt(1), null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_IGNORE, MdlType.MDL_EXCLUSIVE);
+//				thd.addTableToList((TableIdent) yystack.valueAt(1), null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_IGNORE, MdlType.MDL_EXCLUSIVE);
 			}
 			;
 			break;
@@ -25410,7 +25410,7 @@ public class MyParser implements Parser {
 
 //            Lex->m_sql_cmd= new (YYTHD->mem_root) Sql_cmd_create_trigger();
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_CREATE_TRIGGER;
-				thd.addTableToList((TableIdent) yystack.valueAt(6), null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_READ_NO_INSERT, MdlType.MDL_SHARED_NO_WRITE);
+//				thd.addTableToList((TableIdent) yystack.valueAt(6), null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_READ_NO_INSERT, MdlType.MDL_SHARED_NO_WRITE);
 			}
 			;
 			break;

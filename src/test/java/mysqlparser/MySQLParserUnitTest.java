@@ -37,7 +37,14 @@ public class MySQLParserUnitTest {
 //		String sql = "show index in t1;show full columns in t4;";
 //		String sql = "ALTER TABLE pt EXCHANGE PARTITION p WITH TABLE nt;";
 //		String sql = "drop index idx_1 on t4;";
-		String sql = "LOAD INDEX INTO CACHE t1, t2 IGNORE LEAVES;";
+//		String sql = "LOAD INDEX INTO CACHE t1, t2 IGNORE LEAVES;";
+//		String sql = "ANALYZE TABLE t UPDATE HISTOGRAM ON c1;";
+//		String sql = "CREATE TRIGGER tg1 AFTER INSERT ON t1 FOR EACH ROW PRECEDES tg2 BEGIN insert into t2 values(1,2,3); END";
+		String sql = "CREATE DEFINER=`platform_app`@`%` TRIGGER `subject_category_assoc_after_update` AFTER UPDATE ON `subject_category_assoc` FOR EACH ROW BEGIN\r\n"
+				+ "        insert into double_key_log (table_name,action,key1,key2) values ('subject_category_assoc', 'update',new.subject_id,new.subject_category_id);\r\n"
+				+ "END";
+//		String sql = "repair NO_WRITE_TO_BINLOG table t1, t2 quick EXTENDED USE_FRM ;";
+//		String sql = "select 1;";
 //		String sql = "LOAD DATA INFILE '/tmp/test.txt' INTO TABLE test IGNORE 1 LINES;";
 //		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, (SELECT id FROM items2 WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
 //		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
@@ -696,4 +703,152 @@ public class MySQLParserUnitTest {
 			assertEquals("test", ti1.getTable());
 		}
 	}
+
+	@Test
+	public void case15() throws IOException {
+		String sql = "repair NO_WRITE_TO_BINLOG table t1, t2 quick EXTENDED USE_FRM ;";
+		ParseResult result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_REPAIR));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertEquals("t2", ti2.getTable());
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_REPAIR));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertEquals("t2", ti2.getTable());
+		}
+		sql = "ANALYZE TABLE t UPDATE HISTOGRAM ON c1;";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertFalse(result.success());
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_ANALYZE));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertEquals("t", ti1.getTable());
+		}
+		sql = "CHECK TABLE t1,t2 FOR UPGRADE quick fast;";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_CHECK));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertEquals("t2", ti2.getTable());
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_CHECK));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertEquals("t2", ti2.getTable());
+		}
+		sql = "OPTIMIZE NO_WRITE_TO_BINLOG TABLE t1, t2;";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_OPTIMIZE));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertEquals("t2", ti2.getTable());
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_OPTIMIZE));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertEquals("t2", ti2.getTable());
+		}
+		sql = "DROP TABLE t1;DROP VIEW v1;FLUSH TABLES t1,t2 WITH READ LOCK;";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_DROP_TABLE));
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_DROP_VIEW));
+			ti1 = row2.getTableIdents().get(0);
+			assertEquals("v1", ti1.getTable());
+			SQLInfo row3 = list.get(2);
+			assertTrue(row3.getSQLCommand().equals(SQLCommand.SQLCOM_FLUSH));
+			ti1 = row3.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			TableIdent ti2 = row3.getTableIdents().get(1);
+			assertEquals("t2", ti2.getTable());
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_DROP_TABLE));
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_DROP_VIEW));
+			ti1 = row2.getTableIdents().get(0);
+			assertEquals("v1", ti1.getTable());
+			SQLInfo row3 = list.get(2);
+			assertTrue(row3.getSQLCommand().equals(SQLCommand.SQLCOM_FLUSH));
+			ti1 = row3.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			TableIdent ti2 = row3.getTableIdents().get(1);
+			assertEquals("t2", ti2.getTable());
+		}
+	}
+
+	@Test
+	public void case16() throws IOException {
+		String sql = "CREATE DEFINER=`platform_app`@`%` TRIGGER `subject_category_assoc_after_update` AFTER UPDATE ON `acdb`.`subject_category_assoc` FOR EACH ROW BEGIN\r\n"
+				+ "        insert into `bkdb`.double_key_log (table_name,action,key1,key2) values ('subject_category_assoc', 'update',new.subject_id,new.subject_category_id);\r\n"
+				+ "END";
+		ParseResult result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_CREATE_TRIGGER));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertEquals("acdb", ti1.getDb());
+			assertEquals("subject_category_assoc", ti1.getTable());
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertEquals("bkdb", ti2.getDb());
+			assertEquals("double_key_log", ti2.getTable());
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row = list.get(0);
+			assertTrue(row.getSQLCommand().equals(SQLCommand.SQLCOM_CREATE_TRIGGER));
+			TableIdent ti1 = row.getTableIdents().get(0);
+			assertEquals("acdb", ti1.getDb());
+			assertEquals("subject_category_assoc", ti1.getTable());
+			TableIdent ti2 = row.getTableIdents().get(1);
+			assertEquals("bkdb", ti2.getDb());
+			assertEquals("double_key_log", ti2.getTable());
+		}
+	}
+
 }
