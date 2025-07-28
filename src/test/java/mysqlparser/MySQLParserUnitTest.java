@@ -40,9 +40,7 @@ public class MySQLParserUnitTest {
 //		String sql = "LOAD INDEX INTO CACHE t1, t2 IGNORE LEAVES;";
 //		String sql = "ANALYZE TABLE t UPDATE HISTOGRAM ON c1;";
 //		String sql = "CREATE TRIGGER tg1 AFTER INSERT ON t1 FOR EACH ROW PRECEDES tg2 BEGIN insert into t2 values(1,2,3); END";
-		String sql = "CREATE DEFINER=`platform_app`@`%` TRIGGER `subject_category_assoc_after_update` AFTER UPDATE ON `subject_category_assoc` FOR EACH ROW BEGIN\r\n"
-				+ "        insert into double_key_log (table_name,action,key1,key2) values ('subject_category_assoc', 'update',new.subject_id,new.subject_category_id);\r\n"
-				+ "END";
+		String sql = "alter table acdb.t1 add column age int unsigned comment '年龄';";
 //		String sql = "repair NO_WRITE_TO_BINLOG table t1, t2 quick EXTENDED USE_FRM ;";
 //		String sql = "select 1;";
 //		String sql = "LOAD DATA INFILE '/tmp/test.txt' INTO TABLE test IGNORE 1 LINES;";
@@ -848,6 +846,39 @@ public class MySQLParserUnitTest {
 			TableIdent ti2 = row.getTableIdents().get(1);
 			assertEquals("bkdb", ti2.getDb());
 			assertEquals("double_key_log", ti2.getTable());
+		}
+	}
+
+	@Test
+	public void case17() throws IOException {
+		String sql = "desc acdb.t1;show full columns from `bkdb`.`t2`;";
+		ParseResult result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_SHOW_FIELDS));
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("acdb", ti1.getDb());
+			assertEquals("t1", ti1.getTable());
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_SHOW_FIELDS));
+			ti1 = row2.getTableIdents().get(0);
+			assertEquals("bkdb", ti1.getDb());
+			assertEquals("t2", ti1.getTable());
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_SHOW_FIELDS));
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("acdb", ti1.getDb());
+			assertEquals("t1", ti1.getTable());
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_SHOW_FIELDS));
+			ti1 = row2.getTableIdents().get(0);
+			assertEquals("bkdb", ti1.getDb());
+			assertEquals("t2", ti1.getTable());
 		}
 	}
 
