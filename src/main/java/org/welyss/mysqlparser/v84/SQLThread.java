@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import org.junit.platform.commons.util.StringUtils;
 import org.welyss.mysqlparser.MySQLThread;
-import org.welyss.mysqlparser.SQLInfo;
 import org.welyss.mysqlparser.items.TableIdent;
 import org.welyss.mysqlparser.v84.MyParser.Location;
 
@@ -35,8 +34,10 @@ public class SQLThread extends MySQLThread {
 	}
 
 	public void addSQL(String sql) {
-		parsedSqls.add(new SQLInfo(sql, lex.sqlCommand, lex.tables));
+		parsedSqls.add(new MySQLInfo(sql, lex.sqlCommand, lex.tables, pc.alterInfo.flags));
+		// Clear transient variables
 		lex.tables = new ArrayList<TableIdent>();
+		pc.alterInfo.flags = 0;
 	}
 
 	/**

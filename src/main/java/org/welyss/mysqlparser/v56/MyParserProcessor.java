@@ -1,7 +1,6 @@
 package org.welyss.mysqlparser.v56;
 
 import org.welyss.mysqlparser.AlterColumnInfo;
-import org.welyss.mysqlparser.AlterFlag;
 import org.welyss.mysqlparser.Lex;
 import org.welyss.mysqlparser.SchemaTables;
 import org.welyss.mysqlparser.SelectLex;
@@ -86,11 +85,11 @@ public class MyParserProcessor {
 		return success;
 	}
 
-	public static boolean addFieldToList(SQLThread thd, String column, String type, AlterFlag af) {
-		return addFieldToList(thd, column, null, type, af);
+	public static boolean addFieldToList(SQLThread thd, String column, String type) {
+		return addFieldToList(thd, column, null, type);
 	}
 
-	public static boolean addFieldToList(SQLThread thd, String columnName, String changedName, String type, AlterFlag af) {
+	public static boolean addFieldToList(SQLThread thd, String columnName, String changedName, String type) {
 		boolean result = false;
 		if (columnName != null) {
 			AlterColumnInfo curCol = new AlterColumnInfo();
@@ -99,7 +98,6 @@ public class MyParserProcessor {
 			if (type != null) {
 				curCol.typeName = type;
 			}
-			curCol.alterFlag = af;
 			thd.lex.alterInfo.columns.add(curCol);
 			result = true;
 		}

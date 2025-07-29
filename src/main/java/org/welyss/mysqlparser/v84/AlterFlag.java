@@ -1,5 +1,8 @@
 package org.welyss.mysqlparser.v84;
 
+/**
+ * from sql/sql_alter.h
+ */
 public enum AlterFlag {
 	/// Set for ADD [COLUMN]
 	ALTER_ADD_COLUMN(1l << 0),
@@ -138,7 +141,11 @@ public enum AlterFlag {
 		this.value = value;
 	}
 
-	public long longVal() {
+	public long Value() {
 		return value;
+	}
+
+	public boolean is(long flags) {
+		return (flags & value) == value;
 	}
 }

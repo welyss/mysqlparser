@@ -10161,33 +10161,48 @@ public class MyParser implements Parser {
 			break;
 
 		case 758: /* opt_not: %empty */
-//  if (yyn == 758)
-//    /* "sql_yacc.y":6855  */
-//                       { yyval= false; };
+			if (yyn == 758)
+			/* "sql_yacc.y":6855 */
+			{
+				yyval = false;
+			}
+			;
 			break;
 
 		case 759: /* opt_not: NOT_SYM */
-//  if (yyn == 759)
-//    /* "sql_yacc.y":6856  */
-//                       { yyval= true; };
+			if (yyn == 759)
+			/* "sql_yacc.y":6856 */
+			{
+				yyval = true;
+			}
+			;
 			break;
 
 		case 760: /* opt_constraint_enforcement: %empty */
-//  if (yyn == 760)
-//    /* "sql_yacc.y":6860  */
-//                 { yyval= true; };
+			if (yyn == 760)
+			/* "sql_yacc.y":6860 */
+			{
+				yyval = true;
+			}
+			;
 			break;
 
 		case 761: /* opt_constraint_enforcement: constraint_enforcement */
-//  if (yyn == 761)
-//    /* "sql_yacc.y":6861  */
-//                                 { yyval= ((is_not_empty)(yystack.valueAt (0))); };
+			if (yyn == 761)
+			/* "sql_yacc.y":6861 */
+			{
+				yyval = ((boolean) (yystack.valueAt(0)));
+			}
+			;
 			break;
 
 		case 762: /* constraint_enforcement: opt_not ENFORCED_SYM */
-//  if (yyn == 762)
-//    /* "sql_yacc.y":6865  */
-//                                { yyval= !(((is_not_empty)(yystack.valueAt (1)))); };
+			if (yyn == 762)
+			/* "sql_yacc.y":6865 */
+			{
+				yyval = !(((boolean) (yystack.valueAt(1))));
+			}
+			;
 			break;
 
 		case 763: /* field_def: type opt_column_attribute_list */
@@ -12874,19 +12889,23 @@ public class MyParser implements Parser {
 			break;
 
 		case 1088: /* alter_table_partition_options: partition_clause */
-//  if (yyn == 1088)
-//    /* "sql_yacc.y":8625  */
-//          {
+			if (yyn == 1088)
+			/* "sql_yacc.y":8625 */
+			{
 //            yyval= NEW_PTN PT_alter_table_partition_by((yyloc), ((partition_clause)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_PARTITION.Value();
+			}
+			;
 			break;
 
 		case 1089: /* alter_table_partition_options: REMOVE_SYM PARTITIONING_SYM */
-//  if (yyn == 1089)
-//    /* "sql_yacc.y":8629  */
-//          {
+			if (yyn == 1089)
+			/* "sql_yacc.y":8629 */
+			{
 //            yyval= NEW_PTN PT_alter_table_remove_partitioning((yyloc));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_REMOVE_PARTITIONING.Value();
+			}
+			;
 			break;
 
 		case 1090: /* opt_alter_command_list: %empty */
@@ -12934,101 +12953,132 @@ public class MyParser implements Parser {
 			break;
 
 		case 1096: /* standalone_alter_commands: ADD PARTITION_SYM opt_no_write_to_binlog */
-//  if (yyn == 1096)
-//    /* "sql_yacc.y":8671  */
-//          {
+			if (yyn == 1096)
+			/* "sql_yacc.y":8671 */
+			{
 //            yyval= NEW_PTN PT_alter_table_add_partition((yyloc), ((num)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ADD_PARTITION.Value();
+			}
+			;
 			break;
 
 		case 1097: /* standalone_alter_commands: ADD PARTITION_SYM opt_no_write_to_binlog '(' part_def_list ')' */
-//  if (yyn == 1097)
-//    /* "sql_yacc.y":8675  */
-//          {
+			if (yyn == 1097)
+			/* "sql_yacc.y":8675 */
+			{
 //            yyval= NEW_PTN PT_alter_table_add_partition_def_list((yyloc), ((num)(yystack.valueAt (3))), ((part_def_list)(yystack.valueAt (1))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ADD_PARTITION.Value();
+			}
+			;
 			break;
 
 		case 1098: /* standalone_alter_commands: ADD PARTITION_SYM opt_no_write_to_binlog PARTITIONS_SYM real_ulong_num */
-//  if (yyn == 1098)
-//    /* "sql_yacc.y":8679  */
-//          {
+			if (yyn == 1098)
+			/* "sql_yacc.y":8679 */
+			{
 //            yyval= NEW_PTN PT_alter_table_add_partition_num((yyloc), ((num)(yystack.valueAt (2))), ((ulong_num)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ADD_PARTITION.Value();
+			}
+			;
 			break;
 
 		case 1099: /* standalone_alter_commands: DROP PARTITION_SYM ident_string_list */
-//  if (yyn == 1099)
-//    /* "sql_yacc.y":8683  */
-//          {
+			if (yyn == 1099)
+			/* "sql_yacc.y":8683 */
+			{
 //            yyval= NEW_PTN PT_alter_table_drop_partition((yyloc), *((string_list)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_DROP_PARTITION.Value();
+			}
+			;
 			break;
 
 		case 1100: /* standalone_alter_commands: REBUILD_SYM PARTITION_SYM opt_no_write_to_binlog all_or_alt_part_name_list */
-//  if (yyn == 1100)
-//    /* "sql_yacc.y":8688  */
-//          {
+			if (yyn == 1100)
+			/* "sql_yacc.y":8688 */
+			{
 //            yyval= NEW_PTN PT_alter_table_rebuild_partition((yyloc), ((num)(yystack.valueAt (1))), ((string_list)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_REBUILD_PARTITION.Value();
+				doPtAlterTablePartitionListOrAll(thd, (List<Token>) yystack.valueAt(0));
+			}
+			;
 			break;
 
 		case 1101: /* standalone_alter_commands: OPTIMIZE PARTITION_SYM opt_no_write_to_binlog all_or_alt_part_name_list */
-//  if (yyn == 1101)
-//    /* "sql_yacc.y":8693  */
-//          {
+			if (yyn == 1101)
+			/* "sql_yacc.y":8693 */
+			{
 //            yyval= NEW_PTN PT_alter_table_optimize_partition((yyloc), ((num)(yystack.valueAt (1))), ((string_list)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ADMIN_PARTITION.Value();
+				doPtAlterTablePartitionListOrAll(thd, (List<Token>) yystack.valueAt(0));
+			}
+			;
 			break;
 
 		case 1102: /* standalone_alter_commands: ANALYZE_SYM PARTITION_SYM opt_no_write_to_binlog all_or_alt_part_name_list */
-//  if (yyn == 1102)
-//    /* "sql_yacc.y":8698  */
-//          {
+			if (yyn == 1102)
+			/* "sql_yacc.y":8698 */
+			{
 //            yyval= NEW_PTN PT_alter_table_analyze_partition((yyloc), ((num)(yystack.valueAt (1))), ((string_list)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ADMIN_PARTITION.Value();
+				doPtAlterTablePartitionListOrAll(thd, (List<Token>) yystack.valueAt(0));
+			}
+			;
 			break;
 
 		case 1103: /* standalone_alter_commands: CHECK_SYM PARTITION_SYM all_or_alt_part_name_list opt_mi_check_types */
-//  if (yyn == 1103)
-//    /* "sql_yacc.y":8702  */
-//          {
+			if (yyn == 1103)
+			/* "sql_yacc.y":8702 */
+			{
 //            yyval= NEW_PTN PT_alter_table_check_partition((yyloc), ((string_list)(yystack.valueAt (1))),
 //                                                       ((mi_type)(yystack.valueAt (0))).flags, ((mi_type)(yystack.valueAt (0))).sql_flags);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ADMIN_PARTITION.Value();
+				doPtAlterTablePartitionListOrAll(thd, (List<Token>) yystack.valueAt(1));
+			}
+			;
 			break;
 
 		case 1104: /* standalone_alter_commands: REPAIR PARTITION_SYM opt_no_write_to_binlog all_or_alt_part_name_list opt_mi_repair_types */
-//  if (yyn == 1104)
-//    /* "sql_yacc.y":8709  */
-//          {
+			if (yyn == 1104)
+			/* "sql_yacc.y":8709 */
+			{
 //            yyval= NEW_PTN PT_alter_table_repair_partition((yyloc), ((num)(yystack.valueAt (2))), ((string_list)(yystack.valueAt (1))),
 //                                                        ((mi_type)(yystack.valueAt (0))).flags, ((mi_type)(yystack.valueAt (0))).sql_flags);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ADMIN_PARTITION.Value();
+				doPtAlterTablePartitionListOrAll(thd, (List<Token>) yystack.valueAt(1));
+			}
+			;
 			break;
 
 		case 1105: /* standalone_alter_commands: COALESCE PARTITION_SYM opt_no_write_to_binlog real_ulong_num */
-//  if (yyn == 1105)
-//    /* "sql_yacc.y":8714  */
-//          {
+			if (yyn == 1105)
+			/* "sql_yacc.y":8714 */
+			{
 //            yyval= NEW_PTN PT_alter_table_coalesce_partition((yyloc), ((num)(yystack.valueAt (1))), ((ulong_num)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_COALESCE_PARTITION.Value();
+			}
+			;
 			break;
 
 		case 1106: /* standalone_alter_commands: TRUNCATE_SYM PARTITION_SYM all_or_alt_part_name_list */
-//  if (yyn == 1106)
-//    /* "sql_yacc.y":8718  */
-//          {
+			if (yyn == 1106)
+			/* "sql_yacc.y":8718 */
+			{
 //            yyval= NEW_PTN PT_alter_table_truncate_partition((yyloc), ((string_list)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= (AlterFlag.ALTER_ADMIN_PARTITION.Value() | AlterFlag.ALTER_TRUNCATE_PARTITION.Value());
+				doPtAlterTablePartitionListOrAll(thd, (List<Token>) yystack.valueAt(0));
+			}
+			;
 			break;
 
 		case 1107: /* standalone_alter_commands: REORGANIZE_SYM PARTITION_SYM opt_no_write_to_binlog */
-//  if (yyn == 1107)
-//    /* "sql_yacc.y":8722  */
-//          {
+			if (yyn == 1107)
+			/* "sql_yacc.y":8722 */
+			{
 //            yyval= NEW_PTN PT_alter_table_reorganize_partition((yyloc), ((num)(yystack.valueAt (0))));
-//          };
+				// TODO wystest
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_TABLE_REORG.Value();
+			}
+			;
 			break;
 
 		case 1108: /* standalone_alter_commands: REORGANIZE_SYM PARTITION_SYM opt_no_write_to_binlog ident_string_list INTO '(' part_def_list ')' */
@@ -13102,9 +13152,12 @@ public class MyParser implements Parser {
 			break;
 
 		case 1118: /* all_or_alt_part_name_list: ALL */
-//  if (yyn == 1118)
-//    /* "sql_yacc.y":8772  */
-//                                { yyval= nullptr; };
+			if (yyn == 1118)
+			/* "sql_yacc.y":8772 */
+			{
+				yyval = null;
+			}
+			;
 			break;
 
 		case 1120: /* alter_list: alter_list_item */
@@ -13166,223 +13219,279 @@ public class MyParser implements Parser {
 			break;
 
 		case 1127: /* alter_list_item: ADD opt_column ident field_def opt_references opt_place */
-//  if (yyn == 1127)
-//    /* "sql_yacc.y":8823  */
-//          {
+			if (yyn == 1127)
+			/* "sql_yacc.y":8823 */
+			{
 //            yyval= NEW_PTN PT_alter_table_add_column((yyloc), ((lexer.lex_str)(yystack.valueAt (3))), ((field_def)(yystack.valueAt (2))), ((table_constraint_def)(yystack.valueAt (1))), ((c_str)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ADD_COLUMN.Value();
+			}
+			;
 			break;
 
 		case 1128: /* alter_list_item: ADD opt_column '(' table_element_list ')' */
-//  if (yyn == 1128)
-//    /* "sql_yacc.y":8827  */
-//          {
+			if (yyn == 1128)
+			/* "sql_yacc.y":8827 */
+			{
 //            yyval= NEW_PTN PT_alter_table_add_columns((yyloc), ((table_element_list)(yystack.valueAt (1))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ADD_COLUMN.Value();
+			}
+			;
 			break;
 
 		case 1129: /* alter_list_item: ADD table_constraint_def */
-//  if (yyn == 1129)
-//    /* "sql_yacc.y":8831  */
-//          {
+			if (yyn == 1129)
+			/* "sql_yacc.y":8831 */
+			{
 //            yyval= NEW_PTN PT_alter_table_add_constraint((yyloc), ((table_constraint_def)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ADD_INDEX.Value();
+			}
+			;
 			break;
 
 		case 1130: /* alter_list_item: CHANGE opt_column ident ident field_def opt_place */
-//  if (yyn == 1130)
-//    /* "sql_yacc.y":8835  */
-//          {
+			if (yyn == 1130)
+			/* "sql_yacc.y":8835 */
+			{
 //            yyval= NEW_PTN PT_alter_table_change_column((yyloc), ((lexer.lex_str)(yystack.valueAt (3))), ((lexer.lex_str)(yystack.valueAt (2))), ((field_def)(yystack.valueAt (1))), ((c_str)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_CHANGE_COLUMN.Value();
+			}
+			;
 			break;
 
 		case 1131: /* alter_list_item: MODIFY_SYM opt_column ident field_def opt_place */
-//  if (yyn == 1131)
-//    /* "sql_yacc.y":8839  */
-//          {
+			if (yyn == 1131)
+			/* "sql_yacc.y":8839 */
+			{
 //            yyval= NEW_PTN PT_alter_table_change_column((yyloc), ((lexer.lex_str)(yystack.valueAt (2))), ((field_def)(yystack.valueAt (1))), ((c_str)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_CHANGE_COLUMN.Value();
+			}
+			;
 			break;
 
 		case 1132: /* alter_list_item: DROP opt_column ident opt_restrict */
-//  if (yyn == 1132)
-//    /* "sql_yacc.y":8843  */
-//          {
+			if (yyn == 1132)
+			/* "sql_yacc.y":8843 */
+			{
 //            // Note: opt_restrict ($4) is ignored!
 //            yyval= NEW_PTN PT_alter_table_drop_column((yyloc), ((lexer.lex_str)(yystack.valueAt (1))).str);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_DROP_COLUMN.Value();
+			}
+			;
 			break;
 
 		case 1133: /* alter_list_item: DROP FOREIGN KEY_SYM ident */
-//  if (yyn == 1133)
-//    /* "sql_yacc.y":8848  */
-//          {
+			if (yyn == 1133)
+			/* "sql_yacc.y":8848 */
+			{
 //            yyval= NEW_PTN PT_alter_table_drop_foreign_key((yyloc), ((lexer.lex_str)(yystack.valueAt (0))).str);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.DROP_FOREIGN_KEY.Value();
+			}
+			;
 			break;
 
 		case 1134: /* alter_list_item: DROP PRIMARY_SYM KEY_SYM */
-//  if (yyn == 1134)
-//    /* "sql_yacc.y":8852  */
-//          {
+			if (yyn == 1134)
+			/* "sql_yacc.y":8852 */
+			{
 //            yyval= NEW_PTN PT_alter_table_drop_key((yyloc), primary_key_name);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_DROP_INDEX.Value();
+			}
+			;
 			break;
 
 		case 1135: /* alter_list_item: DROP key_or_index ident */
-//  if (yyn == 1135)
-//    /* "sql_yacc.y":8856  */
-//          {
+			if (yyn == 1135)
+			/* "sql_yacc.y":8856 */
+			{
 //            yyval= NEW_PTN PT_alter_table_drop_key((yyloc), ((lexer.lex_str)(yystack.valueAt (0))).str);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_DROP_INDEX.Value();
+			}
+			;
 			break;
 
 		case 1136: /* alter_list_item: DROP CHECK_SYM ident */
-//  if (yyn == 1136)
-//    /* "sql_yacc.y":8860  */
-//          {
+			if (yyn == 1136)
+			/* "sql_yacc.y":8860 */
+			{
 //            yyval= NEW_PTN PT_alter_table_drop_check_constraint((yyloc), ((lexer.lex_str)(yystack.valueAt (0))).str);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.DROP_CHECK_CONSTRAINT.Value();
+			}
+			;
 			break;
 
 		case 1137: /* alter_list_item: DROP CONSTRAINT ident */
-//  if (yyn == 1137)
-//    /* "sql_yacc.y":8864  */
-//          {
+			if (yyn == 1137)
+			/* "sql_yacc.y":8864 */
+			{
 //            yyval= NEW_PTN PT_alter_table_drop_constraint((yyloc), ((lexer.lex_str)(yystack.valueAt (0))).str);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.DROP_ANY_CONSTRAINT.Value();
+			}
+			;
 			break;
 
 		case 1138: /* alter_list_item: DISABLE_SYM KEYS */
-//  if (yyn == 1138)
-//    /* "sql_yacc.y":8868  */
-//          {
+			if (yyn == 1138)
+			/* "sql_yacc.y":8868 */
+			{
 //            yyval= NEW_PTN PT_alter_table_enable_keys((yyloc), false);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_KEYS_ONOFF.Value();
+			}
+			;
 			break;
 
 		case 1139: /* alter_list_item: ENABLE_SYM KEYS */
-//  if (yyn == 1139)
-//    /* "sql_yacc.y":8872  */
-//          {
+			if (yyn == 1139)
+			/* "sql_yacc.y":8872 */
+			{
 //            yyval= NEW_PTN PT_alter_table_enable_keys((yyloc), true);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_KEYS_ONOFF.Value();
+			}
+			;
 			break;
 
 		case 1140: /* alter_list_item: ALTER opt_column ident SET_SYM DEFAULT_SYM signed_literal_or_null */
-//  if (yyn == 1140)
-//    /* "sql_yacc.y":8876  */
-//          {
+			if (yyn == 1140)
+			/* "sql_yacc.y":8876 */
+			{
 //            yyval= NEW_PTN PT_alter_table_set_default((yyloc), ((lexer.lex_str)(yystack.valueAt (3))).str, ((item)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_CHANGE_COLUMN_DEFAULT.Value();
+			}
+			;
 			break;
 
 		case 1141: /* alter_list_item: ALTER opt_column ident SET_SYM DEFAULT_SYM '(' expr ')' */
-//  if (yyn == 1141)
-//    /* "sql_yacc.y":8880  */
-//          {
+			if (yyn == 1141)
+			/* "sql_yacc.y":8880 */
+			{
 //            yyval= NEW_PTN PT_alter_table_set_default((yyloc), ((lexer.lex_str)(yystack.valueAt (5))).str, ((item)(yystack.valueAt (1))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_CHANGE_COLUMN_DEFAULT.Value();
+			}
+			;
 			break;
 
 		case 1142: /* alter_list_item: ALTER opt_column ident DROP DEFAULT_SYM */
-//  if (yyn == 1142)
-//    /* "sql_yacc.y":8884  */
-//          {
+			if (yyn == 1142)
+			/* "sql_yacc.y":8884 */
+			{
 //            yyval= NEW_PTN PT_alter_table_set_default((yyloc), ((lexer.lex_str)(yystack.valueAt (2))).str, nullptr);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_CHANGE_COLUMN_DEFAULT.Value();
+			}
+			;
 			break;
 
 		case 1143: /* alter_list_item: ALTER opt_column ident SET_SYM visibility */
-//  if (yyn == 1143)
-//    /* "sql_yacc.y":8889  */
-//          {
+			if (yyn == 1143)
+			/* "sql_yacc.y":8889 */
+			{
 //            yyval= NEW_PTN PT_alter_table_column_visibility((yyloc), ((lexer.lex_str)(yystack.valueAt (2))).str, ((visibility)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_COLUMN_VISIBILITY.Value();
+			}
+			;
 			break;
 
 		case 1144: /* alter_list_item: ALTER INDEX_SYM ident visibility */
-//  if (yyn == 1144)
-//    /* "sql_yacc.y":8893  */
-//          {
+			if (yyn == 1144)
+			/* "sql_yacc.y":8893 */
+			{
 //            yyval= NEW_PTN PT_alter_table_index_visible((yyloc), ((lexer.lex_str)(yystack.valueAt (1))).str, ((visibility)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_INDEX_VISIBILITY.Value();
+			}
+			;
 			break;
 
 		case 1145: /* alter_list_item: ALTER CHECK_SYM ident constraint_enforcement */
-//  if (yyn == 1145)
-//    /* "sql_yacc.y":8897  */
-//          {
+			if (yyn == 1145)
+			/* "sql_yacc.y":8897 */
+			{
 //            yyval = NEW_PTN PT_alter_table_enforce_check_constraint((yyloc), ((lexer.lex_str)(yystack.valueAt (1))).str, ((is_not_empty)(yystack.valueAt (0))));
-//          };
+				boolean isEnforced = (boolean) (yystack.valueAt(0));
+				thd.pc.alterInfo.flags |= (isEnforced ? AlterFlag.ENFORCE_ANY_CONSTRAINT.Value() : AlterFlag.SUSPEND_ANY_CONSTRAINT.Value());
+			}
+			;
 			break;
 
 		case 1146: /* alter_list_item: ALTER CONSTRAINT ident constraint_enforcement */
-//  if (yyn == 1146)
-//    /* "sql_yacc.y":8901  */
-//          {
+			if (yyn == 1146)
+			/* "sql_yacc.y":8901 */
+			{
 //            yyval = NEW_PTN PT_alter_table_enforce_constraint((yyloc), ((lexer.lex_str)(yystack.valueAt (1))).str, ((is_not_empty)(yystack.valueAt (0))));
-//          };
+				boolean isEnforced = (boolean) (yystack.valueAt(0));
+				thd.pc.alterInfo.flags |= (isEnforced ? AlterFlag.ENFORCE_ANY_CONSTRAINT.Value() : AlterFlag.SUSPEND_ANY_CONSTRAINT.Value());
+			}
+			;
 			break;
 
 		case 1147: /* alter_list_item: RENAME opt_to table_ident */
-//  if (yyn == 1147)
-//    /* "sql_yacc.y":8905  */
-//          {
+			if (yyn == 1147)
+			/* "sql_yacc.y":8905 */
+			{
 //            yyval= NEW_PTN PT_alter_table_rename((yyloc), ((table)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_RENAME.Value();
+			}
+			;
 			break;
 
 		case 1148: /* alter_list_item: RENAME key_or_index ident TO_SYM ident */
-//  if (yyn == 1148)
-//    /* "sql_yacc.y":8909  */
-//          {
+			if (yyn == 1148)
+			/* "sql_yacc.y":8909 */
+			{
 //            yyval= NEW_PTN PT_alter_table_rename_key((yyloc), ((lexer.lex_str)(yystack.valueAt (2))).str, ((lexer.lex_str)(yystack.valueAt (0))).str);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_RENAME_INDEX.Value();
+			}
+			;
 			break;
 
 		case 1149: /* alter_list_item: RENAME COLUMN_SYM ident TO_SYM ident */
-//  if (yyn == 1149)
-//    /* "sql_yacc.y":8913  */
-//          {
+			if (yyn == 1149)
+			/* "sql_yacc.y":8913 */
+			{
 //            yyval= NEW_PTN PT_alter_table_rename_column((yyloc), ((lexer.lex_str)(yystack.valueAt (2))).str, ((lexer.lex_str)(yystack.valueAt (0))).str);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_CHANGE_COLUMN.Value();
+			}
+			;
 			break;
 
 		case 1150: /* alter_list_item: CONVERT_SYM TO_SYM character_set charset_name opt_collate */
-//  if (yyn == 1150)
-//    /* "sql_yacc.y":8917  */
-//          {
+			if (yyn == 1150)
+			/* "sql_yacc.y":8917 */
+			{
 //            yyval= NEW_PTN PT_alter_table_convert_to_charset((yyloc), ((lexer.charset)(yystack.valueAt (1))), ((lexer.charset)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_OPTIONS.Value();
+			}
+			;
 			break;
 
 		case 1151: /* alter_list_item: CONVERT_SYM TO_SYM character_set DEFAULT_SYM opt_collate */
-//  if (yyn == 1151)
-//    /* "sql_yacc.y":8921  */
-//          {
+			if (yyn == 1151)
+			/* "sql_yacc.y":8921 */
+			{
 //            yyval = NEW_PTN PT_alter_table_convert_to_charset(
 //                (yyloc),
 //                YYTHD->variables.collation_database,
 //                ((lexer.charset)(yystack.valueAt (0))) ? ((lexer.charset)(yystack.valueAt (0))) : YYTHD->variables.collation_database);
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_OPTIONS.Value();
+			}
+			;
 			break;
 
 		case 1152: /* alter_list_item: FORCE_SYM */
-//  if (yyn == 1152)
-//    /* "sql_yacc.y":8928  */
-//          {
+			if (yyn == 1152)
+			/* "sql_yacc.y":8928 */
+			{
 //            yyval= NEW_PTN PT_alter_table_force((yyloc));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_RECREATE.Value();
+			}
+			;
 			break;
 
 		case 1153: /* alter_list_item: ORDER_SYM BY alter_order_list */
-//  if (yyn == 1153)
-//    /* "sql_yacc.y":8932  */
-//          {
+			if (yyn == 1153)
+			/* "sql_yacc.y":8932 */
+			{
 //            yyval= NEW_PTN PT_alter_table_order((yyloc), ((order_list)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ORDER.Value();
+			}
+			;
 			break;
 
 		case 1154: /* alter_commands_modifier: alter_algorithm_option */
@@ -18274,29 +18383,46 @@ public class MyParser implements Parser {
 			break;
 
 		case 1780: /* ident_string_list: ident */
-//  if (yyn == 1780)
-//    /* "sql_yacc.y":12238  */
-//          {
+			if (yyn == 1780)
+			/* "sql_yacc.y":12238 */
+			{
 //            yyval= NEW_PTN List<String>;
 //            String *s= NEW_PTN String(const_cast<const char *>(((lexer.lex_str)(yystack.valueAt (0))).str),
 //                                               ((lexer.lex_str)(yystack.valueAt (0))).length,
 //                                               system_charset_info);
 //            if (yyval == nullptr || s == nullptr || yyval->push_back(s))
 //              MYSQL_YYABORT;
-//          };
+				Object ident = yystack.valueAt(0);
+				if (ident != null) {
+					List<Token> identStringList = new ArrayList<Token>();
+					identStringList.add((Token) yystack.valueAt(0));
+					yyval = identStringList;
+				}
+			}
+			;
 			break;
 
 		case 1781: /* ident_string_list: ident_string_list ',' ident */
-//  if (yyn == 1781)
-//    /* "sql_yacc.y":12247  */
-//          {
+			if (yyn == 1781)
+			/* "sql_yacc.y":12247 */
+			{
 //            String *s= NEW_PTN String(const_cast<const char *>(((lexer.lex_str)(yystack.valueAt (0))).str),
 //                                               ((lexer.lex_str)(yystack.valueAt (0))).length,
 //                                               system_charset_info);
 //            if (s == nullptr || ((string_list)(yystack.valueAt (2)))->push_back(s))
 //              MYSQL_YYABORT;
 //            yyval= ((string_list)(yystack.valueAt (2)));
-//          };
+				Object ident = yystack.valueAt(0);
+				if (yyval != null && ident != null) {
+					if (yyval instanceof List) {
+						List<Token> identStringList = (List<Token>) yyval;
+						identStringList.add((Token) ident);
+					} else {
+						yyval = ident;
+					}
+				}
+			}
+			;
 			break;
 
 		case 1782: /* interval: interval_time_stamp */
@@ -26737,6 +26863,12 @@ public class MyParser implements Parser {
 		}
 		thd.lex.sqlCommand = sqlCommand;
 //		thd.addTableToList(tableIdent, null, SQLThread.TL_OPTION_UPDATING, ThrLockType.TL_READ_DEFAULT, MdlType.MDL_SHARED_READ);
+	}
+
+	private void doPtAlterTablePartitionListOrAll(SQLThread thd, List<Token> stringList) {
+		if (stringList == null || (stringList instanceof List && stringList.size() == 0)) {
+			thd.pc.alterInfo.flags |= AlterFlag.ALTER_ALL_PARTITION.Value();
+		}
 	}
 
 	public ParseResult parse(String sql) {

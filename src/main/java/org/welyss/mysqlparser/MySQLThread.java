@@ -5,6 +5,12 @@ import java.util.List;
 
 public abstract class MySQLThread {
 	public String msg;
-	public List<SQLInfo> parsedSqls = new ArrayList<SQLInfo>();
+	public List<SQLInfo> parsedSqls;
 	public Lex lex = new Lex();
+	public ParseContext pc;
+
+	public MySQLThread() {
+		parsedSqls = new ArrayList<SQLInfo>();
+		pc = new ParseContext();
+	}
 }

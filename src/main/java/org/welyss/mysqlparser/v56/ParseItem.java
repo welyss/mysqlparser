@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.welyss.mysqlparser.AlterColumnInfo;
-import org.welyss.mysqlparser.AlterFlag;
 import org.welyss.mysqlparser.SQLCommand;
 import org.welyss.mysqlparser.items.TableIdent;
 

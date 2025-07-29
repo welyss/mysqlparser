@@ -14,6 +14,7 @@ import org.welyss.mysqlparser.ParseResult;
 import org.welyss.mysqlparser.SQLCommand;
 import org.welyss.mysqlparser.SQLInfo;
 import org.welyss.mysqlparser.items.TableIdent;
+import org.welyss.mysqlparser.v84.AlterFlag;
 
 public class MySQLParserUnitTest {
 	MySQLParser parser;
@@ -40,7 +41,9 @@ public class MySQLParserUnitTest {
 //		String sql = "LOAD INDEX INTO CACHE t1, t2 IGNORE LEAVES;";
 //		String sql = "ANALYZE TABLE t UPDATE HISTOGRAM ON c1;";
 //		String sql = "CREATE TRIGGER tg1 AFTER INSERT ON t1 FOR EACH ROW PRECEDES tg2 BEGIN insert into t2 values(1,2,3); END";
-		String sql = "alter table acdb.t1 add column age int unsigned comment '年龄';";
+//		String sql = "alter table acdb.t1 add column age int unsigned comment '年龄', drop column aa;";
+//		String sql = "ALTER TABLE t1 rebuild PARTITION p1, p2;";
+		String sql = "ALTER TABLE t1 rebuild PARTITION ALL;";
 //		String sql = "repair NO_WRITE_TO_BINLOG table t1, t2 quick EXTENDED USE_FRM ;";
 //		String sql = "select 1;";
 //		String sql = "LOAD DATA INFILE '/tmp/test.txt' INTO TABLE test IGNORE 1 LINES;";
@@ -51,6 +54,9 @@ public class MySQLParserUnitTest {
 //		String sql = "select _utf8 0xD0B0D0B1D0B2;";
 //		String sql = "select id from acnt_account;";
 		ParseResult result = parser.parse(sql);
+//		long alterFlags = result.getParsedSQLInfo().get(0).getAlterFlags();
+//		assertTrue(org.welyss.mysqlparser.v84.AlterFlag.ALTER_REBUILD_PARTITION.is(alterFlags));
+//		assertTrue(org.welyss.mysqlparser.v84.AlterFlag.ALTER_ALL_PARTITION.is(alterFlags));
 		assertTrue(result.success());
 //		assertTrue(result.getParsedSQLInfo().get(0).getSQLCommand().equals(SQLCommand.SQLCOM_SELECT));
 	}
