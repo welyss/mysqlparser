@@ -33,8 +33,8 @@ public class SQLThread extends MySQLThread {
 		charsetIsSystemCharset = true;
 	}
 
-	public void addSQL(String sql) {
-		parsedSqls.add(new MySQLInfo(sql, lex.sqlCommand, lex.tables, pc.alterInfo.flags));
+	public void addSQL(String sql, String alterCommand) {
+		parsedSqls.add(new MySQLInfo(sql, lex.sqlCommand, lex.tables, pc.alterInfo.flags, alterCommand));
 		// Clear transient variables
 		lex.tables = new ArrayList<TableIdent>();
 		pc.alterInfo.flags = 0;

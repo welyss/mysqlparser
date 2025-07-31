@@ -4264,15 +4264,20 @@ public class MyParser implements Parser {
 //            }
 				LexInputStream lip = thd.mParserState.mLip;
 				String sql;
+				int subQueryEnd = lip.getPtr() - 1;
 				if (!lip.eof()) {
 					lip.nextState = MyLexStates.MY_LEX_END;
-					sql = lip.sqlBuf.substring(lip.foundSemicolon, lip.getPtr() - 1);
+					sql = lip.sqlBuf.substring(lip.foundSemicolon, subQueryEnd);
 					lip.foundSemicolon = lip.getPtr();
 				} else {
-					sql = lip.sqlBuf.substring(lip.foundSemicolon, lip.getPtr() - 1);
+					sql = lip.sqlBuf.substring(lip.foundSemicolon, subQueryEnd);
 					lip.foundSemicolon = 0;
 				}
-				thd.addSQL(sql);
+				String alterCommand = null;
+				if (thd.lex.alterPos > 0) {
+					alterCommand = lip.sqlBuf.substring(thd.lex.alterPos, subQueryEnd);
+				}
+				thd.addSQL(sql, alterCommand);
 			}
 			;
 			break;
@@ -4285,7 +4290,11 @@ public class MyParser implements Parser {
 //            YYLIP->found_semicolon= nullptr;
 				LexInputStream lip = thd.mParserState.mLip;
 				String sql = lip.sqlBuf.substring(lip.foundSemicolon);
-				thd.addSQL(sql);
+				String alterCommand = null;
+				if (thd.lex.alterPos > 0) {
+					alterCommand = lip.sqlBuf.substring(thd.lex.alterPos);
+				}
+				thd.addSQL(sql, alterCommand);
 				lip.foundSemicolon = 0;
 			}
 			;
@@ -11980,6 +11989,8 @@ public class MyParser implements Parser {
 //                  ((alter_list)(yystack.valueAt (0))).flags.lock.get_or_default(),
 //                  ((alter_list)(yystack.valueAt (0))).flags.validation.get_or_default());
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_TABLE;
+				// mark alter content position
+				thd.lex.alterPos = ((Token)yystack.valueAt(0)).lexStr.pos;
 			}
 			;
 			break;
@@ -11997,6 +12008,8 @@ public class MyParser implements Parser {
 //                  ((standalone_alter_table_action)(yystack.valueAt (0))).flags.lock.get_or_default(),
 //                  ((standalone_alter_table_action)(yystack.valueAt (0))).flags.validation.get_or_default());
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_TABLE;
+				// mark alter content position
+				thd.lex.alterPos = ((Token)yystack.valueAt(0)).lexStr.pos;
 			}
 			;
 			break;
@@ -12937,19 +12950,23 @@ public class MyParser implements Parser {
 			break;
 
 		case 1094: /* standalone_alter_commands: DISCARD_SYM TABLESPACE_SYM */
-//  if (yyn == 1094)
-//    /* "sql_yacc.y":8656  */
-//          {
+			if (yyn == 1094)
+			/* "sql_yacc.y":8656 */
+			{
 //            yyval= NEW_PTN PT_alter_table_discard_tablespace((yyloc));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_DISCARD_TABLESPACE.Value();
+			}
+			;
 			break;
 
 		case 1095: /* standalone_alter_commands: IMPORT TABLESPACE_SYM */
-//  if (yyn == 1095)
-//    /* "sql_yacc.y":8660  */
-//          {
+			if (yyn == 1095)
+			/* "sql_yacc.y":8660 */
+			{
 //            yyval= NEW_PTN PT_alter_table_import_tablespace((yyloc));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_IMPORT_TABLESPACE.Value();
+			}
+			;
 			break;
 
 		case 1096: /* standalone_alter_commands: ADD PARTITION_SYM opt_no_write_to_binlog */
@@ -13075,58 +13092,71 @@ public class MyParser implements Parser {
 			/* "sql_yacc.y":8722 */
 			{
 //            yyval= NEW_PTN PT_alter_table_reorganize_partition((yyloc), ((num)(yystack.valueAt (0))));
-				// TODO wystest
 				thd.pc.alterInfo.flags |= AlterFlag.ALTER_TABLE_REORG.Value();
 			}
 			;
 			break;
 
 		case 1108: /* standalone_alter_commands: REORGANIZE_SYM PARTITION_SYM opt_no_write_to_binlog ident_string_list INTO '(' part_def_list ')' */
-//  if (yyn == 1108)
-//    /* "sql_yacc.y":8727  */
-//          {
+			if (yyn == 1108)
+			/* "sql_yacc.y":8727 */
+			{
 //            yyval= NEW_PTN PT_alter_table_reorganize_partition_into((yyloc), ((num)(yystack.valueAt (5))), *((string_list)(yystack.valueAt (4))), ((part_def_list)(yystack.valueAt (1))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_REORGANIZE_PARTITION.Value();
+			}
+			;
 			break;
 
 		case 1109: /* standalone_alter_commands: EXCHANGE_SYM PARTITION_SYM ident WITH TABLE_SYM table_ident opt_with_validation */
-//  if (yyn == 1109)
-//    /* "sql_yacc.y":8732  */
-//          {
+			if (yyn == 1109)
+			/* "sql_yacc.y":8732 */
+			{
 //            yyval= NEW_PTN PT_alter_table_exchange_partition((yyloc), ((lexer.lex_str)(yystack.valueAt (4))), ((table)(yystack.valueAt (1))), ((with_validation)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_EXCHANGE_PARTITION.Value();
+			}
+			;
 			break;
 
 		case 1110: /* standalone_alter_commands: DISCARD_SYM PARTITION_SYM all_or_alt_part_name_list TABLESPACE_SYM */
-//  if (yyn == 1110)
-//    /* "sql_yacc.y":8737  */
-//          {
+			if (yyn == 1110)
+			/* "sql_yacc.y":8737 */
+			{
 //            yyval= NEW_PTN PT_alter_table_discard_partition_tablespace((yyloc), ((string_list)(yystack.valueAt (1))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_DISCARD_TABLESPACE.Value();
+				doPtAlterTablePartitionListOrAll(thd, (List<Token>) yystack.valueAt(1));
+			}
+			;
 			break;
 
 		case 1111: /* standalone_alter_commands: IMPORT PARTITION_SYM all_or_alt_part_name_list TABLESPACE_SYM */
-//  if (yyn == 1111)
-//    /* "sql_yacc.y":8742  */
-//          {
+			if (yyn == 1111)
+			/* "sql_yacc.y":8742 */
+			{
 //            yyval= NEW_PTN PT_alter_table_import_partition_tablespace((yyloc), ((string_list)(yystack.valueAt (1))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_IMPORT_TABLESPACE.Value();
+				doPtAlterTablePartitionListOrAll(thd, (List<Token>) yystack.valueAt(1));
+			}
+			;
 			break;
 
 		case 1112: /* standalone_alter_commands: SECONDARY_LOAD_SYM opt_use_partition */
-//  if (yyn == 1112)
-//    /* "sql_yacc.y":8746  */
-//          {
+			if (yyn == 1112)
+			/* "sql_yacc.y":8746 */
+			{
 //            yyval= NEW_PTN PT_alter_table_secondary_load((yyloc), ((string_list)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_SECONDARY_LOAD.Value();
+			}
+			;
 			break;
 
 		case 1113: /* standalone_alter_commands: SECONDARY_UNLOAD_SYM opt_use_partition */
-//  if (yyn == 1113)
-//    /* "sql_yacc.y":8750  */
-//          {
+			if (yyn == 1113)
+			/* "sql_yacc.y":8750 */
+			{
 //            yyval= NEW_PTN PT_alter_table_secondary_unload((yyloc), ((string_list)(yystack.valueAt (0))));
-//          };
+				thd.pc.alterInfo.flags |= AlterFlag.ALTER_SECONDARY_UNLOAD.Value();
+			}
+			;
 			break;
 
 		case 1114: /* opt_with_validation: %empty */
@@ -18592,15 +18622,23 @@ public class MyParser implements Parser {
 			break;
 
 		case 1813: /* opt_where_clause: %empty */
-//  if (yyn == 1813)
-//    /* "sql_yacc.y":12307  */
-//                 { yyval = nullptr; };
+			if (yyn == 1813)
+			/* "sql_yacc.y":12307 */
+			{
+				yyval = null;
+				thd.lex.whereExists = false;
+			}
+			;
 			break;
 
 		case 1815: /* where_clause: WHERE expr */
-//  if (yyn == 1815)
-//    /* "sql_yacc.y":12312  */
-//                        { yyval = NEW_PTN PTI_where(yystack.locationAt (0), ((item)(yystack.valueAt (0)))); };
+			if (yyn == 1815)
+			/* "sql_yacc.y":12312 */
+			{
+//	  yyval = NEW_PTN PTI_where(yystack.locationAt (0), ((item)(yystack.valueAt (0))));
+				thd.lex.whereExists = true;
+			}
+			;
 			break;
 
 		case 1816: /* opt_having_clause: %empty */

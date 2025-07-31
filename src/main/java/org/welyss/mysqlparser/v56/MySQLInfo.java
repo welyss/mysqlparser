@@ -29,7 +29,13 @@ public class MySQLInfo implements SQLInfo {
 	}
 
 	public String getAlterCommand() {
-		return alterCommand;
+		String ret;
+		if (alterCommand != null) {
+			ret = alterCommand.trim();
+		} else {
+			ret = alterCommand;
+		}
+		return ret;
 	}
 
 	public void setAlterCommand(String alterCommand) {

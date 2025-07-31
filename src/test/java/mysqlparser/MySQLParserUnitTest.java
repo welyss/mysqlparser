@@ -14,7 +14,6 @@ import org.welyss.mysqlparser.ParseResult;
 import org.welyss.mysqlparser.SQLCommand;
 import org.welyss.mysqlparser.SQLInfo;
 import org.welyss.mysqlparser.items.TableIdent;
-import org.welyss.mysqlparser.v84.AlterFlag;
 
 public class MySQLParserUnitTest {
 	MySQLParser parser;
@@ -43,7 +42,8 @@ public class MySQLParserUnitTest {
 //		String sql = "CREATE TRIGGER tg1 AFTER INSERT ON t1 FOR EACH ROW PRECEDES tg2 BEGIN insert into t2 values(1,2,3); END";
 //		String sql = "alter table acdb.t1 add column age int unsigned comment '年龄', drop column aa;";
 //		String sql = "ALTER TABLE t1 rebuild PARTITION p1, p2;";
-		String sql = "ALTER TABLE t1 rebuild PARTITION ALL;";
+//		String sql = "ALTER TABLE t1 rebuild PARTITION ALL;ALTER TABLE t1 add column age int;";
+		String sql = "ALTER TABLE t1 add column age int";
 //		String sql = "repair NO_WRITE_TO_BINLOG table t1, t2 quick EXTENDED USE_FRM ;";
 //		String sql = "select 1;";
 //		String sql = "LOAD DATA INFILE '/tmp/test.txt' INTO TABLE test IGNORE 1 LINES;";
@@ -57,6 +57,7 @@ public class MySQLParserUnitTest {
 //		long alterFlags = result.getParsedSQLInfo().get(0).getAlterFlags();
 //		assertTrue(org.welyss.mysqlparser.v84.AlterFlag.ALTER_REBUILD_PARTITION.is(alterFlags));
 //		assertTrue(org.welyss.mysqlparser.v84.AlterFlag.ALTER_ALL_PARTITION.is(alterFlags));
+		assertTrue("add column age int".equals(result.getParsedSQLInfo().get(0).getAlterCommand()));
 		assertTrue(result.success());
 //		assertTrue(result.getParsedSQLInfo().get(0).getSQLCommand().equals(SQLCommand.SQLCOM_SELECT));
 	}
@@ -885,6 +886,43 @@ public class MySQLParserUnitTest {
 			ti1 = row2.getTableIdents().get(0);
 			assertEquals("bkdb", ti1.getDb());
 			assertEquals("t2", ti1.getTable());
+		}
+	}
+
+	@Test
+	public void case18() throws IOException {
+		String sql = "ALTER TABLE acdb.t1 rebuild PARTITION ALL;ALTER TABLE bkdb.t2 add column age int;";
+		ParseResult result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("acdb", ti1.getDb());
+			assertEquals("t1", ti1.getTable());
+			assertEquals("rebuild PARTITION ALL", row1.getAlterCommand());
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			ti1 = row2.getTableIdents().get(0);
+			assertEquals("bkdb", ti1.getDb());
+			assertEquals("t2", ti1.getTable());
+			assertEquals("add column age int", row2.getAlterCommand());
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("acdb", ti1.getDb());
+			assertEquals("t1", ti1.getTable());
+			assertEquals("rebuild PARTITION ALL", row1.getAlterCommand());
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			ti1 = row2.getTableIdents().get(0);
+			assertEquals("bkdb", ti1.getDb());
+			assertEquals("t2", ti1.getTable());
+			assertEquals("add column age int", row2.getAlterCommand());
 		}
 	}
 

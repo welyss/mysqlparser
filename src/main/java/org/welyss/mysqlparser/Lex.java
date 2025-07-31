@@ -17,6 +17,7 @@ public class Lex {
 	public int allPrivileges;
 	public Integer alterPos;
 	public String comment;
+	public boolean whereExists;
 
 	public Lex() {
 		createInfo = new CreateInfo();
@@ -24,5 +25,6 @@ public class Lex {
 		allSelectsList = new ArrayList<SelectLex>();
 		tables = new ArrayList<TableIdent>();
 		tableReferenceList = new ArrayList<TableIdent>();
+		whereExists = false;
 	}
 }

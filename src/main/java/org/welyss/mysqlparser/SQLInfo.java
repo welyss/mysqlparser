@@ -6,21 +6,33 @@ import org.welyss.mysqlparser.items.TableIdent;
 
 public interface SQLInfo {
 
-//	public String getSQL();
-//
-//	public void setSQL(String sql);
-//
-//	public String getAlterCommand();
-//
-//	public void setAlterCommand(String alterCommand);
-//
-	public SQLCommand getSQLCommand();
-//
-//	public void setSQLCommand(SQLCommand sqlCommand);
-//
-	public List<TableIdent> getTableIdents();
-//
-//	public void setTableIdents(List<TableIdent> tableIdents);
+	/**
+	 * Get query sql.
+	 * @return
+	 */
+	public String getSQL();
 
-	public long getAlterFlags();
+	/**
+	 * Get query type.
+	 * @return
+	 */
+	SQLCommand getSQLCommand();
+
+	/**
+	 * Get tables in the query.
+	 * @return
+	 */
+	List<TableIdent> getTableIdents();
+
+	/**
+	 * Get type of alter statement.
+	 * @return
+	 */
+	long getAlterFlags();
+
+	/**
+	 * Get command of alter statement.
+	 * @return
+	 */
+	String getAlterCommand();
 }
