@@ -13,11 +13,12 @@ public class MySQLInfo implements SQLInfo {
 	private List<TableIdent> tableIdents;
 	private long alterFlags = 0;
 
-	public MySQLInfo(String sql, SQLCommand sqlCommand, List<TableIdent> tableIdents, long alterFlags) {
+	public MySQLInfo(String sql, SQLCommand sqlCommand, List<TableIdent> tableIdents, long alterFlags, String alterCommand) {
 		this.sql = sql;
 		this.sqlCommand = sqlCommand;
 		this.tableIdents = tableIdents;
 		this.alterFlags = alterFlags;
+		this.alterCommand = alterCommand;
 	}
 
 	public String getSQL() {

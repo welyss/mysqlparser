@@ -15,7 +15,7 @@ public class Lex {
 	public List<TableIdent> tableReferenceList;
 	public long grant;
 	public int allPrivileges;
-	public Integer alterPos;
+	public int alterPos;
 	public String comment;
 	public boolean whereExists;
 
@@ -26,5 +26,6 @@ public class Lex {
 		tables = new ArrayList<TableIdent>();
 		tableReferenceList = new ArrayList<TableIdent>();
 		whereExists = false;
+		alterPos = 0;
 	}
 }

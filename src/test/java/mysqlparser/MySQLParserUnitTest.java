@@ -925,5 +925,4 @@ public class MySQLParserUnitTest {
 			assertEquals("add column age int", row2.getAlterCommand());
 		}
 	}
-
 }

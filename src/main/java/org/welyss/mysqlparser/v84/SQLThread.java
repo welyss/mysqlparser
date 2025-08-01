@@ -38,6 +38,7 @@ public class SQLThread extends MySQLThread {
 		// Clear transient variables
 		lex.tables = new ArrayList<TableIdent>();
 		pc.alterInfo.flags = 0;
+		lex.alterPos = 0;
 	}
 
 	/**

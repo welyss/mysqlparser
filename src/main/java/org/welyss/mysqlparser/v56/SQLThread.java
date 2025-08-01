@@ -78,11 +78,11 @@ public class SQLThread extends MySQLThread {
 
 	protected void addSQL(int eof) {
 		String alterCmd = null;
-		if (lex.alterPos != null && lex.alterPos < eof) {
+		if (lex.alterPos > 0 && lex.alterPos < eof) {
 			alterCmd = sql.substring(lex.alterPos, eof).trim();
-			lex.alterPos = null;
+			lex.alterPos = 0;
 		}
-		parsedSqls.add(new MySQLInfo(sql.substring(foundSemicolon, eof), lex.sqlCommand, lex.tables, pc.alterInfo.flags));
+		parsedSqls.add(new MySQLInfo(sql.substring(foundSemicolon, eof), lex.sqlCommand, lex.tables, pc.alterInfo.flags, alterCmd));
 		// Clear transient variables
 		lex.tables = new ArrayList<TableIdent>();
 		pc.alterInfo.flags = 0;
@@ -97,7 +97,7 @@ public class SQLThread extends MySQLThread {
 				if (ti.getTableStartPos() != null) ti.setTableStartPos(ti.getTableStartPos() - lastPos);
 			}
 		} else {
-			ret = new MySQLInfo(sql.toString(), this.lex.sqlCommand, this.lex.tables, pc.alterInfo.flags);
+			ret = new MySQLInfo(sql.toString(), this.lex.sqlCommand, this.lex.tables, pc.alterInfo.flags, null);
 			this.lex.tables = new ArrayList<TableIdent>();
 		}
 //		ParseItem result = new ParseItem(success, parsedSQL, this.lex.sqlCommand, new ArrayList<TableIdent>(this.lex.tables), this.msg, lex.alterInfo.flags, this.inWhere, alterCommand, lex.alterInfo.columns);
