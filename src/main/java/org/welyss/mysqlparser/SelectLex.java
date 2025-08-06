@@ -2,10 +2,10 @@ package org.welyss.mysqlparser;
 
 public class SelectLex {
 	public int options;
-//	public List<TableIdent> tableList;
+	public boolean whereOn;
 
 	public SelectLex() {
 		options = 0;
-//		tableList = new ArrayList<TableIdent>();
+		whereOn = false;
 	}
 }

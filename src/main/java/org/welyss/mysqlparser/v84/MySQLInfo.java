@@ -12,13 +12,15 @@ public class MySQLInfo implements SQLInfo {
 	private SQLCommand sqlCommand;
 	private List<TableIdent> tableIdents;
 	private long alterFlags = 0;
+	private boolean hasWhere;
 
-	public MySQLInfo(String sql, SQLCommand sqlCommand, List<TableIdent> tableIdents, long alterFlags, String alterCommand) {
+	public MySQLInfo(String sql, SQLCommand sqlCommand, List<TableIdent> tableIdents, long alterFlags, String alterCommand, boolean hasWhere) {
 		this.sql = sql;
 		this.sqlCommand = sqlCommand;
 		this.tableIdents = tableIdents;
 		this.alterFlags = alterFlags;
 		this.alterCommand = alterCommand;
+		this.hasWhere = hasWhere;
 	}
 
 	public String getSQL() {
@@ -62,5 +64,10 @@ public class MySQLInfo implements SQLInfo {
 	@Override
 	public long getAlterFlags() {
 		return alterFlags;
+	}
+
+	@Override
+	public boolean hasWhere() {
+		return hasWhere;
 	}
 }

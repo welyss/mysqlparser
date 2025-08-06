@@ -934,4 +934,97 @@ public class MySQLParserUnitTest {
 			assertEquals("add column age int", row2.getAlterCommand());
 		}
 	}
+
+	@Test
+	public void case19() throws IOException {
+		String sql = "select * from t1;select * from t2 where id = 1";
+		ParseResult result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_SELECT));
+			assertFalse(row1.hasWhere());
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_SELECT));
+			ti1 = row2.getTableIdents().get(0);
+			assertEquals("t2", ti1.getTable());
+			assertTrue(row2.hasWhere());
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_SELECT));
+			assertFalse(row1.hasWhere());
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_SELECT));
+			ti1 = row2.getTableIdents().get(0);
+			assertEquals("t2", ti1.getTable());
+			assertTrue(row2.hasWhere());
+		}
+
+		sql = "update t1 set id=1;update t2 set id=2 where id=1";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_UPDATE));
+			assertFalse(row1.hasWhere());
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_UPDATE));
+			ti1 = row2.getTableIdents().get(0);
+			assertEquals("t2", ti1.getTable());
+			assertTrue(row2.hasWhere());
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_UPDATE));
+			assertFalse(row1.hasWhere());
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_UPDATE));
+			ti1 = row2.getTableIdents().get(0);
+			assertEquals("t2", ti1.getTable());
+			assertTrue(row2.hasWhere());
+		}
+
+		sql = "delete from t1;delete from t2 where id=1";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_DELETE));
+			assertFalse(row1.hasWhere());
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_DELETE));
+			ti1 = row2.getTableIdents().get(0);
+			assertEquals("t2", ti1.getTable());
+			assertTrue(row2.hasWhere());
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_DELETE));
+			assertFalse(row1.hasWhere());
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_DELETE));
+			ti1 = row2.getTableIdents().get(0);
+			assertEquals("t2", ti1.getTable());
+			assertTrue(row2.hasWhere());
+		}
+	}
 }

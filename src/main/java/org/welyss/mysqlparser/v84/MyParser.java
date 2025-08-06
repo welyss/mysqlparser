@@ -18626,7 +18626,7 @@ public class MyParser implements Parser {
 			/* "sql_yacc.y":12307 */
 			{
 				yyval = null;
-				thd.lex.whereExists = false;
+				thd.lex.selectLex.whereOn = false;
 			}
 			;
 			break;
@@ -18636,7 +18636,7 @@ public class MyParser implements Parser {
 			/* "sql_yacc.y":12312 */
 			{
 //	  yyval = NEW_PTN PTI_where(yystack.locationAt (0), ((item)(yystack.valueAt (0))));
-				thd.lex.whereExists = true;
+				thd.lex.selectLex.whereOn = true;
 			}
 			;
 			break;

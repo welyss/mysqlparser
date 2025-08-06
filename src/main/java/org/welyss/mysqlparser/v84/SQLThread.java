@@ -34,7 +34,7 @@ public class SQLThread extends MySQLThread {
 	}
 
 	public void addSQL(String sql, String alterCommand) {
-		parsedSqls.add(new MySQLInfo(sql, lex.sqlCommand, lex.tables, pc.alterInfo.flags, alterCommand));
+		parsedSqls.add(new MySQLInfo(sql, lex.sqlCommand, lex.tables, pc.alterInfo.flags, alterCommand, lex.selectLex.whereOn));
 		// Clear transient variables
 		lex.tables = new ArrayList<TableIdent>();
 		pc.alterInfo.flags = 0;

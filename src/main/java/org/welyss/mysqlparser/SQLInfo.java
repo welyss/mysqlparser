@@ -35,4 +35,10 @@ public interface SQLInfo {
 	 * @return
 	 */
 	String getAlterCommand();
+
+	/**
+	 * Get the query exists where clause.
+	 * @return
+	 */
+	boolean hasWhere();
 }
