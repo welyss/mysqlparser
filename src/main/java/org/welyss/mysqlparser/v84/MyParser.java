@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.welyss.mysqlparser.AlterColumn;
 import org.welyss.mysqlparser.Lex;
 import org.welyss.mysqlparser.MySQLLexer;
 import org.welyss.mysqlparser.MySQLThread;
@@ -10037,23 +10038,34 @@ public class MyParser implements Parser {
 			break;
 
 		case 742: /* table_element_list: table_element */
-//  if (yyn == 742)
-//    /* "sql_yacc.y":6768  */
-//          {
+			if (yyn == 742)
+			/* "sql_yacc.y":6768 */
+			{
 //            yyval= NEW_PTN Mem_root_array<PT_table_element *>(YYMEM_ROOT);
 //            if (yyval == nullptr || yyval->push_back(((table_element)(yystack.valueAt (0)))))
 //              MYSQL_YYABORT; // OOM
-//          };
+				List<ColumnDefinition> tableElementList = new ArrayList<ColumnDefinition>();
+				tableElementList.add((ColumnDefinition) yystack.valueAt(0));
+				yyval = tableElementList;
+			}
+			;
 			break;
 
 		case 743: /* table_element_list: table_element_list ',' table_element */
-//  if (yyn == 743)
-//    /* "sql_yacc.y":6774  */
-//          {
+			if (yyn == 743)
+			/* "sql_yacc.y":6774 */
+			{
 //            yyval= ((table_element_list)(yystack.valueAt (2)));
 //            if (yyval->push_back(((table_element)(yystack.valueAt (0)))))
 //              MYSQL_YYABORT; // OOM
-//          };
+				Object tableElement = yystack.valueAt(0);
+				if (tableElement instanceof ColumnDefinition) {
+					List<ColumnDefinition> tableElementList = ((List<ColumnDefinition>) yystack.valueAt(2));
+					tableElementList.add((ColumnDefinition) tableElement);
+					yyval = tableElementList;
+				}
+			}
+			;
 			break;
 
 		case 744: /* table_element: column_def */
@@ -10069,11 +10081,13 @@ public class MyParser implements Parser {
 			break;
 
 		case 746: /* column_def: ident field_def opt_references */
-//  if (yyn == 746)
-//    /* "sql_yacc.y":6788  */
-//          {
+			if (yyn == 746)
+			/* "sql_yacc.y":6788 */
+			{
 //            yyval= NEW_PTN PT_column_def((yyloc), ((lexer.lex_str)(yystack.valueAt (2))), ((field_def)(yystack.valueAt (1))), ((table_constraint_def)(yystack.valueAt (0))));
-//          };
+				yyval = new ColumnDefinition(((Token) yystack.valueAt(2)).lexStr.str, ((Token) yystack.valueAt(1)).lexStr.str);
+			}
+			;
 			break;
 
 		case 747: /* opt_references: %empty */
@@ -11990,7 +12004,7 @@ public class MyParser implements Parser {
 //                  ((alter_list)(yystack.valueAt (0))).flags.validation.get_or_default());
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_TABLE;
 				// mark alter content position
-				thd.lex.alterPos = ((Token)yystack.valueAt(0)).lexStr.pos;
+				thd.lex.alterPos = ((Token) yystack.valueAt(0)).lexStr.pos;
 			}
 			;
 			break;
@@ -12009,7 +12023,7 @@ public class MyParser implements Parser {
 //                  ((standalone_alter_table_action)(yystack.valueAt (0))).flags.validation.get_or_default());
 				thd.lex.sqlCommand = SQLCommand.SQLCOM_ALTER_TABLE;
 				// mark alter content position
-				thd.lex.alterPos = ((Token)yystack.valueAt(0)).lexStr.pos;
+				thd.lex.alterPos = ((Token) yystack.valueAt(0)).lexStr.pos;
 			}
 			;
 			break;
@@ -13254,6 +13268,11 @@ public class MyParser implements Parser {
 			{
 //            yyval= NEW_PTN PT_alter_table_add_column((yyloc), ((lexer.lex_str)(yystack.valueAt (3))), ((field_def)(yystack.valueAt (2))), ((table_constraint_def)(yystack.valueAt (1))), ((c_str)(yystack.valueAt (0))));
 				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ADD_COLUMN.Value();
+				String colName = ((Token) yystack.valueAt(3)).lexStr.str;
+				String colType = ((Token) yystack.valueAt(2)).lexStr.str;
+				List<AlterColumn> ac = new ArrayList<AlterColumn>();
+				ac.add(new AlterColumn(colName, colType));
+				thd.addAlterColumnsToList(ac);
 			}
 			;
 			break;
@@ -13264,6 +13283,13 @@ public class MyParser implements Parser {
 			{
 //            yyval= NEW_PTN PT_alter_table_add_columns((yyloc), ((table_element_list)(yystack.valueAt (1))));
 				thd.pc.alterInfo.flags |= AlterFlag.ALTER_ADD_COLUMN.Value();
+				List<AlterColumn> acList = new ArrayList<>();
+				List<ColumnDefinition> tableElementList = (List<ColumnDefinition>) yystack.valueAt(1);
+				for (int i = 0; i < tableElementList.size(); i++) {
+					ColumnDefinition cd = tableElementList.get(i);
+					acList.add(new AlterColumn(cd.name, cd.typeName));
+				}
+				thd.addAlterColumnsToList(acList);
 			}
 			;
 			break;
@@ -13284,6 +13310,12 @@ public class MyParser implements Parser {
 			{
 //            yyval= NEW_PTN PT_alter_table_change_column((yyloc), ((lexer.lex_str)(yystack.valueAt (3))), ((lexer.lex_str)(yystack.valueAt (2))), ((field_def)(yystack.valueAt (1))), ((c_str)(yystack.valueAt (0))));
 				thd.pc.alterInfo.flags |= AlterFlag.ALTER_CHANGE_COLUMN.Value();
+				String colName = ((Token) yystack.valueAt(3)).lexStr.str;
+				String changedColName = ((Token) yystack.valueAt(2)).lexStr.str;
+				String colType = ((Token) yystack.valueAt(1)).lexStr.str;
+				List<AlterColumn> ac = new ArrayList<AlterColumn>();
+				ac.add(new AlterColumn(colName, changedColName, colType));
+				thd.addAlterColumnsToList(ac);
 			}
 			;
 			break;
@@ -13294,6 +13326,11 @@ public class MyParser implements Parser {
 			{
 //            yyval= NEW_PTN PT_alter_table_change_column((yyloc), ((lexer.lex_str)(yystack.valueAt (2))), ((field_def)(yystack.valueAt (1))), ((c_str)(yystack.valueAt (0))));
 				thd.pc.alterInfo.flags |= AlterFlag.ALTER_CHANGE_COLUMN.Value();
+				String colName = ((Token) yystack.valueAt(2)).lexStr.str;
+				String colType = ((Token) yystack.valueAt(1)).lexStr.str;
+				List<AlterColumn> ac = new ArrayList<AlterColumn>();
+				ac.add(new AlterColumn(colName, colType));
+				thd.addAlterColumnsToList(ac);
 			}
 			;
 			break;
@@ -13305,6 +13342,10 @@ public class MyParser implements Parser {
 //            // Note: opt_restrict ($4) is ignored!
 //            yyval= NEW_PTN PT_alter_table_drop_column((yyloc), ((lexer.lex_str)(yystack.valueAt (1))).str);
 				thd.pc.alterInfo.flags |= AlterFlag.ALTER_DROP_COLUMN.Value();
+				String colName = ((Token) yystack.valueAt(1)).lexStr.str;
+				List<AlterColumn> ac = new ArrayList<AlterColumn>();
+				ac.add(new AlterColumn(colName));
+				thd.addAlterColumnsToList(ac);
 			}
 			;
 			break;
@@ -13477,6 +13518,13 @@ public class MyParser implements Parser {
 			{
 //            yyval= NEW_PTN PT_alter_table_rename_column((yyloc), ((lexer.lex_str)(yystack.valueAt (2))).str, ((lexer.lex_str)(yystack.valueAt (0))).str);
 				thd.pc.alterInfo.flags |= AlterFlag.ALTER_CHANGE_COLUMN.Value();
+				String oldName = ((Token) yystack.valueAt(2)).lexStr.str;
+				String newName = ((Token) yystack.valueAt(0)).lexStr.str;
+				List<AlterColumn> acList = new ArrayList<AlterColumn>();
+				AlterColumn ac = new AlterColumn(oldName);
+				ac.changedName = newName;
+				acList.add(ac);
+				thd.addAlterColumnsToList(acList);
 			}
 			;
 			break;

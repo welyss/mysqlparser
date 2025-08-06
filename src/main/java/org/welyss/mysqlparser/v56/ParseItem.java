@@ -3,7 +3,7 @@ package org.welyss.mysqlparser.v56;
 import java.util.List;
 import java.util.Set;
 
-import org.welyss.mysqlparser.AlterColumnInfo;
+import org.welyss.mysqlparser.AlterColumn;
 import org.welyss.mysqlparser.SQLCommand;
 import org.welyss.mysqlparser.items.TableIdent;
 
@@ -14,11 +14,11 @@ public class ParseItem {
 	private List<TableIdent> tables;
 	private String errorMsg;
 	private Set<AlterFlag> alterFlags;
-	private List<AlterColumnInfo> alterColumnInfos;
+	private List<AlterColumn> alterColumnInfos;
 	private boolean inWhere;
 	private String alterCommand;
 
-	public ParseItem(boolean success, String parsedSQL, SQLCommand sqlCommand, List<TableIdent> tables, String errorMsg, Set<AlterFlag> alterFlags, boolean inWhere, String alterCommand, List<AlterColumnInfo> alterColumnInfos) {
+	public ParseItem(boolean success, String parsedSQL, SQLCommand sqlCommand, List<TableIdent> tables, String errorMsg, Set<AlterFlag> alterFlags, boolean inWhere, String alterCommand, List<AlterColumn> alterColumnInfos) {
 		this.success = success;
 		this.parsedSQL = parsedSQL;
 		this.sqlCommand = sqlCommand;
@@ -79,11 +79,11 @@ public class ParseItem {
 		this.alterCommand = alterCommand;
 	}
 
-	public List<AlterColumnInfo> getAlterColumnInfos() {
+	public List<AlterColumn> getAlterColumnInfos() {
 		return alterColumnInfos;
 	}
 
-	public void setAlterColumnInfos(List<AlterColumnInfo> alterColumnInfos) {
+	public void setAlterColumnInfos(List<AlterColumn> alterColumnInfos) {
 		this.alterColumnInfos = alterColumnInfos;
 	}
 

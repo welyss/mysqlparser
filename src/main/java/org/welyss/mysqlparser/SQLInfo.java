@@ -41,4 +41,10 @@ public interface SQLInfo {
 	 * @return
 	 */
 	boolean hasWhere();
+
+	/**
+	 * Get columns in alter modify/change query.
+	 * @return
+	 */
+	List<AlterColumn> getAlterColumns();
 }

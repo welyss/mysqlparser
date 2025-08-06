@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
+import org.welyss.mysqlparser.AlterColumn;
 import org.welyss.mysqlparser.MySQLParser;
 import org.welyss.mysqlparser.MySQLVersion;
 import org.welyss.mysqlparser.ParseResult;
@@ -44,13 +45,10 @@ public class MySQLParserUnitTest {
 //		String sql = "alter table acdb.t1 add column age int unsigned comment '年龄', drop column aa;";
 //		String sql = "ALTER TABLE t1 rebuild PARTITION p1, p2;";
 //		String sql = "ALTER TABLE t1 rebuild PARTITION ALL;ALTER TABLE t1 add column age int;";
-		String sql = "alter table fof_asset_allocation_rate_bond alter column DISABLE set default  1;\r\n"
-				+ "alter table fof_asset_allocation_credit_bond alter column DISABLE set default  1;\r\n"
-				+ "alter table fof_asset_allocation_convert_bond alter column DISABLE set default  1;\r\n"
-				+ "alter table fof_asset_allocation_domestic_interest alter column DISABLE set default  1;\r\n"
-				+ "alter table fof_asset_allocation_us_stock alter column DISABLE set default  1;\r\n"
-				+ "alter table fof_asset_allocation_h_stock alter column DISABLE set default  1;\r\n"
-				+ "alter table fof_asset_allocation_product alter column DISABLE set default  1;";
+//		String sql = "alter table fof_asset_allocation_rate_bond add column (c1 int null default null comment '123', c2 bigint null default null)";
+//		String sql = "alter table fof_asset_allocation_rate_bond add column c1 int null default null comment '123' after c2";
+//		String sql = "alter table fof_asset_allocation_rate_bond rename column c1 to c2";
+		String sql = "alter table fof_asset_allocation_rate_bond drop column c1";
 //		String sql = "repair NO_WRITE_TO_BINLOG table t1, t2 quick EXTENDED USE_FRM ;";
 //		String sql = "select 1;";
 //		String sql = "LOAD DATA INFILE '/tmp/test.txt' INTO TABLE test IGNORE 1 LINES;";
@@ -1025,6 +1023,173 @@ public class MySQLParserUnitTest {
 			ti1 = row2.getTableIdents().get(0);
 			assertEquals("t2", ti1.getTable());
 			assertTrue(row2.hasWhere());
+		}
+	}
+
+	@Test
+	public void case20() throws IOException {
+		String sql = "alter table t1 add c1 varchar(200) comment 'aaa'";
+		ParseResult result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			assertEquals(1, row1.getAlterColumns().size());
+			AlterColumn ac1 = row1.getAlterColumns().get(0);
+			assertEquals("c1", ac1.name);
+			assertEquals("varchar", ac1.typeName);
+			assertEquals(null, ac1.changedName);
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			assertEquals(1, row1.getAlterColumns().size());
+			AlterColumn ac1 = row1.getAlterColumns().get(0);
+			assertEquals("c1", ac1.name);
+			assertEquals("varchar", ac1.typeName);
+			assertEquals(null, ac1.changedName);
+		}
+
+		sql = "alter table t1 modify c1 varchar(200) comment 'aaa';alter table t2 modify column c2 varchar(100) comment 'bbb';alter table t3 change c3 nc3 varchar(300) comment 'ccc';alter table t4 change column c4 nc4 varchar(400) comment 'ddd';";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			assertEquals(1, row1.getAlterColumns().size());
+			AlterColumn ac1 = row1.getAlterColumns().get(0);
+			assertEquals("c1", ac1.name);
+			assertEquals("varchar", ac1.typeName);
+			assertEquals(null, ac1.changedName);
+
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti2 = row2.getTableIdents().get(0);
+			assertEquals("t2", ti2.getTable());
+			assertEquals(1, row2.getAlterColumns().size());
+			AlterColumn ac2 = row2.getAlterColumns().get(0);
+			assertEquals("c2", ac2.name);
+			assertEquals("varchar", ac2.typeName);
+			assertEquals(null, ac2.changedName);
+
+			SQLInfo row3 = list.get(2);
+			assertTrue(row3.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti3 = row3.getTableIdents().get(0);
+			assertEquals("t3", ti3.getTable());
+			assertEquals(1, row3.getAlterColumns().size());
+			AlterColumn ac3 = row3.getAlterColumns().get(0);
+			assertEquals("c3", ac3.name);
+			assertEquals("nc3", ac3.changedName);
+			assertEquals("varchar", ac3.typeName);
+
+			SQLInfo row4 = list.get(3);
+			assertTrue(row4.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti4 = row4.getTableIdents().get(0);
+			assertEquals("t4", ti4.getTable());
+			assertEquals(1, row4.getAlterColumns().size());
+			AlterColumn ac4 = row4.getAlterColumns().get(0);
+			assertEquals("c4", ac4.name);
+			assertEquals("nc4", ac4.changedName);
+			assertEquals("varchar", ac4.typeName);
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			assertEquals(1, row1.getAlterColumns().size());
+			AlterColumn ac1 = row1.getAlterColumns().get(0);
+			assertEquals("c1", ac1.name);
+			assertEquals("varchar", ac1.typeName);
+			assertEquals(null, ac1.changedName);
+
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti2 = row2.getTableIdents().get(0);
+			assertEquals("t2", ti2.getTable());
+			assertEquals(1, row2.getAlterColumns().size());
+			AlterColumn ac2 = row2.getAlterColumns().get(0);
+			assertEquals("c2", ac2.name);
+			assertEquals("varchar", ac2.typeName);
+			assertEquals(null, ac2.changedName);
+
+			SQLInfo row3 = list.get(2);
+			assertTrue(row3.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti3 = row3.getTableIdents().get(0);
+			assertEquals("t3", ti3.getTable());
+			assertEquals(1, row3.getAlterColumns().size());
+			AlterColumn ac3 = row3.getAlterColumns().get(0);
+			assertEquals("c3", ac3.name);
+			assertEquals("nc3", ac3.changedName);
+			assertEquals("varchar", ac3.typeName);
+
+			SQLInfo row4 = list.get(3);
+			assertTrue(row4.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti4 = row4.getTableIdents().get(0);
+			assertEquals("t4", ti4.getTable());
+			assertEquals(1, row4.getAlterColumns().size());
+			AlterColumn ac4 = row4.getAlterColumns().get(0);
+			assertEquals("c4", ac4.name);
+			assertEquals("nc4", ac4.changedName);
+			assertEquals("varchar", ac4.typeName);
+		}
+
+		sql = "alter table t1 drop c1;alter table t2 drop column c2";
+		result = parser.parse(sql);
+		if (parser.version().equals(MySQLVersion.v56)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			assertEquals(1, row1.getAlterColumns().size());
+			AlterColumn ac1 = row1.getAlterColumns().get(0);
+			assertEquals("c1", ac1.name);
+			assertEquals(null, ac1.typeName);
+			assertEquals(null, ac1.changedName);
+
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti2 = row2.getTableIdents().get(0);
+			assertEquals("t2", ti2.getTable());
+			assertEquals(1, row2.getAlterColumns().size());
+			AlterColumn ac2 = row2.getAlterColumns().get(0);
+			assertEquals("c2", ac2.name);
+			assertEquals(null, ac2.typeName);
+			assertEquals(null, ac2.changedName);
+		} else if (parser.version().equals(MySQLVersion.v84)) {
+			assertTrue(result.success());
+			List<SQLInfo> list = result.getParsedSQLInfo();
+			SQLInfo row1 = list.get(0);
+			assertTrue(row1.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti1 = row1.getTableIdents().get(0);
+			assertEquals("t1", ti1.getTable());
+			assertEquals(1, row1.getAlterColumns().size());
+			AlterColumn ac1 = row1.getAlterColumns().get(0);
+			assertEquals("c1", ac1.name);
+			assertEquals(null, ac1.typeName);
+			assertEquals(null, ac1.changedName);
+
+			SQLInfo row2 = list.get(1);
+			assertTrue(row2.getSQLCommand().equals(SQLCommand.SQLCOM_ALTER_TABLE));
+			TableIdent ti2 = row2.getTableIdents().get(0);
+			assertEquals("t2", ti2.getTable());
+			assertEquals(1, row2.getAlterColumns().size());
+			AlterColumn ac2 = row2.getAlterColumns().get(0);
+			assertEquals("c2", ac2.name);
+			assertEquals(null, ac2.typeName);
+			assertEquals(null, ac2.changedName);
 		}
 	}
 }

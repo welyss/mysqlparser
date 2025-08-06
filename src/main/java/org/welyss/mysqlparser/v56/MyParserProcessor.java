@@ -1,6 +1,6 @@
 package org.welyss.mysqlparser.v56;
 
-import org.welyss.mysqlparser.AlterColumnInfo;
+import org.welyss.mysqlparser.AlterColumn;
 import org.welyss.mysqlparser.Lex;
 import org.welyss.mysqlparser.SchemaTables;
 import org.welyss.mysqlparser.SelectLex;
@@ -92,8 +92,7 @@ public class MyParserProcessor {
 	public static boolean addFieldToList(SQLThread thd, String columnName, String changedName, String type) {
 		boolean result = false;
 		if (columnName != null) {
-			AlterColumnInfo curCol = new AlterColumnInfo();
-			curCol.name = columnName;
+			AlterColumn curCol = new AlterColumn(columnName);
 			curCol.changedName = changedName;
 			if (type != null) {
 				curCol.typeName = type;

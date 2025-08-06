@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.welyss.mysqlparser.AlterColumnInfo;
+import org.welyss.mysqlparser.AlterColumn;
 import org.welyss.mysqlparser.CreateInfo;
 import org.welyss.mysqlparser.Lex;
 import org.welyss.mysqlparser.LexConstants;
@@ -7963,9 +7963,9 @@ public class MyParser implements Parser {
 						MyParserProcessor.addFieldToList(thd, columnName, columnType);
 					} else if (AlterFlag.ALTER_CHANGE_COLUMN.is(flags)) {
 						// ALTER CHANGE field_ident [field_ident] [field_spec]
-						List<AlterColumnInfo> alterColumns = thd.lex.alterInfo.columns;
+						List<AlterColumn> alterColumns = thd.lex.alterInfo.columns;
 						if (alterColumns.size() > 0) {
-							AlterColumnInfo curAlterColumnInfo = alterColumns.get(alterColumns.size() - 1);
+							AlterColumn curAlterColumnInfo = alterColumns.get(alterColumns.size() - 1);
 							if (curAlterColumnInfo.changedName != null) {
 								Object fieldIdent = yystack.valueAt(1 - (1));
 								if (fieldIdent != null) {
@@ -10920,14 +10920,12 @@ public class MyParser implements Parser {
 				// lex->charset,
 				// lex->uint_geom_type))
 				// return YYABORT;
-				List<AlterColumnInfo> alterColumns = thd.lex.alterInfo.columns;
+				List<AlterColumn> alterColumns = thd.lex.alterInfo.columns;
 				if (alterColumns.size() > 0) {
-					AlterColumnInfo curAlterColumnInfo = alterColumns.get(alterColumns.size() - 1);
-					if (AlterFlag.ALTER_CHANGE_COLUMN.equals(curAlterColumnInfo.alterFlag)) {
-						Object type = yystack.valueAt(6 - (5));
-						if (type != null) {
-							curAlterColumnInfo.typeName = ((Token) type).lexStr.str;
-						}
+					AlterColumn curAlterColumnInfo = alterColumns.get(alterColumns.size() - 1);
+					Object type = yystack.valueAt(6 - (5));
+					if (type != null) {
+						curAlterColumnInfo.typeName = ((Token) type).lexStr.str;
 					}
 				}
 			}

@@ -6,10 +6,10 @@ import java.util.List;
 public class AlterInfo {
 //	public Set<AlterFlag> flags;
 	public long flags = 0;
-	public List<AlterColumnInfo> columns;
+	public List<AlterColumn> columns;
 
 	public AlterInfo() {
 //		this.flags = new TreeSet<AlterFlag>();
-		this.columns = new ArrayList<AlterColumnInfo>();
+		this.columns = new ArrayList<AlterColumn>();
 	}
 }

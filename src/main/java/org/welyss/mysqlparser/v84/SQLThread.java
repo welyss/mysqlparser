@@ -2,8 +2,10 @@ package org.welyss.mysqlparser.v84;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.platform.commons.util.StringUtils;
+import org.welyss.mysqlparser.AlterColumn;
 import org.welyss.mysqlparser.MySQLThread;
 import org.welyss.mysqlparser.items.TableIdent;
 import org.welyss.mysqlparser.v84.MyParser.Location;
@@ -34,11 +36,12 @@ public class SQLThread extends MySQLThread {
 	}
 
 	public void addSQL(String sql, String alterCommand) {
-		parsedSqls.add(new MySQLInfo(sql, lex.sqlCommand, lex.tables, pc.alterInfo.flags, alterCommand, lex.selectLex.whereOn));
+		parsedSqls.add(new MySQLInfo(sql, lex.sqlCommand, lex.tables, pc.alterInfo.flags, alterCommand, lex.selectLex.whereOn, lex.alterInfo.columns));
 		// Clear transient variables
 		lex.tables = new ArrayList<TableIdent>();
 		pc.alterInfo.flags = 0;
 		lex.alterPos = 0;
+		lex.alterInfo.columns = new ArrayList<AlterColumn>();
 	}
 
 	/**
@@ -96,5 +99,11 @@ public class SQLThread extends MySQLThread {
 			return IdentNameCheck.TOO_LONG;
 		}
 		return IdentNameCheck.OK;
+	}
+
+	public boolean addAlterColumnsToList(List<AlterColumn> columns) {
+		boolean ret = true;
+		lex.alterInfo.columns.addAll(columns);
+		return ret;
 	}
 }
