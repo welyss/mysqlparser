@@ -26911,8 +26911,8 @@ public class MyParser implements Parser {
 
 	public ParseResult parse(String sql) {
 		MyParseResult ret = new MyParseResult();
+		SQLThread thd = new SQLThread(sql);
 		try {
-			SQLThread thd = new SQLThread(sql);
 			LexInputStream lip = thd.mParserState.mLip;
 			ret.success = true;
 			while (ret.success && !lip.eof()) {
@@ -26923,6 +26923,9 @@ public class MyParser implements Parser {
 			ret.parsedSQLInfo = thd.parsedSqls;
 		} catch (IOException e) {
 			ret.success = false;
+		}
+		if (!ret.success) {
+			ret.setErrorMsg(thd.msg);
 		}
 		return ret;
 	}

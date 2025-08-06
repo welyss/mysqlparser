@@ -28664,6 +28664,9 @@ public class MyParser implements Parser {
 			result.parsedSQLInfo.add(thd.getSQLResultAndReset(lastPos));
 		}
 		result.success = thd.success;
+		if (!result.success) {
+			result.errorMsg = thd.msg;
+		}
 		return result;
 	}
 }

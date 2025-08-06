@@ -1,5 +1,6 @@
 package mysqlparser;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -43,7 +44,13 @@ public class MySQLParserUnitTest {
 //		String sql = "alter table acdb.t1 add column age int unsigned comment '年龄', drop column aa;";
 //		String sql = "ALTER TABLE t1 rebuild PARTITION p1, p2;";
 //		String sql = "ALTER TABLE t1 rebuild PARTITION ALL;ALTER TABLE t1 add column age int;";
-		String sql = "ALTER TABLE t1 add column age int";
+		String sql = "alter table fof_asset_allocation_rate_bond alter column DISABLE set default  1;\r\n"
+				+ "alter table fof_asset_allocation_credit_bond alter column DISABLE set default  1;\r\n"
+				+ "alter table fof_asset_allocation_convert_bond alter column DISABLE set default  1;\r\n"
+				+ "alter table fof_asset_allocation_domestic_interest alter column DISABLE set default  1;\r\n"
+				+ "alter table fof_asset_allocation_us_stock alter column DISABLE set default  1;\r\n"
+				+ "alter table fof_asset_allocation_h_stock alter column DISABLE set default  1;\r\n"
+				+ "alter table fof_asset_allocation_product alter column DISABLE set default  1;";
 //		String sql = "repair NO_WRITE_TO_BINLOG table t1, t2 quick EXTENDED USE_FRM ;";
 //		String sql = "select 1;";
 //		String sql = "LOAD DATA INFILE '/tmp/test.txt' INTO TABLE test IGNORE 1 LINES;";
@@ -57,7 +64,7 @@ public class MySQLParserUnitTest {
 //		long alterFlags = result.getParsedSQLInfo().get(0).getAlterFlags();
 //		assertTrue(org.welyss.mysqlparser.v84.AlterFlag.ALTER_REBUILD_PARTITION.is(alterFlags));
 //		assertTrue(org.welyss.mysqlparser.v84.AlterFlag.ALTER_ALL_PARTITION.is(alterFlags));
-		assertTrue("add column age int".equals(result.getParsedSQLInfo().get(0).getAlterCommand()));
+//		assertTrue("add column age int".equals(result.getParsedSQLInfo().get(0).getAlterCommand()));
 		assertTrue(result.success());
 //		assertTrue(result.getParsedSQLInfo().get(0).getSQLCommand().equals(SQLCommand.SQLCOM_SELECT));
 	}
@@ -368,6 +375,7 @@ public class MySQLParserUnitTest {
 		ParseResult result = parser.parse(sql);
 		if (parser.version().equals(MySQLVersion.v56)) {
 			assertFalse(result.success());
+			assertNotNull(result.getErrorMsg());
 		} else if(parser.version().equals(MySQLVersion.v84)) {
 			assertTrue(result.success());
 			List<SQLInfo> list = result.getParsedSQLInfo();
@@ -384,6 +392,7 @@ public class MySQLParserUnitTest {
 			assertTrue(SQLCommand.SQLCOM_SLAVE_STOP.equals(list.get(1).getSQLCommand()));
 		} else if(parser.version().equals(MySQLVersion.v84)) {
 			assertFalse(result.success());
+			assertNotNull(result.getErrorMsg());
 		}
 	}
 

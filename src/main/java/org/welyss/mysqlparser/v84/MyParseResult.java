@@ -7,8 +7,9 @@ import org.welyss.mysqlparser.ParseResult;
 import org.welyss.mysqlparser.SQLInfo;
 
 public class MyParseResult implements ParseResult {
-	public Boolean success;
-	public List<SQLInfo> parsedSQLInfo;
+	protected Boolean success;
+	protected List<SQLInfo> parsedSQLInfo;
+	protected String errorMsg;
 
 	public MyParseResult() {
 		parsedSQLInfo = new ArrayList<SQLInfo>();
@@ -18,17 +19,26 @@ public class MyParseResult implements ParseResult {
 		this.parsedSQLInfo = parsedSQLInfo;
 	}
 
-	@Override
-	public boolean success() {
-		return success;
-	}
-
 	public boolean setSuccess(boolean success) {
 		return this.success = success;
 	}
 
 	@Override
+	public boolean success() {
+		return success;
+	}
+
+	@Override
 	public List<SQLInfo> getParsedSQLInfo() {
 		return parsedSQLInfo;
+	}
+
+	@Override
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
 	}
 }
