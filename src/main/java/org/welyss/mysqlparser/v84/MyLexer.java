@@ -648,36 +648,26 @@ public class MyLexer implements Lexer, MySQLLexer {
 					 *
 					 * 5 digits: 1 digit (major), 2 digits (minor), then 2 digits (dot). 32302 . 3.23.2 50032 . 5.0.32 50114 . 5.1.14
 					 */
-//		          char versionStr[7] = {0};
-					char[] versionStr = new char[8];
-					versionStr[7] = 0;
-					if (Character.isDigit(versionStr[0] = lip.yyPeekn(0)) && Character.isDigit(versionStr[1] = lip.yyPeekn(1)) && Character.isDigit(versionStr[2] = lip.yyPeekn(2))
-							&& Character.isDigit(versionStr[3] = lip.yyPeekn(3)) && Character.isDigit(versionStr[4] = lip.yyPeekn(4))) {
+					char[] versionArray = new char[8];
+					versionArray[7] = 0;
+					if (Character.isDigit(versionArray[0] = lip.yyPeekn(0)) && Character.isDigit(versionArray[1] = lip.yyPeekn(1)) && Character.isDigit(versionArray[2] = lip.yyPeekn(2))
+							&& Character.isDigit(versionArray[3] = lip.yyPeekn(3)) && Character.isDigit(versionArray[4] = lip.yyPeekn(4))) {
 						if (Character.isDigit(lip.yyPeekn(5)) && Character.isWhitespace(lip.yyPeekn(6))) {
-							versionStr[5] = lip.yyPeekn(5);
+							versionArray[5] = lip.yyPeekn(5);
 						} else if (!Character.isWhitespace(lip.yyPeekn(5))) {
 							LOGGER.warn("ER_WARN_NO_SPACE_VERSION_COMMENT");
 //		              pushWarning(thd, SqlCondition::SL_WARNING,
 //		                           ER_WARN_NO_SPACE_VERSION_COMMENT,
 //		                           ErThd(thd, ER_WARN_NO_SPACE_VERSION_COMMENT));
+							return (ABORT_SYM);
 						}
 
-//		            long version = strtol(versionStr, null, 10);
 						long version;
-						try {
-							version = Long.parseLong(versionStr.toString());
-						} catch (NumberFormatException e) {
-							version = Long.parseLong(versionStr.toString().replaceFirst("^(\\d+).*", "$1"));
-						}
+						String versionStr = new String(versionArray).trim();
+						version = Long.parseLong(versionStr);
 						if (version <= mysqlVersion.value()) {
 							/* Accept ('M') 'M' 'm' 'm' 'd' 'd' */
-							int skipLen = 0;
-							for (int i = 6; i >= 0; i--) {
-								if (Character.isDigit(versionStr[i])) {
-									skipLen = i + 1;
-								}
-							}
-							lip.yySkipn(skipLen);
+							lip.yySkipn(versionStr.length() + 1);
 							/* Expand the content of the special comment as real code */
 							lip.setEcho(true);
 							state = MyLexStates.MY_LEX_START;
@@ -706,6 +696,7 @@ public class MyLexer implements Lexer, MySQLLexer {
 //		                ER_WARN_DEPRECATED_SYNTAX_NO_REPLACEMENT,
 //		                ErThd(lip.mThd, ER_WARN_DEPRECATED_NESTED_COMMENT_SYNTAX));
 						LOGGER.warn("ER_WARN_DEPRECATED_SYNTAX_NO_REPLACEMENT,ER_WARN_DEPRECATED_NESTED_COMMENT_SYNTAX");
+						return (ABORT_SYM);
 					}
 					lip.inComment = EnumCommentState.PRESERVE_COMMENT;
 					lip.yySkip(); // Accept /

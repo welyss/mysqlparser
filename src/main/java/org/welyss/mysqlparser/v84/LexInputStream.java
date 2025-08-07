@@ -604,8 +604,8 @@ public class LexInputStream {
 
 	public boolean myIsalnum(char ch) {
 		int chInt = ch + 1;
-		int alnum = (MY_CHAR_U | MY_CHAR_L | MY_CHAR_NMR);
-		return chInt < ctypeUtf8mb4.length && (ctypeUtf8mb4[chInt] & alnum) == alnum;
+		return chInt < ctypeUtf8mb4.length && ((ctypeUtf8mb4[chInt] & MY_CHAR_U) == MY_CHAR_U
+				|| (ctypeUtf8mb4[chInt] & MY_CHAR_L) == MY_CHAR_L || (ctypeUtf8mb4[chInt] & MY_CHAR_NMR) == MY_CHAR_NMR);
 	}
 
 	public boolean myIsxdigit(char ch) {
