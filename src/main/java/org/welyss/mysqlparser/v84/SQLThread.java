@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.platform.commons.util.StringUtils;
 import org.welyss.mysqlparser.AlterColumn;
 import org.welyss.mysqlparser.MySQLThread;
 import org.welyss.mysqlparser.items.TableIdent;
@@ -91,7 +90,7 @@ public class SQLThread extends MySQLThread {
 	 */
 	private IdentNameCheck checkTableName(String name) {
 		// name length in symbols
-		if (StringUtils.isBlank(name))
+		if (name == null || name.trim().length() == 0)
 			return IdentNameCheck.WRONG;
 		if (name.length() != name.trim().length()) {
 			return IdentNameCheck.WRONG;
