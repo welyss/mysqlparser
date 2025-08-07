@@ -21,7 +21,7 @@ public class MySQLParserUnitTest {
 	MySQLParser parser;
 
 	public MySQLParserUnitTest() throws IOException {
-		parser = new MySQLParser(MySQLVersion.v84);
+		parser = new MySQLParser(MySQLVersion.v56);
 //		parser.setDebugLevel(1);
 	}
 
@@ -48,7 +48,11 @@ public class MySQLParserUnitTest {
 //		String sql = "alter table fof_asset_allocation_rate_bond add column (c1 int null default null comment '123', c2 bigint null default null)";
 //		String sql = "alter table fof_asset_allocation_rate_bond add column c1 int null default null comment '123' after c2";
 //		String sql = "alter table fof_asset_allocation_rate_bond rename column c1 to c2";
-		String sql = "alter table fof_asset_allocation_rate_bond drop column c1";
+		String sql = "alter table tg_product add avg_buy_price decimal(15, 6)  default null  comment '平均买入均价' AFTER avg_cost;\r\n"
+				+ "\r\n"
+				+ "update tg_product p set p.avg_buy_price = (\r\n"
+				+ "    select round(sum(a.cost) / sum(a.count),3) from tg_adjustment a where a.mimicplaid=p.mimicplaid and a.code=p.code and a.market = p.market and a.direct in (1,42) and a.times>=p.created_date\r\n"
+				+ ") where 1=1;aa";
 //		String sql = "repair NO_WRITE_TO_BINLOG table t1, t2 quick EXTENDED USE_FRM ;";
 //		String sql = "select 1;";
 //		String sql = "LOAD DATA INFILE '/tmp/test.txt' INTO TABLE test IGNORE 1 LINES;";

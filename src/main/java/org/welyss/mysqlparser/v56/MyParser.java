@@ -28670,12 +28670,14 @@ public class MyParser implements Parser {
 			int lastPos = thd.mPtr;
 			thd.nextState = MyLexStates.MY_LEX_START;
 			thd.success = myParse(thd);
-			result.parsedSQLInfo.add(thd.getSQLResultAndReset(lastPos));
+			if (thd.success) {
+				result.parsedSQLInfo.add(thd.getSQLResultAndReset(lastPos));
+			} else {
+				result.errorMsg = thd.msg;
+				break;
+			}
 		}
 		result.success = thd.success;
-		if (!result.success) {
-			result.errorMsg = thd.msg;
-		}
 		return result;
 	}
 }
