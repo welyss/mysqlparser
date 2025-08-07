@@ -18767,7 +18767,6 @@ public class MyParser implements Parser {
 //                                             ((subquery)(yystack.valueAt (0))), &((simple_ident_list)(yystack.valueAt (2))), YYTHD->mem_root);
 //            if (yyval == nullptr)
 //              MYSQL_YYABORT;   /* purecov: inspected */
-				System.out.println();
 			}
 			;
 			break;
