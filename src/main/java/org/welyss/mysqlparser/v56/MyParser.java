@@ -28665,17 +28665,19 @@ public class MyParser implements Parser {
 		thd.success = myParse(thd);
 		if (thd.success) {
 			result.parsedSQLInfo.add(thd.getSQLResultAndReset(0));
-		}
-		while (thd.success && thd.foundSemicolon > 0 && !myLexer.lip.eof(thd)) {
-			int lastPos = thd.mPtr;
-			thd.nextState = MyLexStates.MY_LEX_START;
-			thd.success = myParse(thd);
-			if (thd.success) {
-				result.parsedSQLInfo.add(thd.getSQLResultAndReset(lastPos));
-			} else {
-				result.errorMsg = thd.msg;
-				break;
+			while (thd.success && thd.foundSemicolon > 0 && !myLexer.lip.eof(thd)) {
+				int lastPos = thd.mPtr;
+				thd.nextState = MyLexStates.MY_LEX_START;
+				thd.success = myParse(thd);
+				if (thd.success) {
+					result.parsedSQLInfo.add(thd.getSQLResultAndReset(lastPos));
+				} else {
+					result.errorMsg = thd.msg;
+					break;
+				}
 			}
+		} else {
+			result.errorMsg = thd.msg;
 		}
 		result.success = thd.success;
 		return result;

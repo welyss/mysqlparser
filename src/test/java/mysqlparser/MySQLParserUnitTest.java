@@ -21,7 +21,7 @@ public class MySQLParserUnitTest {
 	MySQLParser parser;
 
 	public MySQLParserUnitTest() throws IOException {
-		parser = new MySQLParser(MySQLVersion.v84);
+		parser = new MySQLParser(MySQLVersion.v56);
 //		parser.setDebugLevel(1);
 	}
 
@@ -48,9 +48,8 @@ public class MySQLParserUnitTest {
 //		String sql = "alter table fof_asset_allocation_rate_bond add column (c1 int null default null comment '123', c2 bigint null default null)";
 //		String sql = "alter table fof_asset_allocation_rate_bond add column c1 int null default null comment '123' after c2";
 //		String sql = "alter table fof_asset_allocation_rate_bond rename column c1 to c2";
-		String sql = "/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;select 1";
 //		String sql = "repair NO_WRITE_TO_BINLOG table t1, t2 quick EXTENDED USE_FRM ;";
-//		String sql = "select 1;";
+		String sql = "select 1;";
 //		String sql = "LOAD DATA INFILE '/tmp/test.txt' INTO TABLE test IGNORE 1 LINES;";
 //		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, (SELECT id FROM items2 WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
 //		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
