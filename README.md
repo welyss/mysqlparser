@@ -1,6 +1,6 @@
 # mysqlparser
-this is a mysql parser, lexer is modified from mysql5.6.35 source code to java by myself, parser is created by bison2.7.
-一个mysql的sql解析，词法解析部分是人工将mysql5.6.35源码翻译成java版，语法解析部分是通过bison2.7对mysql5.6.35中sql_yacc.yy文件生成的，语义解释部分由于sql_yacc.yy中都是c语言的，所以生成的语义解释都注释掉了，导致解析以外的所有功能需要用java重新改造，目前只实现了获取sql类型，库名，表名，有时间的话可能会再追加wherelist。。。。。
+this is a mysql parser, lexer is modified from mysql5.6.35/mysql8.4.5 source to java by myself, parser is created by bison2.7. The parser can confirm if the query correct, query type, alter type, related tables and schemas.
+一个mysql的sql解析，词法解析部分是人工将mysql5.6.35和8.4.5的源码翻译成java版，语法解析部分是通过bison2.7对sql_yacc.yy文件生成的, 解析器可以确认SQL语法是否正确，SQL的类型，修改表的类型，查询涉及到的表和库.
 
 # Sample
 		
