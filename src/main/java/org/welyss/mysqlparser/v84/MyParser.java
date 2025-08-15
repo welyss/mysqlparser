@@ -14894,9 +14894,11 @@ public class MyParser implements Parser {
 //            if (yyval.push_back(((table_reference)(yystack.valueAt (0)))))
 //              MYSQL_YYABORT; // OOM
 				Object tableReference = yystack.valueAt(0);
-				List<TableIdent> tableReferenceList = new ArrayList<TableIdent>();
-				tableReferenceList.add((TableIdent) tableReference);
-				yyval = tableReferenceList;
+				if (tableReference instanceof TableIdent) {
+					List<TableIdent> tableReferenceList = new ArrayList<TableIdent>();
+					tableReferenceList.add((TableIdent) tableReference);
+					yyval = tableReferenceList;
+				}
 			}
 			;
 			break;

@@ -1,6 +1,7 @@
 package mysqlparser;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -49,7 +50,53 @@ public class MySQLParserUnitTest {
 //		String sql = "alter table fof_asset_allocation_rate_bond add column c1 int null default null comment '123' after c2";
 //		String sql = "alter table fof_asset_allocation_rate_bond rename column c1 to c2";
 //		String sql = "repair NO_WRITE_TO_BINLOG table t1, t2 quick EXTENDED USE_FRM ;";
-		String sql = "select 1;";
+		String sql = "SELECT \r\n"
+				+ "    case t.inst_id \r\n"
+				+ "        when 17 then '爱派克电子' \r\n"
+				+ "        when 18 then '上海易则投资' \r\n"
+				+ "        when 20 then '华宝证券'\r\n"
+				+ "when 21 then '上海图斯投资'\r\n"
+				+ "when 22 then '国联民生证券'\r\n"
+				+ "       when 23 then '渠荷（北京）资产管理'\r\n"
+				+ "          when 25 then '前海盛景'\r\n"
+				+ "            when 26 then '国通信托'\r\n"
+				+ "             when 27 then '华鑫国际信托'  \r\n"
+				+ "            when 28 then '上海珠池资产管理'  \r\n"
+				+ "            when 29 then '上海融世私募基金管理'\r\n"
+				+ "           when 30 then '锡和私募' \r\n"
+				+ "           when 31 then '广州期货'   else t.inst_id\r\n"
+				+ "    end as 管理机构,\r\n"
+				+ "    m.MPD_NM as 产品清单,\r\n"
+				+ "    t.cust_no as 客户号,\r\n"
+				+ "    t.渠道名称,\r\n"
+				+ "    SUM(CASE WHEN t.TRD_TP=120 or t.TRD_TP=122 THEN t.TSN_AMT ELSE 0 END) AS 总认申购,\r\n"
+				+ "    SUM(CASE WHEN t.TRD_TP=124 THEN t.TSN_AMT ELSE 0 END) AS 总赎回,\r\n"
+				+ "    SUM(CASE \r\n"
+				+ "                    WHEN t.TRD_TP=120 or t.TRD_TP=122 THEN TSN_AMT\r\n"
+				+ "                    WHEN t.TRD_TP=124 THEN -t.TSN_AMT\r\n"
+				+ "                    ELSE 0\r\n"
+				+ "            end \r\n"
+				+ "            ) AS 净申购,\r\n"
+				+ "        SUM(CASE WHEN t.TRD_TP=120 or t.TRD_TP=122 THEN t.TSN_AMT ELSE 0 END)/5 as 日均认申购\r\n"
+				+ "FROM (\r\n"
+				+ "                SELECT \r\n"
+				+ "                    INST_ID, MPD_ID, cust_no,\r\n"
+				+ "                    case ENTR_SRC when  '1' then '华宝聚合' else '旁路' end as 渠道名称,\r\n"
+				+ "                    trd_tp,\r\n"
+				+ "                    tsn_amt\r\n"
+				+ "                FROM \r\n"
+				+ "                    ifp.TIFP_TRD_FUND_TRANS TRANS\r\n"
+				+ "                where TSN_DT >= ' 20250801' and TSN_DT <='  20250814'\r\n"
+				+ "        ) t\r\n"
+				+ "JOIN ifp.TIFP_MPD_INF m ON t.inst_id = m.INST_ID and t.mpd_id = m.MPD_ID\r\n"
+				+ "WHERE \r\n"
+				+ "    t.TRD_TP IN (120, 122, 124)\r\n"
+				+ "GROUP BY \r\n"
+				+ "        t.inst_id,\r\n"
+				+ "    m.MPD_NM,\r\n"
+				+ "    t.cust_no,\r\n"
+				+ "    t.渠道名称\r\n"
+				+ "order by t.inst_id;";
 //		String sql = "LOAD DATA INFILE '/tmp/test.txt' INTO TABLE test IGNORE 1 LINES;";
 //		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, (SELECT id FROM items2 WHERE retail / wholesale >= 1.3 AND quantity < 100) AS discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
 //		String sql = "UPDATE /*+ NO_MERGE(discounted) */ items, discounted SET items.retail = items.retail * 0.9 WHERE items.id = discounted.id;";
@@ -58,6 +105,7 @@ public class MySQLParserUnitTest {
 //		String sql = "select _utf8 0xD0B0D0B1D0B2;";
 //		String sql = "select id from acnt_account;";
 		ParseResult result = parser.parse(sql);
+		assertEquals(2, result.getParsedSQLInfo().get(0).getTableIdents().size());
 //		long alterFlags = result.getParsedSQLInfo().get(0).getAlterFlags();
 //		assertTrue(org.welyss.mysqlparser.v84.AlterFlag.ALTER_REBUILD_PARTITION.is(alterFlags));
 //		assertTrue(org.welyss.mysqlparser.v84.AlterFlag.ALTER_ALL_PARTITION.is(alterFlags));
