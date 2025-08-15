@@ -1,9 +1,12 @@
-# mysqlparser
-this is a mysql parser, lexer is modified from mysql5.6.35/mysql8.4.5 source to java by myself, parser is created by bison2.7. The parser can confirm if the query correct, query type, alter type, related tables and schemas.
-一个mysql的sql解析，词法解析部分是人工将mysql5.6.35和8.4.5的源码翻译成java版，语法解析部分是通过bison2.7对sql_yacc.yy文件生成的, 解析器可以确认SQL语法是否正确，SQL的类型，修改表的类型，查询涉及到的表和库.
+# MySQL Parser
 
-# Sample
-		
+This is a mysql parser, lexer is modified from mysql5.6.35/mysql8.4.5 source to java by myself, parser is created by bison2.7. The parser can confirm if the query correct, query type, alter type, related tables and schemas.<br>
+<br>
+一个mysql的SQL解析，词法解析部分是人工将mysql5.6.35和8.4.5的源码翻译成java版，语法解析部分是通过bison2.7对sql_yacc.yy文件生成的, 解析器可以确认SQL语法是否正确，SQL的类型，修改表的类型，查询涉及到的表和库. 
+
+# Example
+
+```
 		MySQLParser parser = new MySQLParser(MySQLVersion.v84);
 		String sql = "DELETE t1, t2 FROM db1.ta t1 INNER JOIN db2.tb t2 INNER JOIN db3.tc t3 WHERE t1.id=t2.id AND t2.id=t3.id;";
 		ParseResult result = parser.parse(sql);
@@ -156,3 +159,4 @@ this is a mysql parser, lexer is modified from mysql5.6.35/mysql8.4.5 source to 
 			assertTrue("t".equals(ti1.getTable()));
 		}
 	
+```
