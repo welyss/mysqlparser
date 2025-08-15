@@ -158,5 +158,4 @@ This is a mysql parser, lexer is modified from mysql5.6.35/mysql8.4.5 c++ to jav
 			assertTrue("acdb".equals(ti1.getDb()));
 			assertTrue("t".equals(ti1.getTable()));
 		}
-	
 ```
